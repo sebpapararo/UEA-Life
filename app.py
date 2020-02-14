@@ -1,4 +1,5 @@
 from flask import *
+from flask_bootstrap import Bootstrap
 import functions
 import sqlite3
 import urllib
@@ -6,6 +7,7 @@ import urllib
 
 # Configuration Statements
 app = Flask(__name__, template_folder="templates")
+Bootstrap(app)
 DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
 
@@ -13,11 +15,11 @@ sslContext = ('server.crt', 'server.key')
 # Routes
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('/index.html', title="Lame Site")
+    return render_template('/index.html', title="UEA Life")
 
 @app.route('/login')
-def hello_world():
-    return 'Hello Students!'
+def login():
+    return render_template('/login.html', title="Login")
 
 
 # Function that verifies a captcha attempt by asking google whether they have verified that attempt
