@@ -5,13 +5,17 @@ import urllib
 
 
 # Configuration Statements
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
 
 
 # Routes
-@app.route('/')
+@app.route('/', methods=['GET'])
+def index():
+    return render_template('/index.html', title="Lame Site")
+
+@app.route('/login')
 def hello_world():
     return 'Hello Students!'
 
