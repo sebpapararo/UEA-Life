@@ -15,12 +15,12 @@ sslContext = ('server.crt', 'server.key')
 # Routes
 @app.route('/', methods=['GET'])
 def index():
-    return render_template('/index.html', title="UEA Life")
+    return render_template('/index.html', title="UEA Life | Home")
 
 
 @app.route('/login')
 def login():
-    return render_template('/login.html', title="Login")
+    return render_template('/login.html', title="UEA Life | Login")
 
 
 # Function that verifies a captcha attempt by asking google whether they have verified that attempt

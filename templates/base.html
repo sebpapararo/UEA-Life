@@ -1,6 +1,6 @@
-<!-- layout.html -->
+<!-- base.html -->
+<!-- BASE REFERS TO CONSTANT FACTORS THROUGHOUT THE WEBSITE -->
 {% extends "bootstrap/base.html" %}
-{% block title %}This is the title{% endblock %}
 
 {% block navbar %}
   <div class="navbar-default">
@@ -11,6 +11,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li {% if active_page == "login" %} class="active" {% endif %}><a href="/login">Login/Signup</a></li>
+      </ul>
     </div>
   </div>
 {% endblock %}
