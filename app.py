@@ -17,6 +17,7 @@ sslContext = ('server.crt', 'server.key')
 def index():
     return render_template('/index.html', title="UEA Life")
 
+
 @app.route('/login')
 def login():
     return render_template('/login.html', title="Login")
@@ -47,7 +48,8 @@ def verifyCaptcha():
 
 if __name__ == '__main__':
     # TODO: 11/02/2020 Change debug to False before submitting
-    app.run(host='127.0.0.1', port=5000, debug=True, ssl_context=sslContext)
+    # app.run(host='127.0.0.1', port=5000, debug=True, ssl_context=sslContext)
+    app.run(host='127.0.0.1', port=5000, debug=True)
 
 
 # Database Methods
