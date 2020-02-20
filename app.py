@@ -52,7 +52,7 @@ if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)
 
 
-# Database Methods
+# Database Methods - Courtesy of Oli
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
