@@ -1,26 +1,29 @@
 from flask import *
-from flask_bootstrap import Bootstrap
 import functions
 import sqlite3
 import urllib
 
-
 # Configuration Statements
 app = Flask(__name__, template_folder="templates")
-Bootstrap(app)
 DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
-
 
 # Routes
 @app.route('/', methods=['GET'])
 def index():
     return render_template('/index.html', title="UEA Life | Home")
 
-
-@app.route('/login')
+@app.route('/login', methods=['GET'])
 def login():
     return render_template('/login.html', title="UEA Life | Login")
+
+@app.route('/dashboard', methods=['GET'])
+def dashboard():
+    return render_template('/dashboard.html', title="UEA Life | Dashboard")
+
+@app.route('/createPost', methods=['GET', 'POST'])
+def createPost():
+    return render_template('/newPost.html', title="UEA Life | Create Post")
 
 
 # Function that verifies a captcha attempt by asking google whether they have verified that attempt

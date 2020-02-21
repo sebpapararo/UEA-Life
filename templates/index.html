@@ -10,29 +10,42 @@
   <p>An Online Forum for UEA Student and Staff</p>
 </div>
 
-{#<div class="container">#}
-{#    <h1>Landing Page</h1>#}
-{#    <p>Sign up to UEA Life today!</p>#}
-{#</div>#}
-
-<div class="container text-center">
+<div class="container">
   <div class="row">
-    <div class="col-lg-6">
-      <div class="card" style="width: 49%;">
-          <div class="card-body ">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
-          </div>
+    <div class="col-6">
+      <div class="card">
+        <div class="card-body">
+          <h1>Welcome to UEA Life</h1>
+          <h4>New to the UEA? Need help with Campus Life? Have advice for new students?</h4>
+          <p>UEA Life offers student and staff a forum to exchange advice, experiances and answer other questions</p>
+          <a href="#" class="btn">Learn More</a>
         </div>
+      </div>
     </div>
-    </div>
-    <div class="col-lg-6">
-      <div class="card" style="width: 49%;">
-          <div class="card-body ">
-            <h5 class="card-title">Card title</h5>
-            <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+    <div class="col-6">
+        <div class="card">
+          <div class=card-body>
+            <form action="" method="post" role="login-form">
+              <div class="form-group">
+                <label for="email"> Email Address: </label>
+                <input type="text" class="form-control" id="email" name="email" placeholder="Email Address"/>
+                <label for="password"> Password </label>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+              </div>
+              <div>
+                <div class="row justify-content-center">
+                  <button type="submit" class="btn btn-success">Login</button>
+                </div>
+                  <div class="row pt-2 justify-content-center">
+                    <div class="col-sm-6">
+                      <button type="submit" class="btn btn-outline-success float-right">Sign Up</button>
+                    </div>
+                    <div class="col-sm-6">
+                      <button type="submit" class="btn btn-outline-info float-left">Forgot Password</button>
+                    </div>
+                  </div>
+              </div>
+            </form>
           </div>
         </div>
     </div>

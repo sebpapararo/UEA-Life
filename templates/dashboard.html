@@ -1,12 +1,50 @@
 <!-- dashboard.html -->
 <!-- MAIN HOME SCREEN POST USER LOGIN/ACCOUNT CREATION -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% set active_page = "dashboard" %}
 
-</body>
-</html>
+{% block content %}
+
+<div class="container">
+  <div class="row">
+      <div class="col-sm-2 text-center">
+        <div class="card mt-3 p-2">
+          <div class="btn-group-vertical">
+            <button class="btn btn-success align-self-center">Create a New Post</button>
+            <button class="btn btn-success align-self-center">Create a New Post</button>
+            <button class="btn bg-info">Finance</button>
+            <button class="btn bg-info">Accomodation</button>
+            <button class="btn bg-info">Students Union</button>
+            <button class="btn bg-info ">Local Area</button>
+            <button class="btn bg-info">Travel</button>
+          </div>
+        </div>
+      </div>
+      <div class="col-sm-10">
+        <div class="card mt-5">
+          <!-- some for loop here for each post -->
+          <ul class="list-group list-group-flush">
+            <!-- some sort of for loop here! -->
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-3">
+                  Posted By: Jeffory
+                </div>
+                <div class="col-3">
+                  Posted To: General
+                </div>
+                <div class="cols-3 col align-self-end">
+                </div>
+                  Posted on: Friday 13th
+              </div>
+              <div class="row">
+                Hey guys
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
