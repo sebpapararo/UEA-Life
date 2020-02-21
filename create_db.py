@@ -1,29 +1,26 @@
-import datetime
 import os
-import random
-import re
 import sqlite3
 
 DATABASE = 'database.sqlite'
 
+
 def create():
     db = sqlite3.connect(DATABASE)
-
     c = db.cursor()
 
+    # Create the users table
     c.execute('''
         CREATE TABLE users (
             id varchar PRIMARY KEY,
             created_on varchar,
             verified DEFAULT 0,
             password varchar,
+            salt varchar,
             email varchar UNIQUE
         );
     ''')
 
-    c.execute(
-        '''INSERT INTO users VALUES('1', '20/02/2020 13:17', '0', 'TestPassword123', 's.papararo@uea.ac.uk');''')
-
+    # Create the profiles table
     c.execute('''
                 CREATE TABLE profiles (
                     id varchar PRIMARY KEY,
@@ -36,6 +33,7 @@ def create():
                 );
         ''')
 
+    # Create the posts table
     c.execute('''
         CREATE TABLE posts (
             id integer PRIMARY KEY AUTOINCREMENT,
@@ -47,6 +45,7 @@ def create():
         );
     ''')
 
+    # Create the replies table
     c.execute('''
             CREATE TABLE replies (
                 id integer PRIMARY KEY AUTOINCREMENT,
@@ -57,6 +56,7 @@ def create():
             );
         ''')
 
+    # Create the table for forgot password requests
     c.execute('''
         CREATE TABLE forgotPasswordRequests (
             id varchar PRIMARY KEY,
@@ -64,16 +64,16 @@ def create():
         );
     ''')
 
-
-
+    # Commit all changes to the database
     db.commit()
 
 
-
+# Delete the database, ready to create a new one
 def delete_db():
     if os.path.exists(DATABASE):
         os.remove(DATABASE)
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     delete_db()
     create()

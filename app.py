@@ -1,13 +1,13 @@
 from flask import *
-from flask_bootstrap import Bootstrap
 import functions
 import sqlite3
 import urllib
+import re
+import uuid
 
 
 # Configuration Statements
 app = Flask(__name__, template_folder="templates")
-Bootstrap(app)
 DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
 
