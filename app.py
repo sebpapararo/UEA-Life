@@ -10,18 +10,22 @@ app = Flask(__name__, template_folder="templates")
 DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
 
+
 # Routes
 @app.route('/', methods=['GET'])
 def index():
     return render_template('/index.html', title="UEA Life | Home")
 
+
 @app.route('/login', methods=['GET'])
 def login():
     return render_template('/login.html', title="UEA Life | Login")
 
+
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
     return render_template('/dashboard.html', title="UEA Life | Dashboard")
+
 
 @app.route('/createPost', methods=['GET', 'POST'])
 def createPost():
