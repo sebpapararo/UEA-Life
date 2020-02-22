@@ -1,12 +1,58 @@
 <!-- register.html -->
 <!-- REGISTER TO CREATE NEW ACCOUNT - ACCESSIBLE FROM INDEX (WELCOME) PAGE IF USER SELECTS "CREATE NEW ACCOUNT" -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% set active_page = "newPost" %}
 
-</body>
-</html>
+{% block content %}
+<div class="container">
+  <div class="card mt-5">
+    <div class="card-body">
+      <h5 class="card-title">Register an account</h5>
+      <form action="" method="POST" role="register-form">
+        <div class="form-group">
+          <label for="title"> Username </label>
+          <input type="text" class="form-control" id="username" name="username" placeholder="Username">
+          <label for="title"> Email </label>
+          <input type="text" class="form-control" id="email" name="email" placeholder="Email">
+          <label for="password">Password:</label>
+          <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+          <label for="password">Verify Password:</label>
+          <input type="password" class="form-control" id="passwordcheck" placeholder="Retype Password" name="passwordcheck">
+        </div>
+        <div class ="form-group">
+            <h6 class="card-title">Other Details</h6>
+            <label for="level"> Level </label>
+          <select class="form-control" id="level">
+            <option>UG (Undergraduate)</option>
+            <option>PGT (Postgraduate Taught)</option>
+            <option>PGR (Postgraduate Research)</option>
+            <option>STF (Staff)</option>
+          </select>
+            <label for="school"> School </label>
+          <select class="form-control" id="school">
+            <option>BIO</option>
+            <option>ENV</option>
+            <option>CMP</option>
+            <option>CHE</option>
+            <option>MED</option>
+            <option>MTH</option>
+            <option>ECO</option>
+            <option>LAW</option>
+            <option>PPL</option>
+            <option>NBS</option>
+            <option>PHA</option>
+            <option>NAT</option>
+            <option>AMA</option>
+          </select>
+        </div>
+          <div class="g-recaptcha" data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk"></div>
+        <div>
+          <div style="text-align: center;">
+            <button type="submit" class="btn btn-success">Submit</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

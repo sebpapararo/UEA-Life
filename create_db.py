@@ -26,8 +26,6 @@ def create():
                     id varchar PRIMARY KEY,
                     username varchar UNIQUE,
                     last_active varchar,
-                    firstname varchar,
-                    surname varchar,
                     level varchar,
                     school varchar         	
                 );
