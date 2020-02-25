@@ -5,15 +5,23 @@
 
 {% block content %}
 
+<!-- <style>
+    .jumbotron {
+    background-image: url('https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg/fcc74a2c-eedb-437a-a39f-1d6fa1ccae26?t=1391011295968');
+    background-size: cover;
+    height: 100%;
+  }
+</style> -->
+
 <div class="jumbotron text-center">
   <h1>Welcome to UEA Life</h1>
   <p>An Online Forum for UEA Student and Staff</p>
 </div>
-
 <div class="container">
-  <div class="row">
+  <div class="row row align-items-center">
     <div class="col-6">
       <div class="card">
+        <img class="card-img-top" src="https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg/fcc74a2c-eedb-437a-a39f-1d6fa1ccae26?t=1391011295968" alt="Card image cap">
         <div class="card-body">
           <h1>Welcome to UEA Life</h1>
           <h4>New to the UEA? Need help with Campus Life? Have advice for new students?</h4>
@@ -25,6 +33,7 @@
     <div class="col-6">
         <div class="card">
           <div class=card-body>
+            <h5 class="card-title">Login</h5>
             <form action="" method="post" role="login-form">
               <div class="form-group">
                 <label for="email"> Email Address: </label>
@@ -32,20 +41,24 @@
                 <label for="password"> Password </label>
                 <input type="password" class="form-control" id="password" name="password" placeholder="Password">
               </div>
-              <div>
-                <div class="row justify-content-center">
-                  <button type="submit" class="btn btn-success">Login</button>
-                </div>
-                  <div class="row pt-2 justify-content-center">
-                    <div class="col-sm-6">
-                      <button type="submit" class="btn btn-outline-success float-right">Sign Up</button>
-                    </div>
-                    <div class="col-sm-6">
-                      <button type="submit" class="btn btn-outline-info float-left">Forgot Password</button>
-                    </div>
-                  </div>
+              <div class="row justify-content-center mt-2">
+                <div class="g-recaptcha" data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk"></div>
               </div>
+              <div class="row justify-content-center mt-2">
+                <div class="col-sm-5">
+                  <button type="submit" class="btn btn-success btn-block">Login</button>
+                </div>
+              </div>
+
             </form>
+            <div class="row pt-2 justify-content-center">
+              <div class="col-sm-5">
+                <a href="/register" class="btn btn-outline-success float-right btn-block">Sign Up</a>
+              </div>
+              <div class="col-sm-5">
+                <button class="btn btn-outline-info float-left btn-block">Forgot Password</button>
+              </div>
+            </div>
           </div>
         </div>
     </div>
