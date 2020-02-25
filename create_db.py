@@ -1,7 +1,7 @@
 import os
 import sqlite3
 
-DATABASE = 'database.sqlite'
+DATABASE = 'database.db'
 
 
 def create():
@@ -57,10 +57,18 @@ def create():
     # Create the table for forgot password requests
     c.execute('''
         CREATE TABLE forgotPasswordRequests (
-            id varchar PRIMARY KEY,
-            email varchar
+            key varchar PRIMARY KEY,
+            id varchar,
+            timestamp varchar
         );
     ''')
+
+    c.execute('''
+            CREATE TABLE verifyEmails (
+                id varchar PRIMARY KEY,
+                key varchar
+            );
+        ''')
 
     # Commit all changes to the database
     db.commit()
