@@ -30,13 +30,16 @@ def dashboard():
 def createPost():
     return render_template('/newPost.html', title="UEA Life | Create Post")
 
+@app.route('/accountSettings', methods=['GET'])
+def profile():
+    return render_template('/settings.html', title="UEA Life | Settings")
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     return render_template('/register.html', title="UEA Life | Register")
 
 # Creates a new user account
-@app.route('/createAccount', methods=[])
+@app.route('/register/createAccount', methods=['POST'])
 
 
 # Function that verifies a captcha attempt by asking google whether they have verified that attempt
