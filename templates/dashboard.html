@@ -5,6 +5,15 @@
 
 {% block content %}
 
+    <!-- Div to display any error messages created when logging in -->
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
     <div class="container">
         <div class="row">
             <div class="col-sm-2 text-center">

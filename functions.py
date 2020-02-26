@@ -109,8 +109,7 @@ def verifyCaptcha():
 
 # Generate a hash of the message using sha3_512 combined with the salt
 def generateHashedPass(salt, message):
-    # Strings must be encoded before being hashed
-    # salt = salt.encode('utf-8')
+    # Message must be encoded before being hashed
     message = message.encode('utf-8')
 
     return hashlib.sha3_512(salt + message).hexdigest()
