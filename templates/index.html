@@ -1,12 +1,11 @@
 <!-- index.html -->
 <!-- WELCOME PAGE USER LOGS IN OR REGISTERS PRIOR TO ACCESSING MAIN HOME -->
 {% extends "base.html" %}
+{% block title %}{{ super() }} Welcome{%  endblock %}
 {% set active_page = "index" %}
 {% set hide_nav = True %}
 
-
 {% block content %}
-
     <div class="jumbotron text-center">
         <h1>Welcome to UEA Life</h1>
         <p>An Online Forum for UEA Student and Staff</p>
@@ -19,11 +18,11 @@
                          src="https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg/fcc74a2c-eedb-437a-a39f-1d6fa1ccae26?t=1391011295968"
                          alt="Card image cap">
                     <div class="card-body">
-                        <h1>Welcome to UEA Life</h1>
-                        <h4>New to the UEA? Need help with Campus Life? Have advice for new students?</h4>
-                        <p>UEA Life offers student and staff a forum to exchange advice, experiances and answer other
+                        <h1 class="card-title">Welcome to UEA Life</h1>
+                        <h4 class="card-subtitle mb-2 text-muted">New to the UEA? Need help with Campus Life? Have advice for new students?</h4>
+                        <p class="card-text">UEA Life offers student and staff a forum to exchange advice, experiences and answer other
                             questions</p>
-                        <a href="#" class="btn">Learn More</a>
+                        <a href="#" class="card-link">Learn More</a>
                     </div>
                 </div>
             </div>
