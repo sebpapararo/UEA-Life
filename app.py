@@ -115,6 +115,39 @@ def createPost():
     else:
         return render_template('/newPost.html', title="UEA Life | Create Post")
 
+@app.route('/accountSettings', methods=['GET', 'POST'])
+def accountSettings():
+    return render_template('/settings.html', title="UEA Life | Create Post")
+
+@app.route('/accountSettings/updateUsername', methods=['POST'])
+def updateUsername():
+    # TODO: add more checks here (see createAccount as example)
+
+    # Guards here:
+    print(request.form)
+    if request.form['username'] != '':
+        # Get these from the request
+        username = functions.sanitiseInputs(request.form['username'])
+        uid = "41386a51-c6ca-42ae-8f1c-6ef327d80c5e" # test id
+
+        # Check if username has already been taken
+        if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
+        query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') == 0:
+            search = query_db('SELECT * FROM profiles WHERE id=?', [uid])
+            print(search)
+            print('someshit')
+            query_db('UPDATE profiles SET username=? WHERE id=?', [username, uid])
+            get_db().commit()
+
+            flash('Username updated successfully!')
+            return render_template('/settings.html', title="UEA Life | Account Settings")
+        else:
+            flash("Username already in use. Please pick another one.")
+            return render_template('/settings.html', title="UEA Life | Account Settings")
+    else:
+        flash('Username cannot be empty!')
+
+
 
 # Render the register html
 @app.route('/register', methods=['GET'])
