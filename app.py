@@ -87,20 +87,33 @@ def login():
     return redirect('/')
 
 
-@app.route('/logout/')
+@app.route('/logout')
 def logout():
-    session.pop('user', None)
-    return redirect('/')
+    if not session:
+        flash('Login you fucking madhead')
+        return redirect('/')
+    else:
+        session.pop('user', None)
+        flash('User has been successfully logged out!')
+        return redirect('/')
 
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    return render_template('/dashboard.html', title="UEA Life | Dashboard")
+    if not session:
+        flash('Login you fucking madhead')
+        return redirect('/')
+    else:
+        return render_template('/dashboard.html', title="UEA Life | Dashboard")
 
 
 @app.route('/createPost', methods=['GET', 'POST'])
 def createPost():
-    return render_template('/newPost.html', title="UEA Life | Create Post")
+    if not session:
+        flash('Login you fucking madhead')
+        return redirect('/')
+    else:
+        return render_template('/newPost.html', title="UEA Life | Create Post")
 
 
 # Render the register html
