@@ -199,6 +199,7 @@ def updateUsername():
 
     # TODO: Get these from the request
     username = request.form.get('username', None)
+
     userCookie = functions.getCookie()
     uid = validSessions.checkSession(userCookie) # TODO: get from request
 
@@ -222,7 +223,7 @@ def updateUsername():
         return redirect('/accountSettings')
 
     # Update requesting users username to the supplied
-    query_db('UPDATE profiles SET username=? WHERE id=?', [username, uid])
+    query_db('UPDATE profiles SET username="%s" WHERE id="%s"' % (username, uid))
     get_db().commit()
 
     flash('Username updated successfully!')
