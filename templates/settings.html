@@ -6,16 +6,25 @@
 {% block content %}
   <div class="card mt-5">
     <h5 class="card-title">Account Settings</h5>
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
     <div class="row pl-4 pb-2 justify-content-center">
       <div class="col">
-        <div class="form-group">
+        <form action="/accountSettings/updateUsername" method="POST" role="change-username" id="update-username">
           <label for="exampleInputEmail1">Username</label>
           <div class="input-group">
-            <input disabled id="username" type="text" class="form-control" placeholder="Your username here:" aria-label="Recipient's username" aria-describedby="basic-addon2">
+            <input disabled name="username" id="username" type="text" class="form-control" placeholder="Your username here:" aria-label="Recipient's username" aria-describedby="basic-addon2">
             <div class="input-group-append">
               <button class="btn btn-outline-secondary" type="button" onclick="profileUndisable('username')">Change</button>
             </div>
           </div>
+          <button type="submit" class="btn btn-success" name="createAccount">Submit</button>
+        </form>
           <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
 
                     <label for="exampleInputEmail1">Email address</label>
