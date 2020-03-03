@@ -115,6 +115,7 @@ def logout():
     return response
 
 
+#######################################################################################################################
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
     userCookie = functions.getCookie()
@@ -127,10 +128,13 @@ def dashboard():
     username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
     flash('Nice one bro! You are logged in as: ' + username)
-    return render_template('/dashboard.html', title="UEA Life | Dashboard")
+
+    query = "SELECT * FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
+    result = query_db(query)
+
+    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=result)
 
 
-#######################################################################################################################
 @app.route('/newPost', methods=['GET'])
 def newPost():
     return render_template('/newPost.html', title="UEA Life | New Post")
@@ -147,10 +151,8 @@ def createPost():
 
     userCookie = functions.getCookie()
     posted_by = validSessions.checkSession(userCookie)
-    print(posted_by)
 
     tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
-    # uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521"
 
     if category not in cats:
         flash('Incorrect Category Selected Dick!!')
@@ -176,16 +178,12 @@ def createPost():
         flash('Really?!?! Content')
         return redirect('/newPost')
 
-    # if query_db('SELECT verified FROM users WHERE username = "%s"' % session['username'])[0].get('verified') == 1:
     query = 'INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
             (posted_by, category, title, content, tod)
     query_db(query)
     get_db().commit()
     print(query)
     return redirect('/dashboard')
-    # else:
-    #     flash('You must verify account before posting')
-    #     return redirect('/dashboard')
 
 ########################################################################################################################
 

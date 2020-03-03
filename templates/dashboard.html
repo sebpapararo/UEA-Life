@@ -14,6 +14,7 @@
             <div class="card">
                 <h1 class="card-title m-2">Welcome</h1>
             </div>
+
             <div class="container">
                 {% for message in get_flashed_messages() %}
                     <div class="alert alert-warning">
@@ -69,84 +70,51 @@
                     <div class="tab-content" id="forumContent">
 
                         {# GENERAL QUERIES - OUTPUT #}
-                        <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general_Tab">
-
-                            <div class="card text-white bg-primary mb-3">
+                    <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general_Tab">
+                        {% for post in data %}
+                        <div class="row">
+                            <div class="card text-white bg-primary mb-3 w-100">
                                 <div class="card-header">
                                     <div class="row">
-                                        <div class="col-3">Posted By: Jeffory</div>
-                                        <div class="col-3">Posted To: General</div>
+                                        <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                        <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                         <div class="cols-3 col align-self-end"/>
                                     </div>
-                                    Posted on: Friday 13th
+                                    Posted on: {{ post.posted_on | safe }}
                                 </div>
                             </div>
                             <div class="card-body">
-                                <h5 class="card-title">Subject</h5>
-                                <p class="card-text">Sup!</p>
-                            </div>
-                        </div>
-
-                        <div class="card border-primary mb-3">
-                            <div class="card-header">
-                                <div class="row">
-                                    <div class="col-3">Posted By: John</div>
-                                    <div class="col-3">Posted To: General</div>
-                                    <div class="cols-3 col align-self-end"/>
+                                <h5 class="card-title">{{ post.title | safe }}</h5>
+                                <p class="card-text">{{ post.content | safe }}</p>
                                 </div>
-                                Posted on: Friday 20th
                             </div>
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title">Subject 2</h5>
-                            <p class="card-text">*Sigh*</p>
-                        </div>
+                        {% endfor %}
                     </div>
 
-                </div>
+                    {# STUDENT UNION QUERIES - OUTPUT #}
+                    <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
+                        <h4>Union Feed</h4>
+                    </div>
 
-                        {# STUDENT UNION QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
-                            <h4>Union Feed</h4>
-                            <div class="card m-1">
-                            <!-- some for loop here for each post -->
-                            <ul class="list-group list-group-flush">
-                                <!-- some sort of for loop here! -->
-                                <li class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-3">
-                                            Posted By: Bob
-                                        </div>
-                                        <div class="col-3">
-                                            Posted To: General
-                                        </div>
-                                        <div class="cols-3 col align-self-end">
-                                        </div>
-                                        Posted on: Friday 20th
-                                    </div>
-                                    <div class="row">
-                                        Sup
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        </div>
-                        {# ACCOMMODATION QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
-                            <h4>Accommodation Feed</h4>
-                        </div>
-                        {# FINANCE QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
-                            <h4>Finance Feed</h4>
-                        </div>
-                        {# LOCAL AREA QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
-                            <h4>Local Area Feed</h4>
-                        </div>
-                        {# TRAVEL QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
-                            <h4>Travel Feed</h4>
-                        </div>
+                    {# ACCOMMODATION QUERIES - OUTPUT #}
+                    <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
+                        <h4>Accommodation Feed</h4>
+                    </div>
+
+                    {# FINANCE QUERIES - OUTPUT #}
+                    <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
+                        <h4>Finance Feed</h4>
+                    </div>
+
+                    {# LOCAL AREA QUERIES - OUTPUT #}
+                    <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
+                        <h4>Local Area Feed</h4>
+                    </div>
+
+                    {# TRAVEL QUERIES - OUTPUT #}
+                    <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
+                        <h4>Travel Feed</h4>
                     </div>
                 </div>
             </div>
