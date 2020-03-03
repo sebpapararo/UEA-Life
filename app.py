@@ -115,21 +115,58 @@ def newPost():
 
 @app.route('/createPost', methods=['POST'])
 def createPost():
-    if query_db('SELECT verified FROM users WHERE username = "%s"' % session['username'])[0].get('verified') == 1:
-        # collect post content from page
-        title = request.form.get('title')
-        content = request.form.get('content')
-        title = functions.sanitiseInputs(title)
-        content = functions.sanitiseInputs(content)
-        # sanitise for XSS and sql injection
-        # once clean - add post to db
-        query = 'INSERT INTO posts (posted_by, title, content, posted_on) VALUES("%s","%s","%s","%s");' % (
-            session['username'], title, content, datetime.datetime.today().strftime('%d/%m/%Y at %H:%M'))
-        result = query_db(query)
-        get_db().commit()
-    else:
-        flash('You must verify account before posting')
-        return redirect('/dashboard')
+    print(request.form)
+    # username = request.form.get('username', None)
+    cats = ['General', 'Finance', 'Accommodation', 'Student Union', 'Local Area', 'Travel']
+    category = request.form.get('category', None)
+    title = request.form.get('title', None)
+    content = request.form.get('content', None)
+
+    tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
+    uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521"
+
+    # if username is None:
+    #     flash('Username field not sent mate')
+    #     return redirect('/newPost')
+    # username = functions.sanitiseInputs(username)
+    # if username == '':
+    #     flash('Username cannot be empty you cheeky cunt')
+    #     return redirect('/newPost')
+
+    if category not in cats:
+        flash('Incorrect Category Selected Dick!!')
+        return redirect('/newPost')
+    category = functions.sanitiseInputs(category)
+    if category == '':
+        flash('Really?? Category')
+        return redirect('/newPost')
+
+    if title is None:
+        flash('Title not sent')
+        return redirect('/newPost')
+    title = functions.sanitiseInputs(title)
+    if title == '':
+        flash('Really??? Title??')
+        return redirect('/newPost')
+
+    if content is None:
+        flash('Content Not Sent')
+        return redirect('/newPost')
+    content = functions.sanitiseInputs(content)
+    if content == '':
+        flash('Really?!?! Content')
+        return redirect('/newPost')
+
+    # if query_db('SELECT verified FROM users WHERE username = "%s"' % session['username'])[0].get('verified') == 1:
+    query = 'INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
+            (uid, category, title, content, tod)
+    query_db(query)
+    get_db().commit()
+    print(query)
+    return redirect('/dashboard')
+    # else:
+    #     flash('You must verify account before posting')
+    #     return redirect('/dashboard')
 
 ########################################################################################################################
 

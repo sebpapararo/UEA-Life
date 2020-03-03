@@ -11,15 +11,23 @@
 
                 <h5 class="card-title">Create a New Post</h5>
 
-                <form method="POST" action="/createPost/">
+                <form method="POST" action="/createPost">
+
+                    <div class="container">
+                        {% for message in get_flashed_messages() %}
+                            <div class="alert alert-warning">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
 
                     <div class="form-group">
-                        <label for="email"> Category </label>
-                        <select class="form-control" id="category">
+                        <label for="category"> Category </label>
+                        <select class="form-control" name="category" id="category">
                             <option>General</option>
                             <option>Finance</option>
-                            <option>Accomodation</option>
-                            <option>Students Union</option>
+                            <option>Accommodation</option>
+                            <option>Student Union</option>
                             <option>Local Area</option>
                             <option>Travel</option>
                         </select>
@@ -27,7 +35,7 @@
                         <label for="title"> Title </label>
                         <input type="text" class="form-control" id="title" name="title" placeholder="Title">
 
-                        <label for="body"> Comment </label>
+                        <label for="content"> Comment </label>
                         <textarea class="form-control" rows="5" id="content" name="content" placeholder="Post Your Content"></textarea>
                     </div>
                     <div>
