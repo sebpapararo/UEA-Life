@@ -201,7 +201,8 @@ def updateUsername():
 
     # TODO: Get these from the request
     username = request.form.get('username', None)
-    uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521" # TODO: get from request
+    userCookie = functions.getCookie()
+    uid = validSessions.checkSession(userCookie) # TODO: get from request
 
     # Check they have sent a field called username
     if(username == None):
