@@ -146,6 +146,8 @@ def createPost():
     content = request.form.get('content', None)
 
     tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
+    userCookie = validSessions.checkSession(functions.getCookie())
+    print (userCookie)
     uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521"
 
     # if username is None:
@@ -194,7 +196,7 @@ def createPost():
 ########################################################################################################################
 
 
-@app.route('/accountSettings', methods=['GET', 'POST'])
+@app.route('/accountSettings', methods=['GET'])
 def accountSettings():
     return render_template('/settings.html', title="UEA Life | Create Post")
 
@@ -205,10 +207,13 @@ def updateUsername():
 
     # TODO: Get these from the request
     username = request.form.get('username', None)
-    uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521" # TODO: get from request
+
+    # Get the user's cookie, get associated uid
+    userCookie = functions.getCookie()
+    uid = validSessions.checkSession(userCookie) # TODO: get from request
 
     # Check they have sent a field called username
-    if(username == None):
+    if(username is None):
         flash('Username field not sent mate')
         return redirect('/accountSettings')
 

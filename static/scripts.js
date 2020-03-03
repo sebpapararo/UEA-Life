@@ -1,12 +1,14 @@
 function profileUndisable( field ) {
   var input = document.getElementById(field);
+  var button = document.getElementById("button-" + field)
   var isDisabled = input.hasAttribute("disabled");
-  console.log(isDisabled)
+
   input.toggleAttribute('disabled');
   // if the form is disabled enable it
-  if(!isDisabled){
-
+  if(isDisabled){
     var form = document.getElementById("update-" + field);
+
+  }else{
     form.submit();
   }
 }
