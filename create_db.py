@@ -38,8 +38,8 @@ def create():
             posted_on varchar,
             category varchar,
             title varchar,
-            body varchar,
-            author varchar
+            content varchar,
+            posted_by varchar
         );
     ''')
 

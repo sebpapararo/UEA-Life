@@ -15,7 +15,7 @@
             UEA Life |
         {% endblock %}
     </title>
-    <link rel="icon" href="../favicon.ico" type="image/x-icon">
+{#    <link rel="icon" href="../favicon.ico" type="image/x-icon">#}
 </head>
 <body>
 
@@ -30,7 +30,7 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="/createPost">Create Post</a>
+                        <a class="nav-link" href="/newPost">Create Post</a>
                     </li>
                 </ul>
             </div>
@@ -50,10 +50,12 @@
     {% endblock %}
 {% endif %}
 
-<div class="container bg-white">
+
+<div class="container bg-white p-2">
     {% block content %}
     {% endblock %}
 </div>
+
 
 {## TODO: 26/02/2020 need to move to head tag and what does it do? #}
 <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"

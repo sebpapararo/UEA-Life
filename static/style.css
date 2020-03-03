@@ -1,5 +1,4 @@
-body  {
-    background: url(https://c1.wallpaperflare.com/preview/69/791/706/uea-university-east-anglia-lasdun.jpg) no-repeat center center fixed;
-    background-size: cover;
-    position: relative;
+.jumbotron {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://www.timeshighereducation.com/sites/default/files/institution/header_image/header_image_-_uea_campus.jpg");
+  background-size: cover;
 }

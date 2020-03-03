@@ -100,20 +100,39 @@ def logout():
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    if not session:
-        flash('Login you fucking madhead')
-        return redirect('/')
-    else:
-        return render_template('/dashboard.html', title="UEA Life | Dashboard")
+    # if not session:
+    #     flash('Login you fucking madhead')
+    #     return redirect('/')
+    # else:
+    return render_template('/dashboard.html', title="UEA Life | Dashboard")
 
 
-@app.route('/createPost', methods=['GET', 'POST'])
+#######################################################################################################################
+@app.route('/newPost', methods=['GET'])
+def newPost():
+    return render_template('/newPost.html', title="UEA Life | New Post")
+
+
+@app.route('/createPost', methods=['POST'])
 def createPost():
-    if not session:
-        flash('Login you fucking madhead')
-        return redirect('/')
+    if query_db('SELECT verified FROM users WHERE username = "%s"' % session['username'])[0].get('verified') == 1:
+        # collect post content from page
+        title = request.form.get('title')
+        content = request.form.get('content')
+        title = functions.sanitiseInputs(title)
+        content = functions.sanitiseInputs(content)
+        # sanitise for XSS and sql injection
+        # once clean - add post to db
+        query = 'INSERT INTO posts (posted_by, title, content, posted_on) VALUES("%s","%s","%s","%s");' % (
+            session['username'], title, content, datetime.datetime.today().strftime('%d/%m/%Y at %H:%M'))
+        result = query_db(query)
+        get_db().commit()
     else:
-        return render_template('/newPost.html', title="UEA Life | Create Post")
+        flash('You must verify account before posting')
+        return redirect('/dashboard')
+
+########################################################################################################################
+
 
 @app.route('/accountSettings', methods=['GET', 'POST'])
 def accountSettings():
@@ -153,7 +172,6 @@ def updateUsername():
 
     flash('Username updated successfully!')
     return redirect('/accountSettings')
-
 
 # Render the register html
 @app.route('/register', methods=['GET'])
