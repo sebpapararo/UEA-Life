@@ -125,4 +125,8 @@ def generateSalt():
 
 # Used as a guard to check if the user is currently logged in!
 def getCookie():
-    return request.cookies.get('userSession').encode()
+    userCookie = request.cookies.get('userSession')
+    if userCookie is None:
+        return userCookie
+    else:
+        return request.cookies.get('userSession').encode()
