@@ -130,9 +130,9 @@ def dashboard():
     flash('Nice one bro! You are logged in as: ' + username)
 
     query = "SELECT * FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
-    result = query_db(query)
+    results = query_db(query)
 
-    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=result)
+    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results)
 
 
 @app.route('/newPost', methods=['GET'])
