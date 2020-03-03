@@ -7,12 +7,11 @@
 {% block content %}
 
     <div class="container bg-white p-2">
-{#    <div class="container m-2 col-sm-12">#}
-{#        <div class="row">#}
+
         <div class="col-sm-12">
 
             <div class="card">
-                <h1 class="card-title m-2">Welcome</h1>
+                <h1 class="card-title m-2">Welcome </h1>
             </div>
 
             <div class="container">
@@ -71,7 +70,9 @@
 
                         {# GENERAL QUERIES - OUTPUT #}
                     <div class="tab-pane fade show active" id="general" role="tabpanel" aria-labelledby="general_Tab">
-                        {% for post in data %}
+                        <h4>General Feed</h4>
+                        <hr>
+                        {% for post in data if post.category == 'General' %}
                         <div class="row">
                             <div class="card text-white bg-primary mb-3 w-100">
                                 <div class="card-header">
@@ -94,32 +95,130 @@
 
                     {# STUDENT UNION QUERIES - OUTPUT #}
                     <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
-                        <h4>Union Feed</h4>
+                        <h4>Student Union Feed</h4>
+                        <hr>
+                        {% for post in data if post.category == 'Student Union' %}
+                        <div class="row">
+                            <div class="card text-white bg-primary mb-3 w-100">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                        <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                        <div class="cols-3 col align-self-end"/>
+                                    </div>
+                                    Posted on: {{ post.posted_on | safe }}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.title | safe }}</h5>
+                                <p class="card-text">{{ post.content | safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
 
                     {# ACCOMMODATION QUERIES - OUTPUT #}
                     <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
                         <h4>Accommodation Feed</h4>
+                        <hr>
+                        {% for post in data if post.category == 'Accommodation' %}
+                        <div class="row">
+                            <div class="card text-white bg-primary mb-3 w-100">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                        <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                        <div class="cols-3 col align-self-end"/>
+                                    </div>
+                                    Posted on: {{ post.posted_on | safe }}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.title | safe }}</h5>
+                                <p class="card-text">{{ post.content | safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
 
                     {# FINANCE QUERIES - OUTPUT #}
                     <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
                         <h4>Finance Feed</h4>
+                        <hr>
+                        {% for post in data if post.category == 'Finance' %}
+                        <div class="row">
+                            <div class="card text-white bg-primary mb-3 w-100">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                        <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                        <div class="cols-3 col align-self-end"/>
+                                    </div>
+                                    Posted on: {{ post.posted_on | safe }}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.title | safe }}</h5>
+                                <p class="card-text">{{ post.content | safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
 
                     {# LOCAL AREA QUERIES - OUTPUT #}
                     <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
                         <h4>Local Area Feed</h4>
+                        <hr>
+                        {% for post in data if post.category == 'Local Area' %}
+                        <div class="row">
+                            <div class="card text-white bg-primary mb-3 w-100">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                        <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                        <div class="cols-3 col align-self-end"/>
+                                    </div>
+                                    Posted on: {{ post.posted_on | safe }}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.title | safe }}</h5>
+                                <p class="card-text">{{ post.content | safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
 
                     {# TRAVEL QUERIES - OUTPUT #}
                     <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
                         <h4>Travel Feed</h4>
+                        <hr>
+                        {% for post in data if post.category == 'Travel' %}
+                        <div class="row">
+                            <div class="card text-white bg-primary mb-3 w-100">
+                                <div class="card-header">
+                                    <div class="row">
+                                        <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                        <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                        <div class="cols-3 col align-self-end"/>
+                                    </div>
+                                    Posted on: {{ post.posted_on | safe }}
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title">{{ post.title | safe }}</h5>
+                                <p class="card-text">{{ post.content | safe }}</p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-{#        </div>#}
-{#    </div>#}
 {% endblock %}
