@@ -145,18 +145,12 @@ def createPost():
     title = request.form.get('title', None)
     content = request.form.get('content', None)
 
-    tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
-    userCookie = validSessions.checkSession(functions.getCookie())
-    print (userCookie)
-    uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521"
+    userCookie = functions.getCookie()
+    posted_by = validSessions.checkSession(userCookie)
+    print(posted_by)
 
-    # if username is None:
-    #     flash('Username field not sent mate')
-    #     return redirect('/newPost')
-    # username = functions.sanitiseInputs(username)
-    # if username == '':
-    #     flash('Username cannot be empty you cheeky cunt')
-    #     return redirect('/newPost')
+    tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
+    # uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521"
 
     if category not in cats:
         flash('Incorrect Category Selected Dick!!')
@@ -184,7 +178,7 @@ def createPost():
 
     # if query_db('SELECT verified FROM users WHERE username = "%s"' % session['username'])[0].get('verified') == 1:
     query = 'INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
-            (uid, category, title, content, tod)
+            (posted_by, category, title, content, tod)
     query_db(query)
     get_db().commit()
     print(query)
@@ -196,7 +190,7 @@ def createPost():
 ########################################################################################################################
 
 
-@app.route('/accountSettings', methods=['GET'])
+@app.route('/accountSettings', methods=['GET', 'POST'])
 def accountSettings():
     return render_template('/settings.html', title="UEA Life | Create Post")
 
@@ -207,13 +201,10 @@ def updateUsername():
 
     # TODO: Get these from the request
     username = request.form.get('username', None)
-
-    # Get the user's cookie, get associated uid
-    userCookie = functions.getCookie()
-    uid = validSessions.checkSession(userCookie) # TODO: get from request
+    uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521" # TODO: get from request
 
     # Check they have sent a field called username
-    if(username is None):
+    if(username == None):
         flash('Username field not sent mate')
         return redirect('/accountSettings')
 

@@ -49,8 +49,8 @@ def create():
                 id integer PRIMARY KEY AUTOINCREMENT,
                 posted_on varchar,
                 postId integer,
-                author varchar,
-                body varchar              
+                posted_by varchar,
+                content varchar              
             );
         ''')
 
