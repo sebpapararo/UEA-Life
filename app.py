@@ -119,34 +119,40 @@ def createPost():
 def accountSettings():
     return render_template('/settings.html', title="UEA Life | Create Post")
 
+
 @app.route('/accountSettings/updateUsername', methods=['POST'])
 def updateUsername():
     # TODO: add more checks here (see createAccount as example)
 
-    # Guards here:
-    print(request.form)
-    if request.form['username'] != '':
-        # Get these from the request
-        username = functions.sanitiseInputs(request.form['username'])
-        uid = "41386a51-c6ca-42ae-8f1c-6ef327d80c5e" # test id
+    # TODO: Get these from the request
+    username = request.form.get('username', None)
+    uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521" # TODO: get from request
 
-        # Check if username has already been taken
-        if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
-        query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') == 0:
-            search = query_db('SELECT * FROM profiles WHERE id=?', [uid])
-            print(search)
-            print('someshit')
-            query_db('UPDATE profiles SET username=? WHERE id=?', [username, uid])
-            get_db().commit()
+    # Check they have sent a field called username
+    if(username == None):
+        flash('Username field not sent mate')
+        return redirect('/accountSettings')
 
-            flash('Username updated successfully!')
-            return render_template('/settings.html', title="UEA Life | Account Settings")
-        else:
-            flash("Username already in use. Please pick another one.")
-            return render_template('/settings.html', title="UEA Life | Account Settings")
-    else:
-        flash('Username cannot be empty!')
+    # Sanitising inputs
+    username = functions.sanitiseInputs(username)
 
+    #  Check username is not empty
+    if username == '':
+        flash('Username cannot be empty you cheeky cunt')
+        return redirect('/accountSettings')
+
+    # Check if username has already been taken
+    if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
+    query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') != 0:
+        flash("Username already in use. Please pick another one.")
+        return redirect('/accountSettings')
+
+    # Update requesting users username to the supplied
+    query_db('UPDATE profiles SET username=? WHERE id=?', [username, uid])
+    get_db().commit()
+
+    flash('Username updated successfully!')
+    return redirect('/accountSettings')
 
 
 # Render the register html
