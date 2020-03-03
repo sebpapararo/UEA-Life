@@ -204,7 +204,7 @@ def updateUsername():
     uid = "0037d9b5-681d-4b23-a6c8-c7d061a78521" # TODO: get from request
 
     # Check they have sent a field called username
-    if(username == None):
+    if username is None:
         flash('Username field not sent mate')
         return redirect('/accountSettings')
 
