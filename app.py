@@ -1,19 +1,19 @@
-from flask import *
+from flask import Flask, redirect, render_template, request, flash, make_response, g
 import functions
 import sqlite3
-import urllib
 import re
 import uuid
 import datetime
-import secrets
+import os
 from base64 import b64encode, b64decode
+import validSessions
 
 # Configuration Statements
 app = Flask(__name__, template_folder="templates")
 DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
-# TODO: 25/02/2020 research what this does
-app.secret_key = secrets.token_hex(64)
+# TODO: 25/02/2020 research what these do
+app.secret_key = os.urandom(64)
 
 
 # Database Methods - Courtesy of Oli
@@ -73,15 +73,28 @@ def login():
             if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrievedSalt, request.form['password']):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
-                    session['user'] = email
+
+                    cookieId = os.urandom(64)
+                    cookieId = b64encode(cookieId)
+                    expiryDate = datetime.datetime.today() + datetime.timedelta(days=2)
+                    userId = query_db('SELECT id FROM users where email = "%s"' % email)[0].get('id')
+                    ipAddr = request.remote_addr
+                    cookieValue = [userId, expiryDate, ipAddr]
+                    validSessions.addSession(cookieId, cookieValue)
+
+
+                    response = make_response(redirect('/dashboard'))
+                    # TODO: 03/03/2020 change secure to True
+                    response.set_cookie('userSession', cookieId, samesite='strict', secure=False, httponly=True, expires=expiryDate)
+
                     flash('Successfully logged in as %s' % email)
-                    return redirect('/dashboard')
+                    return response
                 else:
                     flash('Invalid Captcha!')
             else:
                 flash('The username or password is incorrect!')
         else:
-            flash('The username or password is incorrect!222')
+            flash('The username or password is incorrect!')
     else:
         flash('The username and password fields cannot be left blank!')
     return redirect('/')
@@ -89,31 +102,37 @@ def login():
 
 @app.route('/logout')
 def logout():
-    if not session:
-        flash('Login you fucking madhead')
-        return redirect('/')
-    else:
-        session.pop('user', None)
-        flash('User has been successfully logged out!')
-        return redirect('/')
+    userCookie = functions.getCookie()
+    validSessions.removeSession(userCookie)
+
+    cookieId = os.urandom(64)
+    cookieId = b64encode(cookieId)
+    response = make_response(redirect('/'))
+    # TODO: 03/03/2020 change secure to True
+    response.set_cookie('userSession', cookieId, samesite='strict', secure=False, httponly=True, expires=0)
+
+    flash('Successfully logged out!')
+    return response
 
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    if not session:
-        flash('Login you fucking madhead')
+    userCookie = functions.getCookie()
+
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
-    else:
-        return render_template('/dashboard.html', title="UEA Life | Dashboard")
+
+    uid = validSessions.checkSession(userCookie)
+    username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+
+    flash('Nice one bro! You are logged in as: ' + username)
+    return render_template('/dashboard.html', title="UEA Life | Dashboard")
 
 
 @app.route('/createPost', methods=['GET', 'POST'])
 def createPost():
-    if not session:
-        flash('Login you fucking madhead')
-        return redirect('/')
-    else:
-        return render_template('/newPost.html', title="UEA Life | Create Post")
+    return render_template('/newPost.html', title="UEA Life | Create Post")
 
 
 # Render the register html

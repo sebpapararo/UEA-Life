@@ -120,6 +120,7 @@ def generateSalt():
     # TODO: 25/02/2020 learn how urandom generates its strings
     return os.urandom(64)
 
+
 # Used as a guard to check if the user is currently logged in!
-def isLoggedIn():
-    return session
+def getCookie():
+    return request.cookies.get('userSession').encode()
