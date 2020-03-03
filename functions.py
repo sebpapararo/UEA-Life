@@ -117,6 +117,13 @@ def generateHashedPass(salt, message):
     return hashlib.sha3_512(salt + message).hexdigest()
 
 
+def generateHashedKey(message):
+    # Message must be encoded before being hashed
+    # message = message.encode('utf-8')
+
+    return hashlib.sha3_512(message).hexdigest()
+
+
 # Use inbuilt python os library to generate a random string of 64 bytes suitable for cryptographic use to act as a salt
 def generateSalt():
     # TODO: 25/02/2020 learn how urandom generates its strings

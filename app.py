@@ -7,6 +7,7 @@ import datetime
 import os
 from base64 import b64encode, b64decode
 import validSessions
+from flask_mail import Mail, Message
 
 # Configuration Statements
 app = Flask(__name__, template_folder="templates")
@@ -14,6 +15,14 @@ DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
 # TODO: 25/02/2020 research what these do
 app.secret_key = os.urandom(64)
+app.config.update(
+    MAIL_SERVER='smtp.gmail.com',
+    MAIL_PORT = 465,
+    MAIL_USE_SSL = True,
+    MAIL_USERNAME = 'uealifedss@gmail.com',
+    MAIL_PASSWORD = '8pw9X$a%bHZkHz8&@ZeU',
+)
+mail = Mail(app)
 
 
 # Database Methods - Courtesy of Oli
@@ -81,7 +90,6 @@ def login():
                     ipAddr = request.remote_addr
                     cookieValue = [userId, expiryDate, ipAddr]
                     validSessions.addSession(cookieId, cookieValue)
-
 
                     response = make_response(redirect('/dashboard'))
                     # TODO: 03/03/2020 change secure to True
@@ -283,11 +291,26 @@ def createAccount():
 
                                     # Execute the queries and commit the changes
                                     query_db(userQuery)
-                                    # get_db().commit()
                                     query_db(profileQuery)
                                     get_db().commit()
 
-                                    # TODO: 25/02/2020 Set up the email verification
+                                    # Create random key for password reset
+                                    key = b64encode(os.urandom(32))
+                                    hashedKey = functions.generateHashedKey(key)
+
+                                    verifyEmailQuery = 'INSERT INTO verifyEmails(key, id) VALUES ("%s", "%s")' % (hashedKey, userId)
+                                    query_db(verifyEmailQuery)
+                                    get_db().commit()
+
+                                    # send an email with a link to verify_email page with the id given
+                                    # TODO: 03/03/2020 change link to https before submitting
+                                    link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), userId)
+                                    msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
+                                                  recipients=[email])
+                                    messageBody = 'Hi %s, please click this link to verify your email: %s' % (
+                                        username, link)
+                                    msg.body = messageBody
+                                    mail.send(msg)
 
                                     flash('Account has been created, please login!')
                                     return redirect('/')
@@ -308,6 +331,53 @@ def createAccount():
     else:
         flash('All fields must not be empty!')
     return redirect('/register')
+
+
+@app.route('/verify_email', methods=['GET'])
+def verify_account():
+    # get id from url
+    linkKey = request.args.get('key')
+    userId = request.args.get('id')
+
+    # this if statement maks sure the logged in user or the non-logged in user cannot see the error messages for verify email
+    if linkKey is not None:
+        # check if verified already
+        if query_db('SELECT verified FROM users WHERE id = "%s"' % userId)[0].get('verified') == 1:
+            flash('Your account is already verified!')
+        else:
+            # check against db
+            if functions.generateHashedKey(linkKey.encode()) == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[0].get('key'):
+                # set verify in db to true
+                query_db('UPDATE users SET verified = 1 WHERE id = "%s"' % userId)
+                get_db().commit()
+                flash('The account is now verified.')
+            else:
+                flash(
+                    'Something went wrong. Try logging in to send another email (and don\'t forget to check your spam folder!)')
+        return render_template('dashboard.html')
+    else:
+        return redirect('/')
+
+
+# @app.route('/resend_verify/', methods=['POST'])
+# def resend_verify():
+#     # get uuid from database
+#     id = str(uuid.uuid4())
+#     hashedID = bcrypt.generate_password_hash(id).decode('utf-8')
+#     query_db('UPDATE users SET uuid = "%s" WHERE username = "%s"' % (hashedID, session['username']))
+#     get_db().commit()
+#     email = query_db('SELECT email FROM users WHERE username = "%s"' % session['username'])[0].get('email')
+#
+#     # send an email with a link to verify_email page with the id given
+#     link = 'https://127.0.0.1:5000/verify_email?id=%s&username=%s' % (id, session['username'])
+#     msg = Message("Verify Email - Norfolk Music", sender="se2cwk@gmail.com",
+#                   recipients=[email])
+#     messageBody = 'Hi %s, please click this link to verify your email: %s' % (session['username'], link)
+#     msg.body = messageBody
+#     mail.send(msg)
+#     flash('Email has been sent')
+#     return redirect('/dashboard/')
+
 
 if __name__ == '__main__':
     # TODO: 11/02/2020 Change debug to False before submitting
