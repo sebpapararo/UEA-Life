@@ -91,6 +91,11 @@ def login():
                     cookieValue = [userId, expiryDate, ipAddr]
                     validSessions.addSession(cookieId, cookieValue)
 
+                    newLastActive = datetime.datetime.today()
+                    uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)
+                    query_db('UPDATE profiles SET last_active="%s" WHERE id="%s"' % (newLastActive, uid))
+                    get_db().commit()
+
                     response = make_response(redirect('/dashboard'))
                     # TODO: 03/03/2020 change secure to True
                     response.set_cookie('userSession', cookieId, samesite='strict', secure=False, httponly=True, expires=expiryDate)
@@ -128,11 +133,9 @@ def logout():
     return response
 
 
-#######################################################################################################################
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
     userCookie = functions.getCookie()
-
     if validSessions.checkSession(userCookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
@@ -214,7 +217,6 @@ def createPost():
     get_db().commit()
     return redirect('/dashboard')
 
-########################################################################################################################
 
 
 @app.route('/accountSettings', methods=['GET', 'POST'])
@@ -252,6 +254,7 @@ def updateUsername():
         return redirect('/accountSettings')
 
     # Update requesting users username to the supplied
+    query_db('UPDATE profiles SET username="%s" WHERE id="%s"' % (username, uid))
     query_db('UPDATE profiles SET username="%s" WHERE id="%s"' % (username, uid))
     get_db().commit()
 
