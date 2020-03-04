@@ -10,13 +10,10 @@
     <h5 class="card-title">Profile:</h5>
     {{ userProfile }}
     <div class="row">
-      Profile Picture:
-    </div>
-    <div class="row">
       Name: {{ userProfile.username }}
     </div>
     <div class="row">
-      Date Joined: 
+      Date Joined:
     </div>
     <div class="row">
       Level: {{ userProfile.level}}
@@ -28,7 +25,7 @@
       Last Active: {{ userProfile.last_active}}
     </div>
     <div class="row">
-      Post Count:
+      Post Count: {{ userProfile.postCount}}
     </div>
     <div class="row">
       Recent Posts:
