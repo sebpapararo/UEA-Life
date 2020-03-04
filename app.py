@@ -201,13 +201,21 @@ def profile():
     userProfile = userProfile[0]
 
     # gets the users post
-    usersPosts = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % userProfile['id'])
+    postCount = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % userProfile['id'])
 
     # TODO: hacky way of getting this, change if have time!
-    userProfile['postCount'] = usersPosts[0]['COUNT(*)']
+    userProfile['postCount'] = postCount[0]['COUNT(*)']
+
+    # Get Date Joined
+    dateJoined = query_db('SELECT Created_on FROM users WHERE id = "%s";' % userProfile['id'])
+    userProfile['dateJoined'] = dateJoined[0]['created_on']
+
+
+    # Get the Content of the posts
+    posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % userProfile['id'])
 
     # TODO: dont use [0]
-    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile)
+    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile, usersPosts=posts)
 
 
 @app.route('/newPost', methods=['GET'])
