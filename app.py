@@ -108,7 +108,7 @@ def login():
                     validSessions.addSession(cookieId, cookieValue)
 
                     newLastActive = datetime.datetime.today()
-                    uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)
+                    uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
                     query_db('UPDATE profiles SET last_active="%s" WHERE id="%s"' % (newLastActive, uid))
                     get_db().commit()
 
