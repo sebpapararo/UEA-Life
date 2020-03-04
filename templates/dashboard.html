@@ -12,6 +12,7 @@
 
             <div class="card">
                 <h1 class="card-title m-2">Welcome </h1>
+            <!-- /card -->
             </div>
 
             <div class="container">
@@ -20,6 +21,7 @@
                         {{ message }}
                     </div>
                 {% endfor %}
+            <!-- /container -->
             </div>
 
             <a href="/newPost">
@@ -29,13 +31,15 @@
             <h4>Discussion Topic</h4>
 
             <div class="card">
+
                 <div class="card-header">
                     {# DYNAMIC TABS #}
                     <ul class="nav nav-tabs card-header-tabs" id="forumTabs" role="tablist">
+
                         {# ALL QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link active" id="general_Tab" data-toggle="tab" href="#all" role="tab" aria-controls="all"
-                               aria-selected="true">All Queries</a>
+                            <a class="nav-link active" id="all_Tab" data-toggle="tab" href="#all" role="tab" aria-controls="all"
+                               aria-selected="true">All</a>
                         </li>
                         {# GENERAL QUERIES TAB #}
                         <li class="nav-item">
@@ -67,6 +71,7 @@
                                aria-selected="false">Travel</a>
                         </li>
                     </ul>
+                <!-- /card-header -->
                 </div>
 
                 <div class="card-body">
@@ -75,7 +80,7 @@
 
                         {# ALL QUERIES - OUTPUT #}
                         <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all_Tab">
-                            <h4>All Enquires Feed</h4>
+                            <h4>All Posts</h4>
                             <hr>
                             {% for post in data %}
                                 <div class="row">
@@ -84,17 +89,22 @@
                                             <div class="row">
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                                <div class="cols-3 col align-self-end"/>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
-                                            Posted on: {{ post.posted_on | safe }}
+                                        <!-- /card-header -->
                                         </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
                                     </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ post.title | safe }}</h5>
-                                        <p class="card-text">{{ post.content | safe }}</p>
-                                    </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tab-pane fade show active -->
                         </div>
 
                         {# GENERAL QUERIES - OUTPUT #}
@@ -108,141 +118,182 @@
                                             <div class="row">
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                                <div class="cols-3 col align-self-end"/>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
-                                            Posted on: {{ post.posted_on | safe }}
+                                        <!-- /card-header -->
                                         </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                    <!-- /card text-white bbg-primary mb-3 w-100 -->
                                     </div>
-                                    <div class="card-body">
-                                        <h5 class="card-title">{{ post.title | safe }}</h5>
-                                        <p class="card-text">{{ post.content | safe }}</p>
-                                    </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tab-pane fade -->
                         </div>
 
-                    {# STUDENT UNION QUERIES - OUTPUT #}
-                    <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
-                        <h4>Student Union Feed</h4>
-                        <hr>
-                        {% for post in data if post.category == 'Student Union' %}
-                            <div class="row">
-                                <div class="card text-white bg-primary mb-3 w-100">
-                                    <div class="card-header">
-                                        <div class="row">
-                                            <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                            <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                            <div class="cols-3 col align-self-end"/>
+                        {# STUDENT UNION QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
+                            <h4>Student Union Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Student Union' %}
+                                <div class="row">
+                                    <div class="card text-white bg-primary mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
                                         </div>
-                                        Posted on: {{ post.posted_on | safe }}
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                    <!-- /card text-white bbg-primary mb-3 w-100 -->
                                     </div>
+                                <!-- /row -->
                                 </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ post.title | safe }}</h5>
-                                    <p class="card-text">{{ post.content | safe }}</p>
+                            {% endfor %}
+                        <!-- /tabb-pane fade -->
+                        </div>
+
+                        {# ACCOMMODATION QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
+                            <h4>Accommodation Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Accommodation' %}
+                                <div class="row">
+                                    <div class="card text-white bg-primary mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                        {# FINANCE QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
+                            <h4>Finance Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Finance' %}
+                                <div class="row">
+                                    <div class="card text-white bg-primary mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                         <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                        {# LOCAL AREA QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
+                            <h4>Local Area Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Local Area' %}
+                                <div class="row">
+                                    <div class="card text-white bg-primary mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                        {# TRAVEL QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
+                            <h4>Travel Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Travel' %}
+                                <div class="row">
+                                    <div class="card text-white bg-primary mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                    <!-- /tab-content -->
                     </div>
 
-                    {# ACCOMMODATION QUERIES - OUTPUT #}
-                    <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
-                        <h4>Accommodation Feed</h4>
-                        <hr>
-                        {% for post in data if post.category == 'Accommodation' %}
-                            <div class="row">
-                                <div class="card text-white bg-primary mb-3 w-100">
-                                    <div class="card-header">
-                                        <div class="row">
-                                            <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                            <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                            <div class="cols-3 col align-self-end"/>
-                                        </div>
-                                        Posted on: {{ post.posted_on | safe }}
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ post.title | safe }}</h5>
-                                    <p class="card-text">{{ post.content | safe }}</p>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    {# FINANCE QUERIES - OUTPUT #}
-                    <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
-                        <h4>Finance Feed</h4>
-                        <hr>
-                        {% for post in data if post.category == 'Finance' %}
-                            <div class="row">
-                                <div class="card text-white bg-primary mb-3 w-100">
-                                    <div class="card-header">
-                                        <div class="row">
-                                            <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                            <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                            <div class="cols-3 col align-self-end"/>
-                                        </div>
-                                        Posted on: {{ post.posted_on | safe }}
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ post.title | safe }}</h5>
-                                    <p class="card-text">{{ post.content | safe }}</p>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    {# LOCAL AREA QUERIES - OUTPUT #}
-                    <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
-                        <h4>Local Area Feed</h4>
-                        <hr>
-                        {% for post in data if post.category == 'Local Area' %}
-                            <div class="row">
-                                <div class="card text-white bg-primary mb-3 w-100">
-                                    <div class="card-header">
-                                        <div class="row">
-                                            <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                            <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                            <div class="cols-3 col align-self-end"/>
-                                        </div>
-                                        Posted on: {{ post.posted_on | safe }}
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ post.title | safe }}</h5>
-                                    <p class="card-text">{{ post.content | safe }}</p>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-
-                    {# TRAVEL QUERIES - OUTPUT #}
-                    <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
-                        <h4>Travel Feed</h4>
-                        <hr>
-                        {% for post in data if post.category == 'Travel' %}
-                            <div class="row">
-                                <div class="card text-white bg-primary mb-3 w-100">
-                                    <div class="card-header">
-                                        <div class="row">
-                                            <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                            <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                            <div class="cols-3 col align-self-end"/>
-                                        </div>
-                                        Posted on: {{ post.posted_on | safe }}
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <h5 class="card-title">{{ post.title | safe }}</h5>
-                                    <p class="card-text">{{ post.content | safe }}</p>
-                                </div>
-                            </div>
-                        {% endfor %}
-                    </div>
-
+                <!-- /card-body -->
                 </div>
+
+            <!-- /card -->
             </div>
+
+        <!-- /col-sm-12 -->
         </div>
+
+    <!-- /container bg-white p-2 -->
     </div>
+
 {% endblock %}
