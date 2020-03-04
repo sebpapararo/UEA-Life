@@ -101,7 +101,7 @@ def login():
 
                     cookieId = os.urandom(64)
                     cookieId = b64encode(cookieId)
-                    expiryDate = datetime.datetime.today() + datetime.timedelta(days=15)
+                    expiryDate = datetime.datetime.today() + datetime.timedelta(days=7)
                     userId = query_db('SELECT id FROM users where email = "%s"' % email)[0].get('id')
                     ipAddr = request.remote_addr
                     cookieValue = [userId, expiryDate, ipAddr]
@@ -394,10 +394,9 @@ def createAccount():
                                     # Create random key for email verification
                                     key = b64encode(os.urandom(32))
                                     hashedKey = functions.generateHashedKey(key)
-                                    timestamp = datetime.datetime.today() + datetime.timedelta(minutes=1)
+                                    timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
 
-
-                                    verifyEmailQuery = 'INSERT INTO verifyEmails(id, key, expiresOn) VALUES ("%s", "%s", "%s")' % (userId, hashedKey, timestamp)
+                                    verifyEmailQuery = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (hashedKey, userId, timestamp)
                                     query_db(verifyEmailQuery)
                                     get_db().commit()
 
@@ -445,6 +444,7 @@ def verify_account():
             flash('Your account is already verified!')
         else:
             # check against db
+            linkKey = linkKey.replace(' ', '+')
             if functions.generateHashedKey(linkKey.encode()) == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[-1].get('key'):
                 formattedTime = datetime.datetime.strptime(query_db('SELECT expiresOn FROM verifyEmails WHERE key = "%s"' % functions.generateHashedKey(linkKey.encode()))[0].get('expiresOn'),
                                                      '%Y-%m-%d %H:%M:%S.%f')
