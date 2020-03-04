@@ -145,6 +145,20 @@ def dashboard():
 
     return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results)
 
+# TODO: Add session checks
+@app.route('/profile/<username>', methods=['GET'])
+def profile(username):
+
+    # Gets the users profile
+    # userProfile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
+    userProfile2 = query_db('SELECT EXISTS(SELECT 1 FROM profiles WHERE username="%s"' % username)
+    print(userProfile2)
+    # gets the users post
+
+
+    # TODO: dont use [0]
+    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile2)
+
 
 @app.route('/newPost', methods=['GET'])
 def newPost():
@@ -193,7 +207,6 @@ def createPost():
             (posted_by, category, title, content, tod)
     query_db(query)
     get_db().commit()
-    print(query)
     return redirect('/dashboard')
 
 ########################################################################################################################

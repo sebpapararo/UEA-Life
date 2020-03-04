@@ -8,14 +8,24 @@
 <div class="container">
   <div class="card pl-4 mt-5 pt-2">
     <h5 class="card-title">Profile:</h5>
+    {{ userProfile }}
     <div class="row">
       Profile Picture:
     </div>
     <div class="row">
-      Name:
+      Name: {{ userProfile.username }}
     </div>
     <div class="row">
-      Date Joined:
+      Date Joined: 
+    </div>
+    <div class="row">
+      Level: {{ userProfile.level}}
+    </div>
+    <div class="row">
+      School: {{ userProfile.school}}
+    </div>
+    <div class="row">
+      Last Active: {{ userProfile.last_active}}
     </div>
     <div class="row">
       Post Count:

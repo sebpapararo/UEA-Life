@@ -13,6 +13,7 @@ function profileUndisable( field ) {
   }else{
     form.submit();
   }
+}
 
 
 $(document).ready(function () {
