@@ -78,7 +78,7 @@ def login():
                 query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') == 1:
             # Check if the password is correct
             retrievedSalt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
-            retrievedSalt = b64decode(retrievedSalt.encode('utf-8'))
+            retrievedSalt = b64decode(retrievedSalt.encode())
             if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrievedSalt, request.form['password']):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
