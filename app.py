@@ -85,7 +85,6 @@ def login():
         flash('You are already logged in you baboon!')
         return redirect('/dashboard')
 
-
     # If the fields are not emtpy
     if request.form['email'] != '' and request.form['password'] != '':
         email = functions.sanitiseInputs(request.form['email'])
@@ -108,6 +107,7 @@ def login():
                     validSessions.addSession(cookieId, cookieValue)
 
                     newLastActive = datetime.datetime.today()
+                    newLastActive = datetime.datetime.strftime(newLastActive, '%Y-%m-%d %H:%M')
                     uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
                     query_db('UPDATE profiles SET last_active="%s" WHERE id="%s"' % (newLastActive, uid))
                     get_db().commit()
@@ -398,6 +398,7 @@ def createAccount():
                                     key = b64encode(os.urandom(32))
                                     hashedKey = functions.generateHashedKey(key)
                                     timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
+                                    timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
 
                                     verifyEmailQuery = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (hashedKey, userId, timestamp)
                                     query_db(verifyEmailQuery)
@@ -449,9 +450,7 @@ def verify_account():
             # check against db
             linkKey = linkKey.replace(' ', '+')
             if functions.generateHashedKey(linkKey.encode()) == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[-1].get('key'):
-                formattedTime = datetime.datetime.strptime(query_db('SELECT expiresOn FROM verifyEmails WHERE key = "%s"' % functions.generateHashedKey(linkKey.encode()))[0].get('expiresOn'),
-                                                     '%Y-%m-%d %H:%M:%S.%f')
-                if datetime.datetime.today() < formattedTime:
+                if datetime.datetime.today() < query_db('SELECT expiresOn FROM verifyEmails WHERE key = "%s"' % functions.generateHashedKey(linkKey.encode()))[0].get('expiresOn'):
                     # set verify in db to true
                     query_db('UPDATE users SET verified = 1 WHERE id = "%s"' % userId)
                     get_db().commit()
@@ -483,6 +482,7 @@ def resend_verify():
     key = b64encode(os.urandom(32))
     hashedKey = functions.generateHashedKey(key)
     timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
+    timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
 
     verifyEmailQuery = 'INSERT INTO verifyEmails(id, key, expiresOn) VALUES ("%s", "%s", "%s")' % (uid, hashedKey, timestamp)
     query_db(verifyEmailQuery)
