@@ -85,7 +85,7 @@ def login():
 
                     cookieId = os.urandom(64)
                     cookieId = b64encode(cookieId)
-                    expiryDate = datetime.datetime.today() + datetime.timedelta(days=2)
+                    expiryDate = datetime.datetime.today() + datetime.timedelta(days=15)
                     userId = query_db('SELECT id FROM users where email = "%s"' % email)[0].get('id')
                     ipAddr = request.remote_addr
                     cookieValue = [userId, expiryDate, ipAddr]
@@ -111,6 +111,11 @@ def login():
 @app.route('/logout')
 def logout():
     userCookie = functions.getCookie()
+
+    if validSessions.checkSession(userCookie) is False:
+        flash('You can\'t logout if you weren\'t logged in, you fucking meathead!')
+        return redirect('/')
+
     validSessions.removeSession(userCookie)
 
     cookieId = os.urandom(64)
@@ -300,8 +305,10 @@ def createAccount():
                                     # Create random key for email verification
                                     key = b64encode(os.urandom(32))
                                     hashedKey = functions.generateHashedKey(key)
+                                    timestamp = datetime.datetime.today() + datetime.timedelta(minutes=1)
 
-                                    verifyEmailQuery = 'INSERT INTO verifyEmails(key, id) VALUES ("%s", "%s")' % (hashedKey, userId)
+
+                                    verifyEmailQuery = 'INSERT INTO verifyEmails(id, key, expiresOn) VALUES ("%s", "%s", "%s")' % (userId, hashedKey, timestamp)
                                     query_db(verifyEmailQuery)
                                     get_db().commit()
 
@@ -310,8 +317,8 @@ def createAccount():
                                     link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), userId)
                                     msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
                                                   recipients=[email])
-                                    messageBody = 'Hi %s, please click this link to verify your email: %s' % (
-                                        username, link)
+                                    messageBody = 'Hi %s,\n Please click the following link to verify your email:\n %s\n\nNotes: ' \
+                                                  'This email expires 15 minutes after being requested.' % (username, link)
                                     msg.body = messageBody
                                     mail.send(msg)
 
@@ -342,18 +349,23 @@ def verify_account():
     linkKey = request.args.get('key')
     userId = request.args.get('id')
 
-    # this if statement maks sure the logged in user or the non-logged in user cannot see the error messages for verify email
+    # this if statement make sure the logged in user or the non-logged in user cannot see the error messages for verify email
     if linkKey is not None:
         # check if verified already
         if query_db('SELECT verified FROM users WHERE id = "%s"' % userId)[0].get('verified') == 1:
             flash('Your account is already verified!')
         else:
             # check against db
-            if functions.generateHashedKey(linkKey.encode()) == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[0].get('key'):
-                # set verify in db to true
-                query_db('UPDATE users SET verified = 1 WHERE id = "%s"' % userId)
-                get_db().commit()
-                flash('The account is now verified.')
+            if functions.generateHashedKey(linkKey.encode()) == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[-1].get('key'):
+                formattedTime = datetime.datetime.strptime(query_db('SELECT expiresOn FROM verifyEmails WHERE key = "%s"' % functions.generateHashedKey(linkKey.encode()))[0].get('expiresOn'),
+                                                     '%Y-%m-%d %H:%M:%S.%f')
+                if datetime.datetime.today() < formattedTime:
+                    # set verify in db to true
+                    query_db('UPDATE users SET verified = 1 WHERE id = "%s"' % userId)
+                    get_db().commit()
+                    flash('The account is now verified.')
+                else:
+                    flash(Markup('Email has expired! <a href="/resend_verify" class="alert-link">Click here</a> to resend the verification email!'))
             else:
                 flash(
                     'Something went wrong. Try logging in to send another email (and don\'t forget to check your spam folder!)')
@@ -378,8 +390,9 @@ def resend_verify():
     # get uuid from database
     key = b64encode(os.urandom(32))
     hashedKey = functions.generateHashedKey(key)
+    timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
 
-    verifyEmailQuery = 'INSERT INTO verifyEmails(key, id) VALUES ("%s", "%s")' % (hashedKey, uid)
+    verifyEmailQuery = 'INSERT INTO verifyEmails(id, key, expiresOn) VALUES ("%s", "%s", "%s")' % (uid, hashedKey, timestamp)
     query_db(verifyEmailQuery)
     get_db().commit()
 
@@ -388,24 +401,10 @@ def resend_verify():
     link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), uid)
     msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
                   recipients=[email])
-    messageBody = 'Hi %s, please click this link to verify your email: %s' % (username, link)
+    messageBody = 'Hi %s,\n Please click the following link to verify your email:\n %s\n\nNotes: ' \
+                  'This email expires 15 minutes after being requested.' % (username, link)
     msg.body = messageBody
     mail.send(msg)
-
-
-    # id = str(uuid.uuid4())
-    # hashedID = bcrypt.generate_password_hash(id).decode('utf-8')
-    # query_db('UPDATE users SET uuid = "%s" WHERE username = "%s"' % (hashedID, session['username']))
-    # get_db().commit()
-    # email = query_db('SELECT email FROM users WHERE username = "%s"' % session['username'])[0].get('email')
-    #
-    # # send an email with a link to verify_email page with the id given
-    # link = 'https://127.0.0.1:5000/verify_email?id=%s&username=%s' % (id, session['username'])
-    # msg = Message("Verify Email - Norfolk Music", sender="se2cwk@gmail.com",
-    #               recipients=[email])
-    # messageBody = 'Hi %s, please click this link to verify your email: %s' % (session['username'], link)
-    # msg.body = messageBody
-    # mail.send(msg)
 
     flash('Email has been sent')
     return redirect('/dashboard')

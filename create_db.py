@@ -68,10 +68,12 @@ def create():
 
     c.execute('''
             CREATE TABLE verifyEmails (
+                key varchar PRIMARY KEY,
                 id varchar,
-                key varchar PRIMARY KEY
+                expiresOn varchar 
             );
         ''')
+
 
     # Create and add some test users
     salt1 = functions.generateSalt()
