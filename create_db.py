@@ -68,8 +68,8 @@ def create():
 
     c.execute('''
             CREATE TABLE verifyEmails (
-                id varchar PRIMARY KEY,
-                key varchar
+                id varchar,
+                key varchar PRIMARY KEY
             );
         ''')
 

@@ -1,4 +1,4 @@
-from flask import Flask, redirect, render_template, request, flash, make_response, g
+from flask import Flask, redirect, render_template, request, flash, make_response, g, Markup
 import functions
 import sqlite3
 import re
@@ -135,7 +135,10 @@ def dashboard():
     uid = validSessions.checkSession(userCookie)
     username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
-    flash('Nice one bro! You are logged in as: ' + username)
+    verified = query_db('SELECT verified FROM users where id = "%s"' % uid)[0].get('verified')
+    if verified == 0:
+        flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> to resend the verification email!'))
+
 
     query = "SELECT * FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
     results = query_db(query)
@@ -294,7 +297,7 @@ def createAccount():
                                     query_db(profileQuery)
                                     get_db().commit()
 
-                                    # Create random key for password reset
+                                    # Create random key for email verification
                                     key = b64encode(os.urandom(32))
                                     hashedKey = functions.generateHashedKey(key)
 
@@ -359,24 +362,53 @@ def verify_account():
         return redirect('/')
 
 
-# @app.route('/resend_verify/', methods=['POST'])
-# def resend_verify():
-#     # get uuid from database
-#     id = str(uuid.uuid4())
-#     hashedID = bcrypt.generate_password_hash(id).decode('utf-8')
-#     query_db('UPDATE users SET uuid = "%s" WHERE username = "%s"' % (hashedID, session['username']))
-#     get_db().commit()
-#     email = query_db('SELECT email FROM users WHERE username = "%s"' % session['username'])[0].get('email')
-#
-#     # send an email with a link to verify_email page with the id given
-#     link = 'https://127.0.0.1:5000/verify_email?id=%s&username=%s' % (id, session['username'])
-#     msg = Message("Verify Email - Norfolk Music", sender="se2cwk@gmail.com",
-#                   recipients=[email])
-#     messageBody = 'Hi %s, please click this link to verify your email: %s' % (session['username'], link)
-#     msg.body = messageBody
-#     mail.send(msg)
-#     flash('Email has been sent')
-#     return redirect('/dashboard/')
+@app.route('/resend_verify', methods=['GET'])
+def resend_verify():
+
+    userCookie = functions.getCookie()
+
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
+    uid = validSessions.checkSession(userCookie)
+    username = query_db('SELECT username FROM profiles WHERE id = "%s"' % uid)[0].get('username')
+    email = query_db('SELECT email FROM users WHERE id = "%s"' % uid)[0].get('email')
+
+    # get uuid from database
+    key = b64encode(os.urandom(32))
+    hashedKey = functions.generateHashedKey(key)
+
+    verifyEmailQuery = 'INSERT INTO verifyEmails(key, id) VALUES ("%s", "%s")' % (hashedKey, uid)
+    query_db(verifyEmailQuery)
+    get_db().commit()
+
+    # send an email with a link to verify_email page with the id given
+    # TODO: 03/03/2020 change link to https before submitting
+    link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), uid)
+    msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
+                  recipients=[email])
+    messageBody = 'Hi %s, please click this link to verify your email: %s' % (username, link)
+    msg.body = messageBody
+    mail.send(msg)
+
+
+    # id = str(uuid.uuid4())
+    # hashedID = bcrypt.generate_password_hash(id).decode('utf-8')
+    # query_db('UPDATE users SET uuid = "%s" WHERE username = "%s"' % (hashedID, session['username']))
+    # get_db().commit()
+    # email = query_db('SELECT email FROM users WHERE username = "%s"' % session['username'])[0].get('email')
+    #
+    # # send an email with a link to verify_email page with the id given
+    # link = 'https://127.0.0.1:5000/verify_email?id=%s&username=%s' % (id, session['username'])
+    # msg = Message("Verify Email - Norfolk Music", sender="se2cwk@gmail.com",
+    #               recipients=[email])
+    # messageBody = 'Hi %s, please click this link to verify your email: %s' % (session['username'], link)
+    # msg.body = messageBody
+    # mail.send(msg)
+
+    flash('Email has been sent')
+    return redirect('/dashboard')
 
 
 if __name__ == '__main__':
