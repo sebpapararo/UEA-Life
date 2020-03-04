@@ -8,12 +8,11 @@
 <div class="container">
   <div class="card pl-4 mt-5 pt-2">
     <h5 class="card-title">Profile:</h5>
-    {{ userProfile }}
     <div class="row">
-      Name: {{ userProfile.username }}
+      Username: {{ userProfile.username }}
     </div>
     <div class="row">
-      Date Joined:
+      Date Joined: {{ userProfile.dateJoined }}
     </div>
     <div class="row">
       Level: {{ userProfile.level}}
@@ -30,6 +29,28 @@
     <div class="row">
       Recent Posts:
     </div>
+    {% for post in usersPosts %}
+        <div class="row">
+            <div class="card text-white bg-primary mb-3 w-100">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                        <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                        <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                    <!-- /row -->
+                    </div>
+                <!-- /card-header -->
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">{{ post.title | safe }}</h5>
+                    <p class="card-text">{{ post.content | safe }}</p>
+                <!-- /card-body -->
+                </div>
+            <!-- /card text-white bg-primary mb-3 w-100 -->
+            </div>
+        <!-- /row -->
+        </div>
+    {% endfor %}
   </div>
 </div>
 
