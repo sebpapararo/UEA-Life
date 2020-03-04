@@ -168,7 +168,8 @@ def dashboard():
     query = "SELECT * FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
     results = query_db(query)
 
-    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results)
+    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=username)
+
 
 # TODO: Add session checks
 @app.route('/profile', methods=['GET'])
@@ -228,6 +229,15 @@ def newPost():
         return redirect('/')
 
     return render_template('/newPost.html', title="UEA Life | New Post")
+
+    # TODO: Seb is looking into cookies later - be aware this will break if not logged in properly
+    user_id = validSessions.checkSession(user_cookie)
+
+    if query_db('SELECT verified FROM users WHERE id = "%s"' % user_id)[0].get('verified') == 1:
+        return render_template('/newPost.html', username=user_id)
+    else:
+        flash('Behave - Verify account before posting')
+        return redirect('/dashboard')
 
 
 @app.route('/createPost', methods=['POST'])
@@ -337,6 +347,17 @@ def updateUsername():
 
     flash('Username updated successfully!')
     return redirect('/accountSettings')
+
+
+@app.route('/forgotPassword', methods=['GET'])
+def forgotPassword():
+    return render_template('/forgotPassword.html', title="UEA Life | Forgot Password")
+
+
+@app.route('/passwordReset', methods=['POST'])
+def passwordReset():
+    return render_template('/passwordReset.html', title="UEA Life | Password Reset")
+
 
 # Render the register html
 @app.route('/register', methods=['GET'])

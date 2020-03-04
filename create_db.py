@@ -47,11 +47,12 @@ def create():
     ''')
 
     # Create the replies table
+    # id =
     c.execute('''
             CREATE TABLE replies (
                 id integer PRIMARY KEY AUTOINCREMENT,
-                posted_on varchar,
-                postId integer,
+                posted_on varchar,                      
+                posted_to integer,
                 posted_by varchar,
                 content varchar              
             );
