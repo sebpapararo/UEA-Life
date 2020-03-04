@@ -39,7 +39,7 @@
                         {# ALL QUERIES TAB #}
                         <li class="nav-item">
                             <a class="nav-link active" id="all_Tab" data-toggle="tab" href="#all" role="tab" aria-controls="all"
-                               aria-selected="true">All Queries</a>
+                               aria-selected="true">All</a>
                         </li>
                         {# GENERAL QUERIES TAB #}
                         <li class="nav-item">
@@ -80,7 +80,7 @@
 
                         {# ALL QUERIES - OUTPUT #}
                         <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all_Tab">
-                            <h4>All Enquires Feed</h4>
+                            <h4>All Posts</h4>
                             <hr>
                             {% for post in data %}
                                 <div class="row">
@@ -90,7 +90,9 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
@@ -105,7 +107,6 @@
                         <!-- /tab-pane fade show active -->
                         </div>
 
-
                         {# GENERAL QUERIES - OUTPUT #}
                         <div class="tab-pane fade" id="general" role="tabpanel" aria-labelledby="general_Tab">
                             <h4>General Feed</h4>
@@ -118,15 +119,21 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
                                             <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
                                         </div>
+                                    <!-- /card text-white bbg-primary mb-3 w-100 -->
                                     </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tab-pane fade -->
                         </div>
 
                         {# STUDENT UNION QUERIES - OUTPUT #}
@@ -141,15 +148,21 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
                                             <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
                                         </div>
+                                    <!-- /card text-white bbg-primary mb-3 w-100 -->
                                     </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tabb-pane fade -->
                         </div>
 
                         {# ACCOMMODATION QUERIES - OUTPUT #}
@@ -164,15 +177,21 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
                                             <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
                                         </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
                                     </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tab-pane fade -->
                         </div>
 
                         {# FINANCE QUERIES - OUTPUT #}
@@ -187,15 +206,21 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
+                                         <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
                                             <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
                                         </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
                                     </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tab-pane fade -->
                         </div>
 
                         {# LOCAL AREA QUERIES - OUTPUT #}
@@ -210,15 +235,21 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
                                             <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
                                         </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
                                     </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tab-pane fade -->
                         </div>
 
                         {# TRAVEL QUERIES - OUTPUT #}
@@ -233,25 +264,36 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
                                             <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
                                         </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
                                     </div>
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
+                        <!-- /tab-pane fade -->
                         </div>
 
                     <!-- /tab-content -->
                     </div>
+
                 <!-- /card-body -->
                 </div>
+
             <!-- /card -->
             </div>
+
         <!-- /col-sm-12 -->
         </div>
+
     <!-- /container bg-white p-2 -->
     </div>
+
 {% endblock %}
