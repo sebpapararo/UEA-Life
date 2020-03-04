@@ -65,11 +65,27 @@ def close_connection(exception):
 # Routes
 @app.route('/', methods=['GET'])
 def index():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is not False:
+        flash('You are already logged in you baboon!')
+        return redirect('/dashboard')
+
+
     return render_template('/index.html', title="UEA Life | Home")
 
 
 @app.route('/login', methods=['POST'])
 def login():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is not False:
+        flash('You are already logged in you baboon!')
+        return redirect('/dashboard')
+
+
     # If the fields are not emtpy
     if request.form['email'] != '' and request.form['password'] != '':
         email = functions.sanitiseInputs(request.form['email'])
@@ -110,11 +126,12 @@ def login():
 
 @app.route('/logout')
 def logout():
-    userCookie = functions.getCookie()
 
+    userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
         flash('You can\'t logout if you weren\'t logged in, you fucking meathead!')
         return redirect('/')
+
 
     validSessions.removeSession(userCookie)
 
@@ -128,11 +145,11 @@ def logout():
     return response
 
 
-#######################################################################################################################
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-    userCookie = functions.getCookie()
 
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
@@ -144,34 +161,72 @@ def dashboard():
     if verified == 0:
         flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> to resend the verification email!'))
 
-
     query = "SELECT * FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
     results = query_db(query)
 
     return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results)
 
 # TODO: Add session checks
-@app.route('/profile/<username>', methods=['GET'])
-def profile(username):
+@app.route('/profile', methods=['GET'])
+def profile():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
+    # Gets the username from the URL, if one is not sent defaults to None
+    username = request.args.get('username', None)
+
+    # Check the username field has been sent
+    if username is None:
+        flash('No username sent mate!')
+        return redirect('/dashboard')
 
     # Gets the users profile
-    # userProfile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
-    userProfile2 = query_db('SELECT EXISTS(SELECT 1 FROM profiles WHERE username="%s"' % username)
-    print(userProfile2)
-    # gets the users post
+    userProfile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
+    # When more than expected profiles are recieved, throw error.
+    if(len(userProfile) != 1):
+        flash('User Does Not Exist!')
+        return redirect('/dashboard')
+
+
+    # Get single profile
+    userProfile = userProfile[0]
+
+    # gets the users post
+    usersPosts = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % userProfile['id'])
+
+    # TODO: hacky way of getting this, change if have time!
+    userProfile['postCount'] = usersPosts[0]['COUNT(*)']
 
     # TODO: dont use [0]
-    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile2)
+    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile)
 
 
 @app.route('/newPost', methods=['GET'])
 def newPost():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
     return render_template('/newPost.html', title="UEA Life | New Post")
 
 
 @app.route('/createPost', methods=['POST'])
 def createPost():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
     print(request.form)
     # username = request.form.get('username', None)
     cats = ['General', 'Finance', 'Accommodation', 'Student Union', 'Local Area', 'Travel']
@@ -219,11 +274,25 @@ def createPost():
 
 @app.route('/accountSettings', methods=['GET', 'POST'])
 def accountSettings():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
     return render_template('/settings.html', title="UEA Life | Create Post")
 
 
 @app.route('/accountSettings/updateUsername', methods=['POST'])
 def updateUsername():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
     # TODO: add more checks here (see createAccount as example)
 
     # TODO: Get these from the request
@@ -267,6 +336,13 @@ def register():
 # Creates a new user account
 @app.route('/register/createAccount', methods=['POST'])
 def createAccount():
+
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is not False:
+        flash('You are already logged in you baboon!')
+        return redirect('/dashboard')
+
     # If none of the fields are emtpy
     # TODO: 25/02/2020 check if XSS works in password field as it is not being sanitised
     if request.form['username'] != '' and request.form['email'] != '' and request.form['password'] != '' and \
@@ -390,7 +466,11 @@ def verify_account():
 @app.route('/resend_verify', methods=['GET'])
 def resend_verify():
 
+    # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
 
     if validSessions.checkSession(userCookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')

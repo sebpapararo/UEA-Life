@@ -4,6 +4,7 @@ import hashlib
 import os
 import urllib
 import json
+import validSessions
 
 
 # Method to sanitise the inputs by replacing suspect characters with its HTML numeric code counterpart

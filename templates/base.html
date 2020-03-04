@@ -33,7 +33,12 @@
                         <a class="nav-link" href="/newPost">Create Post</a>
                     </li>
                 </ul>
+                <form class="form-inline my-2 my-lg-0" action='/profile' method="get">
+                  <input name="username" class="form-control mr-sm-2" type="text" placeholder="Search Username" aria-label="Search">
+                  <button class="btn btn-outline-success my-2 my-sm-0" type="submit" >Search</button>
+                </form>
             </div>
+
             <div class="topnav-right">
                 <ul class="navbar-nav">
                     <!-- TODO: hit the logout route -->
