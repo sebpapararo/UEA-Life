@@ -99,7 +99,7 @@ def create():
     hashedPass3 = functions.generateHashedPass(salt3, 'a')
     salt3 = b64encode(salt3)
     uid3 = str(uuid.uuid4())
-    user3Query = 'INSERT INTO users VALUES("%s", "04/03/2020 12:28", 1, "%s", "%s", "andy.davies@gmail.com")' % (uid3, hashedPass3, salt3.decode())
+    user3Query = 'INSERT INTO users VALUES("%s", "04/03/2020 12:28", 1, "%s", "%s", "a.davies964@gmail.com")' % (uid3, hashedPass3, salt3.decode())
     user3ProfileQuery = 'INSERT INTO profiles VALUES("%s", "andy", "04/03/2020 12:28", "PGT", "CMP")' % (uid3)
     c.execute(user3Query)
     c.execute(user3ProfileQuery)
