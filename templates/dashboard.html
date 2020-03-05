@@ -18,10 +18,6 @@
                 </div>
             </div>
 
-{#            <div class="card">#}
-{#                <h1 class="card-title m-2">Welcome {{ user }}</h1>#}
-{#            <!-- /card -->#}
-{#            </div>#}
 
             <div class="container">
                 {% for message in get_flashed_messages() %}
@@ -29,7 +25,6 @@
                         {{ message }}
                     </div>
                 {% endfor %}
-            <!-- /container -->
             </div>
 
             <a href="/newPost">

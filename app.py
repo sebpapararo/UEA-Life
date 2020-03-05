@@ -17,10 +17,10 @@ sslContext = ('server.crt', 'server.key')
 app.secret_key = os.urandom(64)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT = 465,
-    MAIL_USE_SSL = True,
-    MAIL_USERNAME = 'uealifedss@gmail.com',
-    MAIL_PASSWORD = '8pw9X$a%bHZkHz8&@ZeU',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME='uealifedss@gmail.com',
+    MAIL_PASSWORD='8pw9X$a%bHZkHz8&@ZeU',
 )
 mail = Mail(app)
 
@@ -65,20 +65,17 @@ def close_connection(exception):
 # Routes
 @app.route('/', methods=['GET'])
 def index():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
         flash('You are already logged in you baboon!')
         return redirect('/dashboard')
 
-
     return render_template('/index.html', title="UEA Life | Home")
 
 
 @app.route('/login', methods=['POST'])
 def login():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
@@ -94,7 +91,8 @@ def login():
             # Check if the password is correct
             retrievedSalt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
             retrievedSalt = b64decode(retrievedSalt.encode())
-            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrievedSalt, request.form['password']):
+            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrievedSalt,
+                                                                                                                                    request.form['password']):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
@@ -131,7 +129,6 @@ def login():
 
 @app.route('/logout')
 def logout():
-
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
         flash('You can\'t logout if you weren\'t logged in, you fucking meathead!')
@@ -151,7 +148,6 @@ def logout():
 
 @app.route('/dashboard', methods=['GET'])
 def dashboard():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
@@ -174,7 +170,6 @@ def dashboard():
 # TODO: Add session checks
 @app.route('/profile', methods=['GET'])
 def profile():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
@@ -193,10 +188,9 @@ def profile():
     userProfile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
     # When more than expected profiles are recieved, throw error.
-    if(len(userProfile) != 1):
+    if (len(userProfile) != 1):
         flash('User Does Not Exist!')
         return redirect('/dashboard')
-
 
     # Get single profile
     userProfile = userProfile[0]
@@ -211,7 +205,6 @@ def profile():
     dateJoined = query_db('SELECT Created_on FROM users WHERE id = "%s";' % userProfile['id'])
     userProfile['dateJoined'] = dateJoined[0]['created_on']
 
-
     # Get the Content of the posts
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % userProfile['id'])
 
@@ -221,7 +214,6 @@ def profile():
 
 @app.route('/newPost', methods=['GET'])
 def newPost():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
@@ -242,7 +234,6 @@ def newPost():
 
 @app.route('/createPost', methods=['POST'])
 def createPost():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
@@ -292,10 +283,8 @@ def createPost():
     return redirect('/dashboard')
 
 
-
 @app.route('/accountSettings', methods=['GET', 'POST'])
 def accountSettings():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
@@ -307,7 +296,6 @@ def accountSettings():
 
 @app.route('/accountSettings/updateUsername', methods=['POST'])
 def updateUsername():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
@@ -320,7 +308,7 @@ def updateUsername():
     username = request.form.get('username', None)
 
     userCookie = functions.getCookie()
-    uid = validSessions.checkSession(userCookie) # TODO: get from request
+    uid = validSessions.checkSession(userCookie)  # TODO: get from request
 
     # Check they have sent a field called username
     if username is None:
@@ -332,12 +320,12 @@ def updateUsername():
 
     #  Check username is not empty
     if username == '':
-        flash('Username cannot be empty you cheeky cunt')
+        flash('Username cannot be empty you cheeky pr**k')
         return redirect('/accountSettings')
 
     # Check if username has already been taken
     if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
-    query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') != 0:
+            query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') != 0:
         flash("Username already in use. Please pick another one.")
         return redirect('/accountSettings')
 
@@ -349,14 +337,106 @@ def updateUsername():
     return redirect('/accountSettings')
 
 
-@app.route('/forgotPassword', methods=['GET'])
+@app.route('/forgotPassword', methods=['GET', 'POST'])
 def forgotPassword():
-    return render_template('/forgotPassword.html', title="UEA Life | Forgot Password")
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is not False:
+        flash('You are already logged in you donkey!')
+        return redirect('/dashboard')
+
+    if request.method == 'GET':
+        return render_template('/forgotPassword.html', title="UEA Life | Forgot Password")
+    else:
+
+        email = functions.sanitiseInputs(request.form['email'])
+        # Check the email entered  is valid
+        if re.match('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
+            # Check the reCaptcha was completed
+            if functions.verifyCaptcha():
+
+                # Create random key for email verification
+                key = b64encode(os.urandom(32))
+                hashedKey = functions.generateHashedKey(key)
+                timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
+                timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
+
+                # Make sure the email exists in teh database
+                if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
+                        query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') == 0:
+                    flash('Email has been sent')
+                    return redirect('/')
+
+                uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
+                username = query_db('SELECT username FROM profiles WHERE id = "%s"' % uid)[0].get('username')
+
+                forgotPasswordQuery = 'INSERT INTO forgotPasswordRequests(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (hashedKey, uid, timestamp)
+                query_db(forgotPasswordQuery)
+                get_db().commit()
+
+                # TODO: 03/03/2020 change link to https before submitting
+                link = 'http://127.0.0.1:5000/passwordReset?key=%s&id=%s' % (key.decode(), uid)
+                msg = Message("Password Reset - UEA Life", sender="uealifedss@gmail.com",
+                              recipients=[email])
+                messageBody = 'Hi %s,\n Please click the following link to reset your password:\n %s\n\nNotes: ' \
+                              'This email expires 15 minutes after being requested.' % (username, link)
+                msg.body = messageBody
+                mail.send(msg)
+
+                flash('Email has been sent')
+                return redirect('/')
+            else:
+                flash('Invalid reCaptcha!')
+        else:
+            flash('Email address was invalid!')
+    return redirect('/forgotPassword')
 
 
-@app.route('/passwordReset', methods=['POST'])
+@app.route('/passwordReset', methods=['GET', 'POST'])
 def passwordReset():
-    return render_template('/passwordReset.html', title="UEA Life | Password Reset")
+    # Is Authed Guard, redirects to the login
+    userCookie = functions.getCookie()
+    if validSessions.checkSession(userCookie) is not False:
+        flash('You are already logged in you baboon!')
+        return redirect('/dashboard')
+
+    if request.method == 'GET':
+        linkKey = request.args.get('key')
+        linkKey = linkKey.replace(' ', '+')
+        hashedKey = functions.generateHashedKey(linkKey.encode())
+        userId = request.args.get('id')
+
+        # this if statement make sure the logged in user or the non-logged in user cannot see the error messages for verify email
+        if linkKey is not None:
+            # Check the key in the url is valid and has no expired.
+
+            if hashedKey == query_db('SELECT key FROM forgotPasswordRequests WHERE id = "%s"' % userId)[-1].get('key'):
+                if datetime.datetime.today() < datetime.datetime.strptime(
+                        query_db('SELECT expiresOn FROM forgotPasswordRequests WHERE key = "%s"' % hashedKey)[0].get('expiresOn'), '%Y-%m-%d %H:%M'):
+                    return render_template('/passwordReset.html', title="UEA Life | Password Reset")
+                else:
+                    flash(Markup('Email has expired! <a href="/forgotPassword" class="alert-link">Click here</a> to request another!'))
+            else:
+                flash(Markup('Something went wrong. Try requesting another email  <a href="/forgotPassword" class="alert-link"> here!</a>'))
+        return redirect('/')
+    else:
+        if request.form['password'] == request.form['verifyPassword']:
+            if functions.validatePassword(request.form.get('password')):
+                newSalt = functions.generateSalt()
+                hashedPass = functions.generateHashedPass(newSalt, request.form['password'])
+                newSalt = b64encode(newSalt)
+
+                uid = request.form['id']
+
+                query_db('UPDATE users SET password="%s", salt="%s" WHERE id="%s"' % (hashedPass, newSalt.decode(), uid))
+                get_db().commit()
+                flash('Password updated!')
+                return redirect('/')
+            else:
+                flash('Invalid password! Please follow the rules')
+        else:
+            flash("Passwords do not match")
+        return redirect('/passwordReset')
 
 
 # Render the register html
@@ -368,7 +448,6 @@ def register():
 # Creates a new user account
 @app.route('/register/createAccount', methods=['POST'])
 def createAccount():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
@@ -468,6 +547,8 @@ def createAccount():
 def verify_account():
     # get id from url
     linkKey = request.args.get('key')
+    linkKey = linkKey.replace(' ', '+')
+    hashedKey = functions.generateHashedKey(linkKey.encode())
     userId = request.args.get('id')
 
     # this if statement make sure the logged in user or the non-logged in user cannot see the error messages for verify email
@@ -477,9 +558,9 @@ def verify_account():
             flash('Your account is already verified!')
         else:
             # check against db
-            linkKey = linkKey.replace(' ', '+')
-            if functions.generateHashedKey(linkKey.encode()) == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[-1].get('key'):
-                if datetime.datetime.today() < query_db('SELECT expiresOn FROM verifyEmails WHERE key = "%s"' % functions.generateHashedKey(linkKey.encode()))[0].get('expiresOn'):
+            if hashedKey == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[-1].get('key'):
+                if datetime.datetime.today() < datetime.datetime.strptime(
+                        query_db('SELECT expiresOn FROM verifyEmails WHERE key = "%s"' % hashedKey)[0].get('expiresOn'), '%Y-%m-%d %H:%M'):
                     # set verify in db to true
                     query_db('UPDATE users SET verified = 1 WHERE id = "%s"' % userId)
                     get_db().commit()
@@ -487,8 +568,7 @@ def verify_account():
                 else:
                     flash(Markup('Email has expired! <a href="/resend_verify" class="alert-link">Click here</a> to resend the verification email!'))
             else:
-                flash(
-                    'Something went wrong. Try logging in to send another email (and don\'t forget to check your spam folder!)')
+                flash('Something went wrong. Try logging in to send another email (and don\'t forget to check your spam folder!)')
         return render_template('dashboard.html')
     else:
         return redirect('/')
@@ -496,7 +576,6 @@ def verify_account():
 
 @app.route('/resend_verify', methods=['GET'])
 def resend_verify():
-
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:

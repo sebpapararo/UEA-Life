@@ -63,7 +63,7 @@ def create():
         CREATE TABLE forgotPasswordRequests (
             key varchar PRIMARY KEY,
             id varchar,
-            timestamp varchar
+            expiresOn varchar
         );
     ''')
 
