@@ -3,6 +3,7 @@
 {% extends 'base.html' %}
 {% block title %}{{ super() }} Your Dashboard{% endblock %}
 {% set active_page = "dashboard" %}
+{% block current_user %}{{ user }}{% endblock %}
 
 {% block content %}
 
@@ -10,10 +11,17 @@
 
         <div class="col-sm-12">
 
-            <div class="card">
-                <h1 class="card-title m-2">Welcome {{ user }}</h1>
-            <!-- /card -->
+            <div class="jumbotron jumbotron-fluid" id="dash_jumbo">
+                <div class="container text-white">
+                    <h1 class="display-4">Welcome {{ user }}</h1>
+                    <p class="lead">An Online Forum for UEA Student and Staff</p>
+                </div>
             </div>
+
+{#            <div class="card">#}
+{#                <h1 class="card-title m-2">Welcome {{ user }}</h1>#}
+{#            <!-- /card -->#}
+{#            </div>#}
 
             <div class="container">
                 {% for message in get_flashed_messages() %}
