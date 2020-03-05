@@ -289,6 +289,10 @@ def createPost():
 def accountSettings():
     # Is Authed Guard, redirects to the login
     user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
     uid = validSessions.checkSession(user_cookie)
 
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
@@ -309,16 +313,19 @@ def updateUsername():
         return redirect('/')
 
     # TODO: add more checks here (see createAccount as example)
-
+    # TODO: 05/03/2020 Do not allow for current username
     # TODO: Get these from the request
     username = request.form.get('username', None)
 
-    user_cookie = functions.getCookie()
     uid = validSessions.checkSession(user_cookie) # TODO: get from request
 
     # Check they have sent a field called username
     if username is None:
         flash('Username field not sent mate')
+        return redirect('/accountSettings')
+
+    if not re.match("^[A-Za-z0-9_-]*$", username):
+        flash('Username contained invalid characters')
         return redirect('/accountSettings')
 
     # Sanitising inputs
@@ -332,7 +339,7 @@ def updateUsername():
     # Check if username has already been taken
     if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
             query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') != 0:
-        flash("Username already in use. Please pick another one.")
+        flash("Username was invalid. Please pick another one.")
         return redirect('/accountSettings')
 
     # Update requesting users username to the supplied
@@ -341,6 +348,55 @@ def updateUsername():
 
     flash('Username updated successfully!')
     return redirect('/accountSettings')
+
+@app.route('/accountSettings/updateEmail', methods=['POST'])
+def updateEmail():
+    # Is Authed Guard, redirects to the login
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
+    # TODO: add more checks here (see createAccount as example)
+    # TODO: 05/03/2020 do not allow for current email
+    # TODO: Get these from the request
+    email = request.form.get('email', None)
+
+    uid = validSessions.checkSession(user_cookie) # TODO: get from request
+
+    # Check they have sent a field called username
+    if email is None:
+        flash('Email field not sent mate')
+        return redirect('/accountSettings')
+
+    # Verify the email is in the correct format using a regular expression
+    if not re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
+        flash('Email contained invalid character!')
+        return redirect('/accountSettings')
+
+    # Sanitising inputs
+    email = functions.sanitiseInputs(email)
+
+    #  Check username is not empty
+    if email == '':
+        flash('Email cannot be empty you cheeky pr**k')
+        return redirect('/accountSettings')
+
+    # Check if email has already been taken
+    if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
+            query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') != 0:
+        flash("Email invalid. Please pick another one.")
+        return redirect('/accountSettings')
+
+    # Update requesting users email to the supplied
+    query_db('UPDATE users SET email="%s" WHERE id="%s"' % (email, uid))
+    get_db().commit()
+
+    flash('Email updated successfully!')
+    return redirect('/accountSettings')
+
+
+
 
 
 @app.route('/forgotPassword', methods=['GET', 'POST'])
@@ -357,7 +413,7 @@ def forgotPassword():
 
         email = functions.sanitiseInputs(request.form['email'])
         # Check the email entered  is valid
-        if re.match('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
+        if re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
             # Check the reCaptcha was completed
             if functions.verifyCaptcha():
 
@@ -469,7 +525,7 @@ def createAccount():
         level = functions.sanitiseInputs(request.form['level'])
         school = functions.sanitiseInputs(request.form['school'])
         # Verify the email is in the correct format using a regular expression
-        if re.match('^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
+        if re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
             # Check the username matches the allowed format
             if re.match("^[A-Za-z0-9_-]*$", username):
                 # Check the email does not exist in the database

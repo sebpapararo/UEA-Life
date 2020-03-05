@@ -1,69 +1,70 @@
 <!-- profile.html -->
 {% extends 'base.html' %}
-{% block title %}{{ super() }} Settings{%  endblock %}
+{% block title %}{{ super() }} Settings{% endblock %}
 {% set active_page = "accountSettings" %}
 {% block current_user %}{{ user }}{% endblock %}
 
 {% block content %}
-  <div class="card mt-5">
-    <h5 class="card-title">Account Settings</h5>
-    <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
-    <div class="row pl-4 pb-2 justify-content-center">
-      <div class="col">
-        <form action="/accountSettings/updateUsername" method="POST" role="change-username" id="update-username">
-          <label for="exampleInputEmail1">Username</label>
-          <div class="input-group">
-            <input disabled name="username" id="username" type="text" class="form-control" placeholder="Your username here:" aria-label="Recipient's username" aria-describedby="basic-addon2">
-            <div class="input-group-append">
-              <button id="button-username" class="btn btn-outline-secondary" type="button" onclick="profileUndisable('username')">Change</button>
-            </div>
-          </div>
-          <!-- <button type="submit" class="btn btn-success" name="createAccount">Submit</button> -->
-        </form>
-          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-
-                    <label for="exampleInputEmail1">Email address</label>
-                    <div class="input-group">
-                        <input disabled id="email" type="text" class="form-control" placeholder="Your email here:"
-                               aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button" onclick="profileUndisable('email')">
-                                Change
-                            </button>
-                        </div>
-                    </div>
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                        else.</small>
-
-                    <label for="exampleInputEmail1">Password</label>
-                    <div class="input-group">
-                        <input disabled id="password" type="text" class="form-control" placeholder="* * * * * * * *"
-                               aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="button"
-                                    onclick="profileUndisable('password')">Change
-                            </button>
-                        </div>
-                    </div>
-                    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                        else.</small>
+    <div class="card mt-5">
+        <h5 class="card-title">Account Settings</h5>
+        <div class="container">
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    {{ message }}
                 </div>
+            {% endfor %}
+        </div>
+        <div class="row pl-4 pb-2 justify-content-center">
+            <div class="col">
+                <form action="/accountSettings/updateUsername" method="POST" role="change-username" id="update-username">
+                    <label for="exampleInputEmail1">Username</label>
+                    <div class="input-group">
+                        <input disabled name="username" id="username" type="text" class="form-control" placeholder="Your username here:"
+                               aria-label="Recipient's username" aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button id="button-username" class="btn btn-outline-secondary" type="button" onclick="profileUndisable('username')">Change</button>
+                        </div>
+                    </div>
+                    <!-- <button type="submit" class="btn btn-success" name="createAccount">Submit</button> -->
+                </form>
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+
+                <form action="/accountSettings/updateEmail" method="POST" role="change-email" id="update-email">
+                <label for="exampleInputEmail1">Email address</label>
+                <div class="input-group">
+                    <input disabled id="email" name="email" type="text" class="form-control" placeholder="Your email here:"
+                           aria-label="Recipient's email" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button id="button-email" class="btn btn-outline-secondary" type="button" onclick="profileUndisable('email')">Change</button>
+                    </div>
+                </div>
+                </form>
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                    else.</small>
+
+                <label for="exampleInputEmail1">Password</label>
+                <div class="input-group">
+                    <input disabled id="password" type="text" class="form-control" placeholder="* * * * * * * *"
+                           aria-label="Recipient's username" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                        <button class="btn btn-outline-secondary" type="button"
+                                onclick="profileUndisable('password')">Change
+                        </button>
+                    </div>
+                </div>
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
+                    else.</small>
             </div>
         </div>
-        <div class="row justify-content-center">
-            <div class="col-sm-5">
-                <a href="/accountSettings" class="btn btn-outline-secondary float-right btn-block">Cancel</a>
-            </div>
-            <div class="col-sm-5 pb-3">
-                <button class="btn btn-info float-left btn-block">Save</button>
-            </div>
+    </div>
+    <div class="row justify-content-center">
+        <div class="col-sm-5">
+            <a href="/accountSettings" class="btn btn-outline-secondary float-right btn-block">Cancel</a>
         </div>
+        <div class="col-sm-5 pb-3">
+            <button class="btn btn-info float-left btn-block">Save</button>
+        </div>
+    </div>
     </div>
 
 {% endblock %}
