@@ -390,14 +390,11 @@ def updateEmail():
 
     # Update requesting users email to the supplied
     query_db('UPDATE users SET email="%s" WHERE id="%s"' % (email, uid))
+    query_db('UPDATE users SET verified=0 WHERE id="%s"' % uid)
     get_db().commit()
 
     flash('Email updated successfully!')
     return redirect('/accountSettings')
-
-
-
-
 
 @app.route('/forgotPassword', methods=['GET', 'POST'])
 def forgotPassword():
