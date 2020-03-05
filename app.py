@@ -177,6 +177,9 @@ def profile():
 
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
+    uid = validSessions.checkSession(userCookie)
+    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+
     if validSessions.checkSession(userCookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
@@ -197,7 +200,6 @@ def profile():
         flash('User Does Not Exist!')
         return redirect('/dashboard')
 
-
     # Get single profile
     userProfile = userProfile[0]
 
@@ -211,12 +213,11 @@ def profile():
     dateJoined = query_db('SELECT Created_on FROM users WHERE id = "%s";' % userProfile['id'])
     userProfile['dateJoined'] = dateJoined[0]['created_on']
 
-
     # Get the Content of the posts
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % userProfile['id'])
 
     # TODO: dont use [0]
-    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile, usersPosts=posts)
+    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile, usersPosts=posts, user=logged_in_as)
 
 
 @app.route('/newPost', methods=['GET'])
@@ -224,11 +225,14 @@ def newPost():
 
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
+    uid = validSessions.checkSession(userCookie)
+    username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+
     if validSessions.checkSession(userCookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    return render_template('/newPost.html', title="UEA Life | New Post")
+    return render_template('/newPost.html', title="UEA Life | New Post", user=username)
 
     # TODO: Seb is looking into cookies later - be aware this will break if not logged in properly
     user_id = validSessions.checkSession(user_cookie)
@@ -298,11 +302,15 @@ def accountSettings():
 
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
+    uid = validSessions.checkSession(userCookie)
+
+    username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+
     if validSessions.checkSession(userCookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    return render_template('/settings.html', title="UEA Life | Create Post")
+    return render_template('/settings.html', title="UEA Life | Profile Settings", user=username)
 
 
 @app.route('/accountSettings/updateUsername', methods=['POST'])

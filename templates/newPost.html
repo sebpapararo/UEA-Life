@@ -3,6 +3,7 @@
 {% extends 'base.html' %}
 {% block title %}{{ super() }} New Post{%  endblock %}
 {% set active_page = "newPost" %}
+{% block current_user %}{{ user }}{% endblock %}
 
 {% block content %}
     <div class="container">
