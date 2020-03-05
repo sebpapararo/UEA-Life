@@ -290,14 +290,13 @@ def createPost():
 @app.route('/createReply', methods=['POST'])
 def createReply():
 
+    # Check user is logged in
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    # Generating post fields for DB
-
-    # Reply to the post with ID:
+    # Reply to the post with the ID:
     replyTo = request.form.get('postId', None)
         # Check this field is being sent
     if replyTo is None:
@@ -312,6 +311,7 @@ def createReply():
         flash('Mate, the post you are replying to does not exist!')
         return redirect('/dashboard')
 
+        # Extract ID from query
     postId = postExists[0]['id']
 
     # Content of the reply:
