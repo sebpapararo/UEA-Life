@@ -131,7 +131,7 @@ def login():
 def logout():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
-        flash('You can\'t logout if you weren\'t logged in, you fucking meathead!')
+        flash('You can\'t logout if you weren\'t logged in, you meathead!')
         return redirect('/')
 
     validSessions.removeSession(user_cookie)
@@ -227,8 +227,8 @@ def newPost():
     uid = validSessions.checkSession(user_cookie)
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
-    if query_db('SELECT verified FROM users WHERE id = "%s"' % user_id)[0].get('verified') == 1:
-        return render_template('/newPost.html', username=user_id, user=logged_in_as)
+    if query_db('SELECT verified FROM users WHERE id = "%s"' % uid)[0].get('verified') == 1:
+        return render_template('/newPost.html', username=uid, user=logged_in_as)
     else:
         flash('Behave - Verify account before posting')
         return redirect('/dashboard')
