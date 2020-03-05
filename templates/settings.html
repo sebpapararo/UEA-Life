@@ -1,7 +1,8 @@
 <!-- profile.html -->
 {% extends 'base.html' %}
 {% block title %}{{ super() }} Settings{%  endblock %}
-{% set active_page = "profile" %}
+{% set active_page = "accountSettings" %}
+{% block current_user %}{{ user }}{% endblock %}
 
 {% block content %}
   <div class="card mt-5">
