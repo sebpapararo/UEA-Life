@@ -162,10 +162,14 @@ def dashboard():
         flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> '
                      'to resend the verification email!'))
 
-    query = "SELECT * FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
+    # TODO(C): Check this actually works properly
+    query = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, profiles.Username  FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
     results = query_db(query)
 
-    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as)
+    query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id"
+    replies = query_db(query)
+
+    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as, replies=replies)
 
 
 # TODO: Add session checks
@@ -242,7 +246,6 @@ def createPost():
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    print(request.form)
     # username = request.form.get('username', None)
     cats = ['General', 'Finance', 'Accommodation', 'Student Union', 'Local Area', 'Travel']
     category = request.form.get('category', None)
@@ -282,6 +285,58 @@ def createPost():
             (posted_by, category, title, content, tod)
     query_db(query)
     get_db().commit()
+    return redirect('/dashboard')
+
+@app.route('/createReply', methods=['POST'])
+def createReply():
+
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
+    # Generating post fields for DB
+
+    # Reply to the post with ID:
+    replyTo = request.form.get('postId', None)
+        # Check this field is being sent
+    if replyTo is None:
+        flash('You have not sent a reply field mate!')
+        return redirect('/dashboard')
+
+        # Check this field is correct (post with the ID exists)
+    postExists = query_db('SELECT * FROM posts WHERE id="%s"' % replyTo)
+
+        # If no post with provided ID exists, throw error and redirect
+    if(len(postExists) != 1):
+        flash('Mate, the post you are replying to does not exist!')
+        return redirect('/dashboard')
+
+    postId = postExists[0]['id']
+
+    # Content of the reply:
+    replyContent = request.form.get('replyBody', None)
+
+    if replyContent is None:
+        flash('You have not sent any reply content mate!')
+        return redirect('/dashboard')
+
+    if (replyContent == ''):
+        flash('A reply cannot be empty matee!')
+        return redirect('/dashboard')
+
+    # Reply posted by user with ID:
+    postedBy = validSessions.checkSession(user_cookie)
+    # Time which user posted the reply:
+    postedOn = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
+
+    # Construct Insert Query
+    query = 'INSERT INTO replies (posted_on, posted_to, posted_by, content) VALUES("%s","%s","%s","%s");' % \
+            (postedOn, postId, postedBy, replyContent)
+    query_db(query)
+    get_db().commit()
+
+    flash('Reply has been created')
     return redirect('/dashboard')
 
 
