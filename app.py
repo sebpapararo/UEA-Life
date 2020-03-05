@@ -17,10 +17,10 @@ sslContext = ('server.crt', 'server.key')
 app.secret_key = os.urandom(64)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
-    MAIL_PORT = 465,
-    MAIL_USE_SSL = True,
-    MAIL_USERNAME = 'uealifedss@gmail.com',
-    MAIL_PASSWORD = '8pw9X$a%bHZkHz8&@ZeU',
+    MAIL_PORT=465,
+    MAIL_USE_SSL=True,
+    MAIL_USERNAME='uealifedss@gmail.com',
+    MAIL_PASSWORD='8pw9X$a%bHZkHz8&@ZeU',
 )
 mail = Mail(app)
 
@@ -66,12 +66,11 @@ def close_connection(exception):
 @app.route('/', methods=['GET'])
 def index():
 
-    # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    if validSessions.checkSession(userCookie) is not False:
+    # Is Authed_Guard, redirects to the login
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is not False:
         flash('You are already logged in you baboon!')
         return redirect('/dashboard')
-
 
     return render_template('/index.html', title="UEA Life | Home")
 
@@ -92,29 +91,30 @@ def login():
         if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
                 query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') == 1:
             # Check if the password is correct
-            retrievedSalt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
-            retrievedSalt = b64decode(retrievedSalt.encode())
-            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrievedSalt, request.form['password']):
+            retrieved_salt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
+            retrieved_salt = b64decode(retrieved_salt.encode())
+            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt, request.form['password']):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
-                    cookieId = os.urandom(64)
-                    cookieId = b64encode(cookieId)
-                    expiryDate = datetime.datetime.today() + datetime.timedelta(days=7)
-                    userId = query_db('SELECT id FROM users where email = "%s"' % email)[0].get('id')
-                    ipAddr = request.remote_addr
-                    cookieValue = [userId, expiryDate, ipAddr]
-                    validSessions.addSession(cookieId, cookieValue)
+                    cookie_id = os.urandom(64)
+                    cookie_id = b64encode(cookie_id)
+                    expiry_date = datetime.datetime.today() + datetime.timedelta(days=7)
+                    user_id = query_db('SELECT id FROM users where email = "%s"' % email)[0].get('id')
+                    ip_addr = request.remote_addr
+                    cookie_value = [user_id, expiry_date, ip_addr]
+                    validSessions.addSession(cookie_id, cookie_value)
 
-                    newLastActive = datetime.datetime.today()
-                    newLastActive = datetime.datetime.strftime(newLastActive, '%Y-%m-%d %H:%M')
+                    new_last_active = datetime.datetime.today()
+                    new_last_active = datetime.datetime.strftime(new_last_active, '%Y-%m-%d %H:%M')
                     uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
-                    query_db('UPDATE profiles SET last_active="%s" WHERE id="%s"' % (newLastActive, uid))
+                    query_db('UPDATE profiles SET last_active="%s" WHERE id="%s"' % (new_last_active, uid))
                     get_db().commit()
 
                     response = make_response(redirect('/dashboard'))
                     # TODO: 03/03/2020 change secure to True
-                    response.set_cookie('userSession', cookieId, samesite='strict', secure=False, httponly=True, expires=expiryDate)
+                    response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True,
+                                        expires=expiry_date)
 
                     flash('Successfully logged in as %s' % email)
                     return response
@@ -132,18 +132,18 @@ def login():
 @app.route('/logout')
 def logout():
 
-    userCookie = functions.getCookie()
-    if validSessions.checkSession(userCookie) is False:
-        flash('You can\'t logout if you weren\'t logged in, you fucking meathead!')
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
+        flash('You can\'t logout if you weren\'t logged in, you meat-head!')
         return redirect('/')
 
-    validSessions.removeSession(userCookie)
+    validSessions.removeSession(user_cookie)
 
-    cookieId = os.urandom(64)
-    cookieId = b64encode(cookieId)
+    cookie_id = os.urandom(64)
+    cookie_id = b64encode(cookie_id)
     response = make_response(redirect('/'))
     # TODO: 03/03/2020 change secure to True
-    response.set_cookie('userSession', cookieId, samesite='strict', secure=False, httponly=True, expires=0)
+    response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True, expires=0)
 
     flash('Successfully logged out!')
     return response
@@ -153,22 +153,23 @@ def logout():
 def dashboard():
 
     # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    if validSessions.checkSession(userCookie) is False:
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    uid = validSessions.checkSession(userCookie)
-    username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+    uid = validSessions.checkSession(user_cookie)
+    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
     verified = query_db('SELECT verified FROM users where id = "%s"' % uid)[0].get('verified')
     if verified == 0:
-        flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> to resend the verification email!'))
+        flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> '
+                     'to resend the verification email!'))
 
     query = "SELECT * FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
     results = query_db(query)
 
-    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=username)
+    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as)
 
 
 # TODO: Add session checks
@@ -176,13 +177,14 @@ def dashboard():
 def profile():
 
     # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    uid = validSessions.checkSession(userCookie)
-    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+    user_cookie = functions.getCookie()
 
-    if validSessions.checkSession(userCookie) is False:
+    if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
+
+    uid = validSessions.checkSession(user_cookie)
+    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
     # Gets the username from the URL, if one is not sent defaults to None
     username = request.args.get('username', None)
@@ -193,46 +195,47 @@ def profile():
         return redirect('/dashboard')
 
     # Gets the users profile
-    userProfile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
+    user_profile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
-    # When more than expected profiles are recieved, throw error.
-    if(len(userProfile) != 1):
+    # When more than expected profiles are received, throw error.
+    if(len(user_profile) != 1):
         flash('User Does Not Exist!')
         return redirect('/dashboard')
 
     # Get single profile
-    userProfile = userProfile[0]
+    user_profile = user_profile[0]
 
     # gets the users post
-    postCount = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % userProfile['id'])
+    post_count = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
     # TODO: hacky way of getting this, change if have time!
-    userProfile['postCount'] = postCount[0]['COUNT(*)']
+    user_profile['post_count'] = post_count[0]['COUNT(*)']
 
     # Get Date Joined
-    dateJoined = query_db('SELECT Created_on FROM users WHERE id = "%s";' % userProfile['id'])
-    userProfile['dateJoined'] = dateJoined[0]['created_on']
+    date_joined = query_db('SELECT Created_on FROM users WHERE id = "%s";' % user_profile['id'])
+    user_profile['date_joined'] = date_joined[0]['created_on']
 
     # Get the Content of the posts
-    posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % userProfile['id'])
+    posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
     # TODO: dont use [0]
-    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=userProfile, usersPosts=posts, user=logged_in_as)
+    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=user_profile,
+                           usersPosts=posts, user=logged_in_as)
 
 
 @app.route('/newPost', methods=['GET'])
 def newPost():
 
     # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    uid = validSessions.checkSession(userCookie)
-    username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+    user_cookie = functions.getCookie()
+    uid = validSessions.checkSession(user_cookie)
+    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
-    if validSessions.checkSession(userCookie) is False:
+    if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    return render_template('/newPost.html', title="UEA Life | New Post", user=username)
+    return render_template('/newPost.html', title="UEA Life | New Post", user=logged_in_as)
 
     # TODO: Seb is looking into cookies later - be aware this will break if not logged in properly
     user_id = validSessions.checkSession(user_cookie)
@@ -248,8 +251,8 @@ def newPost():
 def createPost():
 
     # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    if validSessions.checkSession(userCookie) is False:
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
@@ -260,8 +263,8 @@ def createPost():
     title = request.form.get('title', None)
     content = request.form.get('content', None)
 
-    userCookie = functions.getCookie()
-    posted_by = validSessions.checkSession(userCookie)
+    user_cookie = functions.getCookie()
+    posted_by = validSessions.checkSession(user_cookie)
 
     tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
 
@@ -296,29 +299,28 @@ def createPost():
     return redirect('/dashboard')
 
 
-
 @app.route('/accountSettings', methods=['GET', 'POST'])
 def accountSettings():
 
     # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    uid = validSessions.checkSession(userCookie)
+    user_cookie = functions.getCookie()
+    uid = validSessions.checkSession(user_cookie)
 
-    username = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
-    if validSessions.checkSession(userCookie) is False:
+    if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    return render_template('/settings.html', title="UEA Life | Profile Settings", user=username)
+    return render_template('/settings.html', title="UEA Life | Profile Settings", user=logged_in_as)
 
 
 @app.route('/accountSettings/updateUsername', methods=['POST'])
 def updateUsername():
 
     # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    if validSessions.checkSession(userCookie) is False:
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
@@ -327,8 +329,8 @@ def updateUsername():
     # TODO: Get these from the request
     username = request.form.get('username', None)
 
-    userCookie = functions.getCookie()
-    uid = validSessions.checkSession(userCookie) # TODO: get from request
+    user_cookie = functions.getCookie()
+    uid = validSessions.checkSession(user_cookie) # TODO: get from request
 
     # Check they have sent a field called username
     if username is None:
@@ -345,7 +347,8 @@ def updateUsername():
 
     # Check if username has already been taken
     if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
-    query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') != 0:
+            query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)')\
+            != 0:
         flash("Username already in use. Please pick another one.")
         return redirect('/accountSettings')
 
@@ -378,9 +381,9 @@ def register():
 def createAccount():
 
     # Is Authed Guard, redirects to the login
-    userCookie = functions.getCookie()
-    if validSessions.checkSession(userCookie) is not False:
-        flash('You are already logged in you baboon!')
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is not False:
+        flash('You are already logged in you donkey!')
         return redirect('/dashboard')
 
     # If none of the fields are emtpy
@@ -409,46 +412,46 @@ def createAccount():
                                 if functions.verifyCaptcha():
                                     # Generate random uuid to be the user id
                                     # TODO: 25/02/2020 Learn how this works again
-                                    userId = str(uuid.uuid4())
+                                    user_id = str(uuid.uuid4())
 
                                     # Get the current date and time
-                                    dateAndTime = datetime.datetime.today().strftime('%d/%m/%y %H:%M')
+                                    date_and_time = datetime.datetime.today().strftime('%d/%m/%y %H:%M')
 
                                     # Create the salt and pass it into the hashing algorithm with the password
-                                    userSalt = functions.generateSalt()
+                                    user_salt = functions.generateSalt()
 
-                                    hashedPassword = functions.generateHashedPass(userSalt, request.form['password'])
-                                    userSalt = b64encode(userSalt)
+                                    hashed_password = functions.generateHashedPass(user_salt, request.form['password'])
+                                    user_salt = b64encode(user_salt)
 
                                     # Compose the queries for adding a new user to the database
-                                    userQuery = 'INSERT INTO users(id, created_on, password, salt, email) VALUES ("%s", "%s", "%s", "%s", "%s")' \
-                                                % (userId, dateAndTime, hashedPassword, userSalt.decode('utf-8'), email)
-                                    profileQuery = 'INSERT INTO profiles(id, username, last_active, level, school) VALUES ("%s", "%s", "%s", "%s", "%s")' \
-                                                   % (userId, username, dateAndTime, level, school)
+                                    user_query = 'INSERT INTO users(id, created_on, password, salt, email) VALUES ("%s", "%s", "%s", "%s", "%s")' \
+                                                % (user_id, date_and_time, hashed_password, user_salt.decode('utf-8'), email)
+                                    profile_query = 'INSERT INTO profiles(id, username, last_active, level, school) VALUES ("%s", "%s", "%s", "%s", "%s")' \
+                                                   % (user_id, username, date_and_time, level, school)
 
                                     # Execute the queries and commit the changes
-                                    query_db(userQuery)
-                                    query_db(profileQuery)
+                                    query_db(user_query)
+                                    query_db(profile_query)
                                     get_db().commit()
 
                                     # Create random key for email verification
                                     key = b64encode(os.urandom(32))
-                                    hashedKey = functions.generateHashedKey(key)
+                                    hashed_key = functions.generateHashedKey(key)
                                     timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
                                     timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
 
-                                    verifyEmailQuery = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (hashedKey, userId, timestamp)
-                                    query_db(verifyEmailQuery)
+                                    verify_email_query = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (hashed_key, user_id, timestamp)
+                                    query_db(verify_email_query)
                                     get_db().commit()
 
                                     # send an email with a link to verify_email page with the id given
                                     # TODO: 03/03/2020 change link to https before submitting
-                                    link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), userId)
+                                    link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), user_id)
                                     msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
                                                   recipients=[email])
-                                    messageBody = 'Hi %s,\n Please click the following link to verify your email:\n %s\n\nNotes: ' \
+                                    message_body = 'Hi %s,\n Please click the following link to verify your email:\n %s\n\nNotes: ' \
                                                   'This email expires 15 minutes after being requested.' % (username, link)
-                                    msg.body = messageBody
+                                    msg.body = message_body
                                     mail.send(msg)
 
                                     flash('Account has been created, please login!')

@@ -17,7 +17,7 @@
         {% endblock %}
     </title>
 
-{#    <link rel="shortcut icon" href="favicon.png" type="image/icon">#}
+    {#    <link rel="shortcut icon" href="favicon.png" type="image/icon">#}
 
 </head>
 <body>
@@ -36,7 +36,10 @@
             <div class="collapse navbar-collapse" id="navbarText">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="/dashboard">Dashboard<span class="sr-only">(current)</span></a>
+                        <a class="nav-link" href="/dashboard">Dashboard</a>
+                    </li>
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/newPost">Create Post</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="/accountSettings">Account Settings</a>
@@ -57,10 +60,11 @@
                                     {% endblock %}
                                 </span>
                             </div>
-                            <input name="username" class="form-control mr-sm-0" type="text" placeholder="Find Friends..."
+                            <input name="username" class="form-control mr-sm-0" type="text"
+                                   placeholder="Find Friends..."
                                    aria-label="Search" aria-describedby="basic-addon2">
                             <div class="input-group-append">
-                                <button class="btn btn-outline-success my-sm-0" type="submit" >Search</button>
+                                <button class="btn btn-outline-success my-sm-0" type="submit">Search</button>
                             </div>
                         </div>
 
