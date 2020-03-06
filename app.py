@@ -169,7 +169,9 @@ def dashboard():
     query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id"
     replies = query_db(query)
 
-    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as, replies=replies)
+    script = '<script>alert("oh dear this aint good!")</script>'
+    script = functions.sanitiseInputs(script)
+    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as, replies=replies, testScript = script)
 
 
 # TODO: Add session checks
@@ -303,6 +305,8 @@ def createReply():
         flash('You have not sent a reply field mate!')
         return redirect('/dashboard')
 
+    replyTo = functions.sanitiseInputs(replyTo)
+
         # Check this field is correct (post with the ID exists)
     postExists = query_db('SELECT * FROM posts WHERE id="%s"' % replyTo)
 
@@ -324,6 +328,8 @@ def createReply():
     if (replyContent == ''):
         flash('A reply cannot be empty matee!')
         return redirect('/dashboard')
+
+    replyContent = functions.sanitiseInputs(replyContent)
 
     # Reply posted by user with ID:
     postedBy = validSessions.checkSession(user_cookie)
