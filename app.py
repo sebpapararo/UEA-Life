@@ -252,7 +252,6 @@ def createPost():
     title = request.form.get('title', None)
     content = request.form.get('content', None)
 
-    user_cookie = functions.getCookie()
     posted_by = validSessions.checkSession(user_cookie)
 
     tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
@@ -454,6 +453,58 @@ def updateEmail():
     flash('Email updated successfully!')
     return redirect('/accountSettings')
 
+
+@app.route('/accountSettings/updatePassword', methods=['POST'])
+def updatePassword():
+    # Is Authed Guard, redirects to the login
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+
+    currentPassword = request.form.get('password', None)
+    newPassword = request.form.get('newPassword', None)
+    newPasswordCheck = request.form.get('newPasswordCheck', None)
+
+    uid = validSessions.checkSession(user_cookie) # TODO: get from request
+
+    # Check they have sent a field called password
+    if currentPassword is None or currentPassword == '':
+        flash('Email field not sent mate')
+        return redirect('/accountSettings')
+
+    if newPassword != newPasswordCheck:
+        flash('Passwords did not match!')
+        return redirect('/accountSettings')
+
+    # Verify the email is in the correct format using a regular expression
+    if not functions.validatePassword(newPassword):
+        flash('Password was not valid!')
+        return redirect('/accountSettings')
+
+    # Make sure current password is correct
+    userSalt = query_db('SELECT salt FROM users WHERE id = "%s"' % uid)[0].get('salt')
+    userSalt = b64decode(userSalt.encode())
+    if functions.generateHashedPass(userSalt, currentPassword) != query_db('SELECT password FROM users WHERE id = "%s"' % uid)[0].get('password'):
+        flash('Current password was incorrect!')
+        return redirect('/accountSettings')
+
+    if currentPassword == newPassword:
+        flash('Your new password was the same as the old one you melt!')
+        return redirect('/accountSettings')
+
+    newSalt = functions.generateSalt()
+    newHashedPass = functions.generateHashedPass(newSalt, newPassword)
+    newSalt = b64encode(newSalt)
+
+    # Update requesting users email to the supplied
+    query_db('UPDATE users SET password="%s", salt="%s" WHERE id="%s"' % (newHashedPass, newSalt.decode(), uid))
+    get_db().commit()
+
+    flash('Password updated successfully!')
+    return redirect('/accountSettings')
+
+
 @app.route('/forgotPassword', methods=['GET', 'POST'])
 def forgotPassword():
     # Is Authed Guard, redirects to the login
@@ -568,11 +619,10 @@ def register():
 def delete_account():
 
     user_cookie = functions.getCookie()
-    uid = validSessions.checkSession(user_cookie)
-
     if validSessions.checkSession(user_cookie) is False:
         flash('Really?! You can\'t delete an account your not logged in to!')
         return redirect('/')
+    uid = validSessions.checkSession(user_cookie)
 
     if request.form['verifyEmail'] is not None:
 
@@ -588,6 +638,10 @@ def delete_account():
                 update_query = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
                 query_db(update_query)
                 delete_query = 'DELETE FROM users WHERE id = "%s";' % uid
+                # TODO: 06/03/2020 remove from profiles
+                # TODO: 06/03/2020 update the replies table to deleted user
+                # TODO: 06/03/2020  delete from forgotpassword and verifyemail tables
+
                 query_db(delete_query)
                 get_db().commit()
 

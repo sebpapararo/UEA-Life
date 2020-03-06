@@ -6,70 +6,120 @@
 
 {% block content %}
     <div class="card mt-2">
-        <div class="jumbotron jumbotron-fluid">
-            <div class="container">
-                <h2 class="display-4">{{ user }}'s Account Settings</h2>
-            </div>
-        </div>
-
-
-        {#        <h5 class="card-title">Account Settings</h5>#}
+    <div class="jumbotron jumbotron-fluid">
         <div class="container">
-            {% for message in get_flashed_messages() %}
-                <div class="alert alert-warning">
-                    {{ message }}
+            <h2 class="display-4">{{ user }}'s Account Settings</h2>
+        </div>
+    </div>
+
+
+    <div class="container">
+        {% for message in get_flashed_messages() %}
+            <div class="alert alert-warning">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="accordion m-2" id="accordionSettings">
+        {# TODO: Line 39, 56 and 98 - Need to discus the exampleInputEmail1#}
+
+        {# GENERAL SETTINGS CARD #}
+        <div class="card">
+            <div class="card-header" id="generalSettings">
+                <h5 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseGeneral"
+                            aria-expanded="true" aria-controls="collapseGeneral">
+                        General Account Settings
+                    </button>
+                </h5>
+            </div>
+
+            <div id="collapseGeneral" class="collapse show" aria-labelledby="generalSettings"
+                 data-parent="#accordionSettings">
+                <div class="card-body">
+                    <div class="row pl-4 pb-2 justify-content-center">
+                        <div class="col">
+                            <form action="/accountSettings/updateUsername" method="POST" role="change-username"
+                                  id="update-username">
+                                <label for="exampleInputEmail1">Username</label>
+                                <div class="input-group">
+                                    <input disabled name="username" id="username" type="text" class="form-control"
+                                           placeholder="Your username here:" aria-label="Recipient's username"
+                                           aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button id="button-username" class="btn btn-outline-secondary" type="button"
+                                                onclick="profileUndisable('username')">Change
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                            <small id="emailHelp" class="form-text text-muted">
+                                We'll never share your private details with anyone else.
+                            </small>
+
+                            <form action="/accountSettings/updateEmail" method="POST" role="change-email" id="update-email">
+                                <label for="exampleInputEmail1">Email address</label>
+                                <div class="input-group">
+                                    <input disabled id="email" name="email" type="text" class="form-control" placeholder="Your email here:"
+                                           aria-label="Recipient's email" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button id="button-email" class="btn btn-outline-secondary" type="button"
+                                                onclick="profileUndisable('email')">
+                                            Change
+                                        </button>
+                                        <!-- /input-group-append -->
+                                    </div>
+                                    <!-- /input-group -->
+                                </div>
+                            </form>
+                            <small id="emailHelp" class="form-text text-muted">
+                                We'll never share your email with anyone else.
+                            </small>
+                            <!-- /col -->
+                        </div>
+                        <!-- /row pl-4 pb-2 justify-content-center -->
+                    </div>
+                    <!-- /card-body -->
                 </div>
-            {% endfor %}
-            <!-- /container -->
+                <!-- /collapse -->
+            </div>
+            <!-- /card -->
         </div>
 
-        <div class="accordion m-2" id="accordionSettings">
-            {# TODO: Line 39, 56 and 98 - Need to discus the exampleInputEmail1#}
+        {# PASSWORD SETTINGS CARD #}
+        <div class="card">
+            <div class="card-header" id="passwordSettings">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                            data-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
+                        Password Settings
+                    </button>
+                </h5>
+                <!-- /card-header -->
+            </div>
 
-            {# GENERAL SETTINGS CARD #}
-            <div class="card">
-                <div class="card-header" id="generalSettings">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseGeneral"
-                                aria-expanded="true" aria-controls="collapseGeneral">
-                            General Account Settings
-                        </button>
-                    </h5>
-                    <!-- /card-header -->
-                </div>
-
-                <div id="collapseGeneral" class="collapse show" aria-labelledby="generalSettings"
-                     data-parent="#accordionSettings">
-                    <div class="card-body">
-                        <div class="row pl-4 pb-2 justify-content-center">
-                            <div class="col">
-                                <form action="/accountSettings/updateUsername" method="POST" role="change-username"
-                                      id="update-username">
-                                    <label for="exampleInputEmail1">Username</label>
+            <div id="collapsePassword" class="collapse" aria-labelledby="passwordSettings"
+                 data-parent="#accordionSettings">
+                <div class="card-body">
+                    <div class="row pl-4 pb-2 justify-content-center">
+                        <div class="col">
+                            <label for="exampleInputEmail1">Password</label>
+                            <div class="input-group">
+                                <form action="/accountSettings/updatePassword" method="POST" role="change-password" id="update-password">
                                     <div class="input-group">
-                                        <input disabled name="username" id="username" type="text" class="form-control"
-                                               placeholder="Your username here:" aria-label="Recipient's username"
-                                               aria-describedby="basic-addon2">
+                                        <label for="exampleInputPassword">Current Password</label>
+                                        <input id="password" name="password" type="password" class="form-control" placeholder="Current password here:"
+                                               aria-label="Recipient's password" aria-describedby="basic-addon2">
+                                        <label for="exampleInputPassword">New password</label>
+                                        <input id="newPassword" name="newPassword" type="password" class="form-control" placeholder="New password here:"
+                                               aria-label="Recipient's password" aria-describedby="basic-addon2">
+                                        <label for="exampleInputPassword">Confirm new password</label>
+                                        <input id="newPasswordCheck" name="newPasswordCheck" type="password" class="form-control" placeholder="New password:"
+                                               aria-label="Recipient's password" aria-describedby="basic-addon2">
                                         <div class="input-group-append">
-                                            <button id="button-username" class="btn btn-outline-secondary" type="button"
-                                                    onclick="profileUndisable('username')">Change
-                                            </button>
-                                            <!-- /input-group-append -->
-                                        </div>
-                                        <!-- /input-group -->
-                                    </div>
-                                </form>
-                                <small id="emailHelp" class="form-text text-muted">
-                                    We'll never share your private details with anyone else.
-                                </small>
-
-                                <form action="/accountSettings/updateEmail" method="POST" role="change-email" id="update-email">
-                                    <label for="exampleInputEmail1">Email address</label>
-                                    <div class="input-group">
-                                        <input disabled id="email" name="email" type="text" class="form-control" placeholder="Your email here:" aria-label="Recipient's email" aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button id="button-email" class="btn btn-outline-secondary" type="button"
-                                                    onclick="profileUndisable('email')">
+                                            <button id="button-password" class="btn btn-outline-secondary" type="button"
+                                                    onclick="profileUndisable('password')">
                                                 Change
                                             </button>
                                             <!-- /input-group-append -->
@@ -77,50 +127,6 @@
                                         <!-- /input-group -->
                                     </div>
                                 </form>
-                                <small id="emailHelp" class="form-text text-muted">
-                                    We'll never share your email with anyone else.
-                                </small>
-                                <!-- /col -->
-                            </div>
-                            <!-- /row pl-4 pb-2 justify-content-center -->
-                        </div>
-                        <!-- /card-body -->
-                    </div>
-                    <!-- /collapse -->
-                </div>
-                <!-- /card -->
-            </div>
-
-            {# PASSWORD SETTINGS CARD #}
-            <div class="card">
-                <div class="card-header" id="passwordSettings">
-                    <h5 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                                data-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
-                            Password Settings
-                        </button>
-                    </h5>
-                    <!-- /card-header -->
-                </div>
-
-                <div id="collapsePassword" class="collapse" aria-labelledby="passwordSettings"
-                     data-parent="#accordionSettings">
-                    <div class="card-body">
-                        <div class="row pl-4 pb-2 justify-content-center">
-                            <div class="col">
-                                <label for="exampleInputEmail1">Password</label>
-                                <div class="input-group">
-                                    <input disabled id="password" type="text" class="form-control"
-                                           placeholder="* * * * * * * *"
-                                           aria-label="Recipient's username" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button class="btn btn-outline-secondary" type="button"
-                                                onclick="profileUndisable('password')">Change
-                                        </button>
-                                        <!-- /input-group-append -->
-                                    </div>
-                                    <!-- /input-group -->
-                                </div>
                                 <small id="emailHelp" class="form-text text-muted">
                                     We'll never share your personal details with anyone else.
                                 </small>
