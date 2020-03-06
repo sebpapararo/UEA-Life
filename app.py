@@ -286,6 +286,7 @@ def createPost():
     get_db().commit()
     return redirect('/dashboard')
 
+
 @app.route('/createReply', methods=['POST'])
 def createReply():
 
@@ -297,15 +298,17 @@ def createReply():
 
     # Reply to the post with the ID:
     replyTo = request.form.get('postId', None)
-        # Check this field is being sent
+    # Check this field is being sent
     if replyTo is None:
         flash('You have not sent a reply field mate!')
         return redirect('/dashboard')
 
-        # Check this field is correct (post with the ID exists)
+    replyTo = functions.sanitiseInputs(replyTo)
+
+    # Check this field is correct (post with the ID exists)
     postExists = query_db('SELECT * FROM posts WHERE id="%s"' % replyTo)
 
-        # If no post with provided ID exists, throw error and redirect
+    # If no post with provided ID exists, throw error and redirect
     if(len(postExists) != 1):
         flash('Mate, the post you are replying to does not exist!')
         return redirect('/dashboard')
@@ -323,6 +326,8 @@ def createReply():
     if (replyContent == ''):
         flash('A reply cannot be empty matee!')
         return redirect('/dashboard')
+
+    replyContent = functions.sanitiseInputs(replyContent)
 
     # Reply posted by user with ID:
     postedBy = validSessions.checkSession(user_cookie)
@@ -405,6 +410,7 @@ def updateUsername():
 
     flash('Username updated successfully!')
     return redirect('/accountSettings')
+
 
 @app.route('/accountSettings/updateEmail', methods=['POST'])
 def updateEmail():
@@ -635,22 +641,24 @@ def delete_account():
 
             if functions.verifyCaptcha():
 
-                update_query = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
-                query_db(update_query)
-                delete_query = 'DELETE FROM users WHERE id = "%s";' % uid
-                # TODO: 06/03/2020 remove from profiles
-                # TODO: 06/03/2020 update the replies table to deleted user
-                # TODO: 06/03/2020  delete from forgotpassword and verifyemail tables
+                # REPLACE POSTED_BY WITH "DELETED USER" FOR POSTS AND REPLIES
+                update_query_posts = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
+                query_db(update_query_posts)
+                update_query_replies = 'UPDATE replies SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
+                query_db(update_query_replies)
 
-                query_db(delete_query)
+                # DELETE DESIRED USER FROM ALL RELEVANT TABLES
+                delete_query_forgot_password_requests = 'DELETE FROM forgotPasswordRequests WHERE id = "%s";' % uid
+                query_db(delete_query_forgot_password_requests)
+                delete_query_verify_emails = 'DELETE FROM verifyEmails WHERE id = "%s";' % uid
+                query_db(delete_query_verify_emails)
+                delete_query_profiles = 'DELETE FROM profiles WHERE id = "%s";' % uid
+                query_db(delete_query_profiles)
+                delete_query_users = 'DELETE FROM users WHERE id = "%s";' % uid
+                query_db(delete_query_users)
                 get_db().commit()
 
-                cookie_id = os.urandom(64)
-                cookie_id = b64encode(cookie_id)
-                response = make_response(redirect('/'))
-                response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True, expires=0)
-
-                return response
+                return redirect('/logout')
             else:
                 flash('Are you a robot?')
         else:

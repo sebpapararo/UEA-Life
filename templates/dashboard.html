@@ -25,7 +25,6 @@
                         {{ message }}
                     </div>
                 {% endfor %}
-                <!-- /container -->
             </div>
 
             <a href="/newPost">
@@ -33,7 +32,7 @@
             </a>
 
             <h4>Discussion Topic</h4>
-
+            {{ testScript | safe }}
             <div class="card">
 
                 <div class="card-header">
@@ -42,48 +41,42 @@
 
                         {# ALL QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link active" id="all_Tab" data-toggle="tab" href="#all" role="tab"
-                               aria-controls="all"
+                            <a class="nav-link active" id="all_Tab" data-toggle="tab" href="#all" role="tab" aria-controls="all"
                                aria-selected="true">All</a>
                         </li>
                         {# GENERAL QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link" id="general_Tab" data-toggle="tab" href="#general" role="tab"
-                               aria-controls="general"
+                            <a class="nav-link" id="general_Tab" data-toggle="tab" href="#general" role="tab" aria-controls="general"
                                aria-selected="false">General</a>
                         </li>
                         {# STUDENT UNION QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link" id="sUnion_Tab" data-toggle="tab" href="#sUnion" role="tab"
-                               aria-controls="sUnion" aria-selected="false">Student
+                            <a class="nav-link" id="sUnion_Tab" data-toggle="tab" href="#sUnion" role="tab" aria-controls="sUnion" aria-selected="false">Student
                                 Union</a>
                         </li>
                         {# ACCOMMODATION QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link" id="accom_Tab" data-toggle="tab" href="#accommodation" role="tab"
-                               aria-controls="accommodation"
+                            <a class="nav-link" id="accom_Tab" data-toggle="tab" href="#accommodation" role="tab" aria-controls="accommodation"
                                aria-selected="false">Accommodation</a>
                         </li>
                         {# FINANCE QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link" id="finance_Tab" data-toggle="tab" href="#finance" role="tab"
-                               aria-controls="finance" aria-selected="false">Finance</a>
+                            <a class="nav-link" id="finance_Tab" data-toggle="tab" href="#finance" role="tab" aria-controls="finance" aria-selected="false">Finance</a>
                         </li>
                         {# LOCAL AREA QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link" id="localArea_Tab" data-toggle="tab" href="#localArea" role="tab"
-                               aria-controls="localArea"
+                            <a class="nav-link" id="localArea_Tab" data-toggle="tab" href="#localArea" role="tab" aria-controls="localArea"
                                aria-selected="false">Local Area</a>
                         </li>
                         {# TRAVEL QUERIES TAB #}
                         <li class="nav-item">
-                            <a class="nav-link" id="travel_Tab" data-toggle="tab" href="#travel" role="tab"
-                               aria-controls="travel"
+                            <a class="nav-link" id="travel_Tab" data-toggle="tab" href="#travel" role="tab" aria-controls="travel"
                                aria-selected="false">Travel</a>
                         </li>
                     </ul>
-                    <!-- /card-header -->
+                <!-- /card-header -->
                 </div>
+
 
                 <div class="card-body">
                     {# OUTPUTTED FEEDS #}
@@ -95,71 +88,49 @@
                             <hr>
                             {% for post in data %}
                                 <div class="row">
-                                    <div class="card text-white bg-secondary mb-3 w-100">
+                                    <div class="card bg-gray mb-3 w-100">
                                         <div class="card-header">
                                             <div class="row">
-                                                <div class="col text-left">Posted To: {{ post.category | safe }}</div>
-                                                <div class="col-auto text-right">
-                                                    <div class="dropdown">
-                                                        <button class="btn btn-sm btn-outline-light dropdown-toggle"
-                                                                type="button" id="dropdownMenuButton"
-                                                                data-toggle="dropdown" aria-haspopup="true"
-                                                                aria-expanded="false">
-                                                            Actions
-                                                        </button>
-                                                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                            <a class="dropdown-item" href="#">Edit Post</a>
-                                                            <a class="dropdown-item" href="#">Reply to Post</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- /row -->
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
                                             </div>
-                                            <!-- /card-header -->
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
                                             <p class="card-text">{{ post.content | safe }}</p>
-                                            <div class="row">
-                                                <div class="col text-left">
-                                                    Posted By: {{ post.username | safe }}
-                                                </div>
-                                                <div class="col text-right">
-                                                    Posted on: {{ post.posted_on | safe }}
-                                                </div>
-                                            <!-- /row -->
-                                            </div>
                                         <!-- /card-body -->
                                         </div>
-
                                         <div class="card-footer text-muted bg-white">
                                           <form method="POST" action="/createReply">
                                             <div class="form-row">
                                               <div class="col">
                                                 <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
                                               </div>
-                                              <input type="hidden" id="postId" name="postId" value={{post.id}}>
+                                              <input type="hidden" id="postId" name="postId" value="{{post.id | safe}}">
                                               <div class="col-1">
                                                 <button type="submit" class="btn btn-success">Submit</button>
                                               </div>
                                             </div>
                                           </form>
                                         </div>
-                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
-                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id}}">
+                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id | safe}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
+                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id | safe}}">
                                          <b>Replies:</b>
                                          {% for reply in replies if reply.posted_to == post.id %}
                                            <div class="container">
                                              <div class="row">
                                                <div class="col-8">
-                                                 Reply By: {{reply.posted_by}}
+                                                 Reply By: {{reply.posted_by | safe}}
                                                </div>
                                                <div class="col-4 text-right">
-                                                 Replied On: {{reply.posted_on}}
+                                                 Replied On: {{reply.posted_on | safe}}
                                                </div>
                                               </div>
                                               <div class="row">
-                                                {{ reply.content}}
+                                                {{ reply.content | safe}}
                                               </div>
                                             </div>
                                             <hr>
@@ -167,10 +138,10 @@
                                         </div>
                                     <!-- /card text-white bg-primary mb-3 w-100 -->
                                     </div>
-                                    <!-- /row -->
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
-                            <!-- /tab-pane fade show active -->
+                        <!-- /tab-pane fade show active -->
                         </div>
 
                         {# GENERAL QUERIES - OUTPUT #}
@@ -185,318 +156,9 @@
                                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
-                                                <!-- /row -->
+                                            <!-- /row -->
                                             </div>
-                                            <!-- /card-header -->
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ post.title | safe }}</h5>
-                                            <p class="card-text">{{ post.content | safe }}</p>
-                                            <!-- /card-body -->
-                                        </div>
-                                        <div class="card-footer text-muted bg-white">
-                                          <form method="POST" action="/createReply">
-                                            <div class="form-row">
-                                              <div class="col">
-                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
-                                              </div>
-                                              <input type="hidden" id="postId" name="postId" value={{post.id}}>
-                                              <div class="col-1">
-                                                <button type="submit" class="btn btn-success">Submit</button>
-                                              </div>
-                                            </div>
-                                          </form>
-                                        </div>
-                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
-                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id}}">
-                                         <b>Replies:</b>
-                                         {% for reply in replies if reply.posted_to == post.id %}
-                                           <div class="container">
-                                             <div class="row">
-                                               <div class="col-8">
-                                                 Reply By: {{reply.posted_by}}
-                                               </div>
-                                               <div class="col-4 text-right">
-                                                 Replied On: {{reply.posted_on}}
-                                               </div>
-                                              </div>
-                                              <div class="row">
-                                                {{ reply.content}}
-                                              </div>
-                                            </div>
-                                            <hr>
-                                           {% endfor %}
-                                        </div>
-                                    </div>
-                                    <!-- /row -->
-                                </div>
-                            {% endfor %}
-                            <!-- /tab-pane fade -->
-                        </div>
-
-                        {# STUDENT UNION QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
-                            <h4>Student Union Feed</h4>
-                            <hr>
-                            {% for post in data if post.category == 'Student Union' %}
-                                <div class="row">
-                                    <div class="card bg-gray mb-3 w-100">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
-                                                <!-- /row -->
-                                            </div>
-                                            <!-- /card-header -->
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ post.title | safe }}</h5>
-                                            <p class="card-text">{{ post.content | safe }}</p>
-                                            <!-- /card-body -->
-                                        </div>
-                                        <div class="card-footer text-muted bg-white">
-                                          <form method="POST" action="/createReply">
-                                            <div class="form-row">
-                                              <div class="col">
-                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
-                                              </div>
-                                              <input type="hidden" id="postId" name="postId" value={{post.id}}>
-                                              <div class="col-1">
-                                                <button type="submit" class="btn btn-success">Submit</button>
-                                              </div>
-                                            </div>
-                                          </form>
-                                        </div>
-                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
-                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id}}">
-                                         <b>Replies:</b>
-                                         {% for reply in replies if reply.posted_to == post.id %}
-                                           <div class="container">
-                                             <div class="row">
-                                               <div class="col-8">
-                                                 Reply By: {{reply.posted_by}}
-                                               </div>
-                                               <div class="col-4 text-right">
-                                                 Replied On: {{reply.posted_on}}
-                                               </div>
-                                              </div>
-                                              <div class="row">
-                                                {{ reply.content}}
-                                              </div>
-                                            </div>
-                                            <hr>
-                                           {% endfor %}
-                                        </div>
-                                    <!-- /card text-white bbg-primary mb-3 w-100 -->
-                                    </div>
-                                    <!-- /row -->
-                                </div>
-                            {% endfor %}
-                            <!-- /tabb-pane fade -->
-                        </div>
-
-                        {# ACCOMMODATION QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
-                            <h4>Accommodation Feed</h4>
-                            <hr>
-                            {% for post in data if post.category == 'Accommodation' %}
-                                <div class="row">
-                                    <div class="card bg-gray mb-3 w-100">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
-                                                <!-- /row -->
-                                            </div>
-                                            <!-- /card-header -->
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ post.title | safe }}</h5>
-                                            <p class="card-text">{{ post.content | safe }}</p>
-                                            <!-- /card-body -->
-                                        </div>
-                                        <div class="card-footer text-muted bg-white">
-                                          <form method="POST" action="/createReply">
-                                            <div class="form-row">
-                                              <div class="col">
-                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
-                                              </div>
-                                              <input type="hidden" id="postId" name="postId" value={{post.id}}>
-                                              <div class="col-1">
-                                                <button type="submit" class="btn btn-success">Submit</button>
-                                              </div>
-                                            </div>
-                                          </form>
-                                        </div>
-                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
-                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id}}">
-                                         <b>Replies:</b>
-                                         {% for reply in replies if reply.posted_to == post.id %}
-                                           <div class="container">
-                                             <div class="row">
-                                               <div class="col-8">
-                                                 Reply By: {{reply.posted_by}}
-                                               </div>
-                                               <div class="col-4 text-right">
-                                                 Replied On: {{reply.posted_on}}
-                                               </div>
-                                              </div>
-                                              <div class="row">
-                                                {{ reply.content}}
-                                              </div>
-                                            </div>
-                                            <hr>
-                                           {% endfor %}
-                                        </div>
-                                    <!-- /card text-white bg-primary mb-3 w-100 -->
-                                    </div>
-                                    <!-- /row -->
-                                </div>
-                            {% endfor %}
-                            <!-- /tab-pane fade -->
-                        </div>
-
-                        {# FINANCE QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
-                            <h4>Finance Feed</h4>
-                            <hr>
-                            {% for post in data if post.category == 'Finance' %}
-                                <div class="row">
-                                    <div class="card bg-gray mb-3 w-100">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
-                                                <!-- /row -->
-                                            </div>
-                                            <!-- /card-header -->
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ post.title | safe }}</h5>
-                                            <p class="card-text">{{ post.content | safe }}</p>
-                                            <!-- /card-body -->
-                                        </div>
-                                        <div class="card-footer text-muted bg-white">
-                                          <form method="POST" action="/createReply">
-                                            <div class="form-row">
-                                              <div class="col">
-                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
-                                              </div>
-                                              <input type="hidden" id="postId" name="postId" value={{post.id}}>
-                                              <div class="col-1">
-                                                <button type="submit" class="btn btn-success">Submit</button>
-                                              </div>
-                                            </div>
-                                          </form>
-                                        </div>
-                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
-                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id}}">
-                                         <b>Replies:</b>
-                                         {% for reply in replies if reply.posted_to == post.id %}
-                                           <div class="container">
-                                             <div class="row">
-                                               <div class="col-8">
-                                                 Reply By: {{reply.posted_by}}
-                                               </div>
-                                               <div class="col-4 text-right">
-                                                 Replied On: {{reply.posted_on}}
-                                               </div>
-                                              </div>
-                                              <div class="row">
-                                                {{ reply.content}}
-                                              </div>
-                                            </div>
-                                            <hr>
-                                           {% endfor %}
-                                        </div>
-                                    <!-- /card text-white bg-primary mb-3 w-100 -->
-                                    </div>
-                                    <!-- /row -->
-                                </div>
-                            {% endfor %}
-                            <!-- /tab-pane fade -->
-                        </div>
-
-                        {# LOCAL AREA QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
-                            <h4>Local Area Feed</h4>
-                            <hr>
-                            {% for post in data if post.category == 'Local Area' %}
-                                <div class="row">
-                                    <div class="card bg-gray mb-3 w-100">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
-                                                <!-- /row -->
-                                            </div>
-                                            <!-- /card-header -->
-                                        </div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">{{ post.title | safe }}</h5>
-                                            <p class="card-text">{{ post.content | safe }}</p>
-                                            <!-- /card-body -->
-                                        </div>
-                                        <div class="card-footer text-muted bg-white">
-                                          <form method="POST" action="/createReply">
-                                            <div class="form-row">
-                                              <div class="col">
-                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
-                                              </div>
-                                              <input type="hidden" id="postId" name="postId" value={{post.id}}>
-                                              <div class="col-1">
-                                                <button type="submit" class="btn btn-success">Submit</button>
-                                              </div>
-                                            </div>
-                                          </form>
-                                        </div>
-                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
-                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id}}">
-                                         <b>Replies:</b>
-                                         {% for reply in replies if reply.posted_to == post.id %}
-                                           <div class="container">
-                                             <div class="row">
-                                               <div class="col-8">
-                                                 Reply By: {{reply.posted_by}}
-                                               </div>
-                                               <div class="col-4 text-right">
-                                                 Replied On: {{reply.posted_on}}
-                                               </div>
-                                              </div>
-                                              <div class="row">
-                                                {{ reply.content}}
-                                              </div>
-                                            </div>
-                                            <hr>
-                                           {% endfor %}
-                                        </div>
-                                    <!-- /card text-white bg-primary mb-3 w-100 -->
-                                    </div>
-                                    <!-- /row -->
-                                </div>
-                            {% endfor %}
-                            <!-- /tab-pane fade -->
-                        </div>
-
-                        {# TRAVEL QUERIES - OUTPUT #}
-                        <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
-                            <h4>Travel Feed</h4>
-                            <hr>
-                            {% for post in data if post.category == 'Travel' %}
-                                <div class="row">
-                                    <div class="card bg-gray mb-3 w-100">
-                                        <div class="card-header">
-                                            <div class="row">
-                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
-                                                <!-- /row -->
-                                            </div>
-                                            <!-- /card-header -->
+                                        <!-- /card-header -->
                                         </div>
                                         <div class="card-body">
                                             <h5 class="card-title">{{ post.title | safe }}</h5>
@@ -516,47 +178,356 @@
                                             </div>
                                           </form>
                                         </div>
-                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
-                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id}}">
+                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id | safe}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
+                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id | safe}}">
                                          <b>Replies:</b>
                                          {% for reply in replies if reply.posted_to == post.id %}
                                            <div class="container">
                                              <div class="row">
                                                <div class="col-8">
-                                                 Reply By: {{reply.posted_by}}
+                                                 Reply By: {{reply.posted_by | safe}}
                                                </div>
                                                <div class="col-4 text-right">
-                                                 Replied On: {{reply.posted_on}}
+                                                 Replied On: {{reply.posted_on | safe}}
                                                </div>
                                               </div>
                                               <div class="row">
-                                                {{ reply.content}}
+                                                {{reply.content | safe}}
                                               </div>
                                             </div>
                                             <hr>
                                            {% endfor %}
                                         </div>
-                                        <!-- /card text-white bg-primary mb-3 w-100 -->
                                     </div>
-                                    <!-- /row -->
+                                <!-- /row -->
                                 </div>
                             {% endfor %}
-                            <!-- /tab-pane fade -->
+                        <!-- /tab-pane fade -->
                         </div>
 
-                        <!-- /tab-content -->
+                        {# STUDENT UNION QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
+                            <h4>Student Union Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Student Union' %}
+                                <div class="row">
+                                    <div class="card bg-gray mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                        <div class="card-footer text-muted bg-white">
+                                          <form method="POST" action="/createReply">
+                                            <div class="form-row">
+                                              <div class="col">
+                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
+                                              </div>
+                                              <input type="hidden" id="postId" name="postId" value="{{post.id | safe}}"">
+                                              <div class="col-1">
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id | safe}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
+                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id | safe}}">
+                                         <b>Replies:</b>
+                                         {% for reply in replies if reply.posted_to == post.id %}
+                                           <div class="container">
+                                             <div class="row">
+                                               <div class="col-8">
+                                                 Reply By: {{reply.posted_by | safe}}
+                                               </div>
+                                               <div class="col-4 text-right">
+                                                 Replied On: {{reply.posted_on | safe}}
+                                               </div>
+                                              </div>
+                                              <div class="row">
+                                                {{ reply.content | safe}}
+                                              </div>
+                                            </div>
+                                            <hr>
+                                           {% endfor %}
+                                        </div>
+                                    <!-- /card text-white bbg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tabb-pane fade -->
+                        </div>
+
+                        {# ACCOMMODATION QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
+                            <h4>Accommodation Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Accommodation' %}
+                                <div class="row">
+                                    <div class="card bg-gray mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                        <div class="card-footer text-muted bg-white">
+                                          <form method="POST" action="/createReply">
+                                            <div class="form-row">
+                                              <div class="col">
+                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
+                                              </div>
+                                              <input type="hidden" id="postId" name="postId" value="{{post.id | safe}}">
+                                              <div class="col-1">
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id | safe}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
+                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id | safe}}">
+                                         <b>Replies:</b>
+                                         {% for reply in replies if reply.posted_to == post.id %}
+                                           <div class="container">
+                                             <div class="row">
+                                               <div class="col-8">
+                                                 Reply By: {{reply.posted_by | safe}}
+                                               </div>
+                                               <div class="col-4 text-right">
+                                                 Replied On: {{reply.posted_on | safe}}
+                                               </div>
+                                              </div>
+                                              <div class="row">
+                                                {{ reply.content | safe }}
+                                              </div>
+                                            </div>
+                                            <hr>
+                                           {% endfor %}
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                        {# FINANCE QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
+                            <h4>Finance Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Finance' %}
+                                <div class="row">
+                                    <div class="card bg-gray mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                         <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                        <div class="card-footer text-muted bg-white">
+                                          <form method="POST" action="/createReply">
+                                            <div class="form-row">
+                                              <div class="col">
+                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
+                                              </div>
+                                              <input type="hidden" id="postId" name="postId" value="{{post.id | safe}}">
+                                              <div class="col-1">
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id | safe}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
+                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id | safe}}">
+                                         <b>Replies:</b>
+                                         {% for reply in replies if reply.posted_to == post.id %}
+                                           <div class="container">
+                                             <div class="row">
+                                               <div class="col-8">
+                                                 Reply By: {{reply.posted_by | safe}}
+                                               </div>
+                                               <div class="col-4 text-right">
+                                                 Replied On: {{reply.posted_on | safe}}
+                                               </div>
+                                              </div>
+                                              <div class="row">
+                                                {{ reply.content | safe}}
+                                              </div>
+                                            </div>
+                                            <hr>
+                                           {% endfor %}
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                        {# LOCAL AREA QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
+                            <h4>Local Area Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Local Area' %}
+                                <div class="row">
+                                    <div class="card bg-gray mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                        <div class="card-footer text-muted bg-white">
+                                          <form method="POST" action="/createReply">
+                                            <div class="form-row">
+                                              <div class="col">
+                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
+                                              </div>
+                                              <input type="hidden" id="postId" name="postId" value="{{post.id | safe}}">
+                                              <div class="col-1">
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id | safe}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
+                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id | safe}}">
+                                         <b>Replies:</b>
+                                         {% for reply in replies if reply.posted_to == post.id %}
+                                           <div class="container">
+                                             <div class="row">
+                                               <div class="col-8">
+                                                 Reply By: {{reply.posted_by | safe}}
+                                               </div>
+                                               <div class="col-4 text-right">
+                                                 Replied On: {{reply.posted_on | safe}}
+                                               </div>
+                                              </div>
+                                              <div class="row">
+                                                {{ reply.content | safe}}
+                                              </div>
+                                            </div>
+                                            <hr>
+                                           {% endfor %}
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                        {# TRAVEL QUERIES - OUTPUT #}
+                        <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
+                            <h4>Travel Feed</h4>
+                            <hr>
+                            {% for post in data if post.category == 'Travel' %}
+                                <div class="row">
+                                    <div class="card bg-gray mb-3 w-100">
+                                        <div class="card-header">
+                                            <div class="row">
+                                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
+                                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
+                                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+                                            <!-- /row -->
+                                            </div>
+                                        <!-- /card-header -->
+                                        </div>
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ post.title | safe }}</h5>
+                                            <p class="card-text">{{ post.content | safe }}</p>
+                                        <!-- /card-body -->
+                                        </div>
+                                        <div class="card-footer text-muted bg-white">
+                                          <form method="POST" action="/createReply">
+                                            <div class="form-row">
+                                              <div class="col">
+                                                <input type="text" class="form-control no-border" id="replyBody" name="replyBody" placeholder="Reply to this post">
+                                              </div>
+                                              <input type="hidden" id="postId" name="postId" value="{{post.id | safe}}">
+                                              <div class="col-1">
+                                                <button type="submit" class="btn btn-success">Submit</button>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        </div>
+                                        <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample{{post.id | safe}}" role="button" aria-expanded="false" aria-controls="multiCollapseExample1">Show/Hide Comments</a>
+                                        <div class="collapse multi-collapse" id="multiCollapseExample{{post.id | safe}}">
+                                         <b>Replies:</b>
+                                         {% for reply in replies if reply.posted_to == post.id %}
+                                           <div class="container">
+                                             <div class="row">
+                                               <div class="col-8">
+                                                 Reply By: {{reply.posted_by | safe}}
+                                               </div>
+                                               <div class="col-4 text-right">
+                                                 Replied On: {{reply.posted_on | safe}}
+                                               </div>
+                                              </div>
+                                              <div class="row">
+                                                {{ reply.content | safe}}
+                                              </div>
+                                            </div>
+                                            <hr>
+                                           {% endfor %}
+                                        </div>
+                                    <!-- /card text-white bg-primary mb-3 w-100 -->
+                                    </div>
+                                <!-- /row -->
+                                </div>
+                            {% endfor %}
+                        <!-- /tab-pane fade -->
+                        </div>
+
+                    <!-- /tab-content -->
                     </div>
 
-                    <!-- /card-body -->
+                <!-- /card-body -->
                 </div>
 
-                <!-- /card -->
+            <!-- /card -->
             </div>
 
-            <!-- /col-sm-12 -->
+        <!-- /col-sm-12 -->
         </div>
 
-        <!-- /container bg-white p-2 -->
+    <!-- /container bg-white p-2 -->
     </div>
 
 {% endblock %}
