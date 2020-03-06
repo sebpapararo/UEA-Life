@@ -91,7 +91,8 @@ def login():
             # Check if the password is correct
             retrieved_salt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
             retrieved_salt = b64decode(retrieved_salt.encode())
-            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt, request.form['password']):
+            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt,
+                                                                                                                                    request.form['password']):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
@@ -196,7 +197,7 @@ def profile():
     user_profile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
     # When more than expected profiles are received, throw error.
-    if(len(user_profile) != 1):
+    if (len(user_profile) != 1):
         flash('User Does Not Exist!')
         return redirect('/dashboard')
 
@@ -289,7 +290,6 @@ def createPost():
 
 @app.route('/createReply', methods=['POST'])
 def createReply():
-
     # Check user is logged in
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
@@ -309,7 +309,7 @@ def createReply():
     postExists = query_db('SELECT * FROM posts WHERE id="%s"' % replyTo)
 
     # If no post with provided ID exists, throw error and redirect
-    if(len(postExists) != 1):
+    if (len(postExists) != 1):
         flash('Mate, the post you are replying to does not exist!')
         return redirect('/dashboard')
 
@@ -379,7 +379,7 @@ def updateUsername():
     # TODO: Get these from the request
     username = request.form.get('username', None)
 
-    uid = validSessions.checkSession(user_cookie) # TODO: get from request
+    uid = validSessions.checkSession(user_cookie)  # TODO: get from request
 
     # Check they have sent a field called username
     if username is None:
@@ -425,7 +425,7 @@ def updateEmail():
     # TODO: Get these from the request
     email = request.form.get('email', None)
 
-    uid = validSessions.checkSession(user_cookie) # TODO: get from request
+    uid = validSessions.checkSession(user_cookie)  # TODO: get from request
 
     # Check they have sent a field called username
     if email is None:
@@ -472,7 +472,7 @@ def updatePassword():
     newPassword = request.form.get('newPassword', None)
     newPasswordCheck = request.form.get('newPasswordCheck', None)
 
-    uid = validSessions.checkSession(user_cookie) # TODO: get from request
+    uid = validSessions.checkSession(user_cookie)  # TODO: get from request
 
     # Check they have sent a field called password
     if currentPassword is None or currentPassword == '':
@@ -619,11 +619,9 @@ def register():
     return render_template('/register.html', title="UEA Life | Register")
 
 
-########################################################################################################################
 # Delete user account
 @app.route('/accountSetting/delete_account', methods=['GET', 'POST'])
 def delete_account():
-
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Really?! You can\'t delete an account your not logged in to!')
@@ -636,8 +634,8 @@ def delete_account():
 
         # If the user exists in the database
         if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete) and \
-                query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete)[0].\
-                get('COUNT(email)') == 1:
+                query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete)[0]. \
+                        get('COUNT(email)') == 1:
 
             if functions.verifyCaptcha():
 
@@ -720,9 +718,9 @@ def createAccount():
 
                                     # Compose the queries for adding a new user to the database
                                     user_query = 'INSERT INTO users(id, created_on, password, salt, email) VALUES ("%s", "%s", "%s", "%s", "%s")' \
-                                                % (user_id, date_and_time, hashed_password, user_salt.decode('utf-8'), email)
+                                                 % (user_id, date_and_time, hashed_password, user_salt.decode('utf-8'), email)
                                     profile_query = 'INSERT INTO profiles(id, username, last_active, level, school) VALUES ("%s", "%s", "%s", "%s", "%s")' \
-                                                   % (user_id, username, date_and_time, level, school)
+                                                    % (user_id, username, date_and_time, level, school)
 
                                     # Execute the queries and commit the changes
                                     query_db(user_query)
@@ -735,7 +733,8 @@ def createAccount():
                                     timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
                                     timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
 
-                                    verify_email_query = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (hashed_key, user_id, timestamp)
+                                    verify_email_query = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (
+                                    hashed_key, user_id, timestamp)
                                     query_db(verify_email_query)
                                     get_db().commit()
 
@@ -745,7 +744,7 @@ def createAccount():
                                     msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
                                                   recipients=[email])
                                     message_body = 'Hi %s,\n Please click the following link to verify your email:\n %s\n\nNotes: ' \
-                                                  'This email expires 15 minutes after being requested.' % (username, link)
+                                                   'This email expires 15 minutes after being requested.' % (username, link)
                                     msg.body = message_body
                                     mail.send(msg)
 

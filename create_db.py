@@ -75,7 +75,6 @@ def create():
             );
         ''')
 
-
     # Create and add some test users
     salt1 = functions.generateSalt()
     # TODO: 04/03/2020 change passwords to follow rules
