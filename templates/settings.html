@@ -5,58 +5,199 @@
 {% block current_user %}{{ user }}{% endblock %}
 
 {% block content %}
-    <div class="card mt-5">
-        <h5 class="card-title">Account Settings</h5>
+    <div class="card mt-2">
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h2 class="display-4">{{ user }}'s Account Settings</h2>
+            </div>
+        </div>
+
+
+        {#        <h5 class="card-title">Account Settings</h5>#}
         <div class="container">
             {% for message in get_flashed_messages() %}
                 <div class="alert alert-warning">
                     {{ message }}
                 </div>
             {% endfor %}
+            <!-- /container -->
         </div>
-        <div class="row pl-4 pb-2 justify-content-center">
-            <div class="col">
-                <form action="/accountSettings/updateUsername" method="POST" role="change-username" id="update-username">
-                    <label for="exampleInputEmail1">Username</label>
-                    <div class="input-group">
-                        <input disabled name="username" id="username" type="text" class="form-control" placeholder="Your username here:"
-                               aria-label="Recipient's username" aria-describedby="basic-addon2">
-                        <div class="input-group-append">
-                            <button id="button-username" class="btn btn-outline-secondary" type="button" onclick="profileUndisable('username')">Change</button>
-                        </div>
-                    </div>
-                    <!-- <button type="submit" class="btn btn-success" name="createAccount">Submit</button> -->
-                </form>
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
 
-                <form action="/accountSettings/updateEmail" method="POST" role="change-email" id="update-email">
-                <label for="exampleInputEmail1">Email address</label>
-                <div class="input-group">
-                    <input disabled id="email" name="email" type="text" class="form-control" placeholder="Your email here:"
-                           aria-label="Recipient's email" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                        <button id="button-email" class="btn btn-outline-secondary" type="button" onclick="profileUndisable('email')">Change</button>
-                    </div>
-                </div>
-                </form>
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                    else.</small>
+        <div class="accordion m-2" id="accordionSettings">
+            {# TODO: Line 39, 56 and 98 - Need to discus the exampleInputEmail1#}
 
-                <label for="exampleInputEmail1">Password</label>
-                <div class="input-group">
-                    <input disabled id="password" type="text" class="form-control" placeholder="* * * * * * * *"
-                           aria-label="Recipient's username" aria-describedby="basic-addon2">
-                    <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button"
-                                onclick="profileUndisable('password')">Change
+            {# GENERAL SETTINGS CARD #}
+            <div class="card">
+                <div class="card-header" id="generalSettings">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseGeneral"
+                                aria-expanded="true" aria-controls="collapseGeneral">
+                            General Account Settings
                         </button>
-                    </div>
+                    </h5>
+                    <!-- /card-header -->
                 </div>
-                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone
-                    else.</small>
+
+                <div id="collapseGeneral" class="collapse show" aria-labelledby="generalSettings"
+                     data-parent="#accordionSettings">
+                    <div class="card-body">
+                        <div class="row pl-4 pb-2 justify-content-center">
+                            <div class="col">
+                                <form action="/accountSettings/updateUsername" method="POST" role="change-username"
+                                      id="update-username">
+                                    <label for="exampleInputEmail1">Username</label>
+                                    <div class="input-group">
+                                        <input disabled name="username" id="username" type="text" class="form-control"
+                                               placeholder="Your username here:" aria-label="Recipient's username"
+                                               aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button id="button-username" class="btn btn-outline-secondary" type="button"
+                                                    onclick="profileUndisable('username')">Change
+                                            </button>
+                                            <!-- /input-group-append -->
+                                        </div>
+                                        <!-- /input-group -->
+                                    </div>
+                                </form>
+                                <small id="emailHelp" class="form-text text-muted">
+                                    We'll never share your private details with anyone else.
+                                </small>
+
+                                <form action="/accountSettings/updateEmail" method="POST" role="change-email" id="update-email">
+                                    <label for="exampleInputEmail1">Email address</label>
+                                    <div class="input-group">
+                                        <input disabled id="email" name="email" type="text" class="form-control" placeholder="Your email here:" aria-label="Recipient's email" aria-describedby="basic-addon2">
+                                        <div class="input-group-append">
+                                            <button id="button-email" class="btn btn-outline-secondary" type="button"
+                                                    onclick="profileUndisable('email')">
+                                                Change
+                                            </button>
+                                            <!-- /input-group-append -->
+                                        </div>
+                                        <!-- /input-group -->
+                                    </div>
+                                </form>
+                                <small id="emailHelp" class="form-text text-muted">
+                                    We'll never share your email with anyone else.
+                                </small>
+                                <!-- /col -->
+                            </div>
+                            <!-- /row pl-4 pb-2 justify-content-center -->
+                        </div>
+                        <!-- /card-body -->
+                    </div>
+                    <!-- /collapse -->
+                </div>
+                <!-- /card -->
             </div>
+
+            {# PASSWORD SETTINGS CARD #}
+            <div class="card">
+                <div class="card-header" id="passwordSettings">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                data-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
+                            Password Settings
+                        </button>
+                    </h5>
+                    <!-- /card-header -->
+                </div>
+
+                <div id="collapsePassword" class="collapse" aria-labelledby="passwordSettings"
+                     data-parent="#accordionSettings">
+                    <div class="card-body">
+                        <div class="row pl-4 pb-2 justify-content-center">
+                            <div class="col">
+                                <label for="exampleInputEmail1">Password</label>
+                                <div class="input-group">
+                                    <input disabled id="password" type="text" class="form-control"
+                                           placeholder="* * * * * * * *"
+                                           aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-secondary" type="button"
+                                                onclick="profileUndisable('password')">Change
+                                        </button>
+                                        <!-- /input-group-append -->
+                                    </div>
+                                    <!-- /input-group -->
+                                </div>
+                                <small id="emailHelp" class="form-text text-muted">
+                                    We'll never share your personal details with anyone else.
+                                </small>
+                                <!-- /col -->
+                            </div>
+                            <!-- /row pl-4 pbb-2 justify-content-center -->
+                        </div>
+                        <!-- /card-body -->
+                    </div>
+                    <!-- /collapse -->
+                </div>
+                <!-- /card -->
+            </div>
+
+            {# DELETE ACCOUNT CARD #}
+            <div class="card">
+                <div class="card-header" id="deleteAccount">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                data-target="#collapseDelete" aria-expanded="false" aria-controls="collapseDelete">
+                            Delete Account
+                        </button>
+                    </h5>
+                    <!-- /card-header -->
+                </div>
+
+                <div id="collapseDelete" class="collapse" aria-labelledby="deleteAccount"
+                     data-parent="#accordionSettings">
+                    <div class="card-body">
+                        <div class="row pl-4 pb-2 justify-content-center">
+                            <div class="col">
+                                <div class="container">
+                                    <div class="alert alert-info" role="alert">
+                                        Enter email address for account to be deleted, confirm your not a robot then
+                                        click "Delete Account"
+                                    </div>
+                                    <form method="POST" action="/accountSetting/delete_account">
+                                        <div class="row align-items-center mb-4">
+                                            <div class="col-8">
+                                                <label for="exampleInputEmail1">Email Address:</label>
+                                                <input type="text" class="form-control" id="verifyEmail" name="verifyEmail"
+                                                       placeholder="Verify Email">
+                                                <small id="emailHelp" class="form-text text-muted">
+                                                    We'll never share your email with anyone else.
+                                                </small>
+                                                <!-- /col-8 -->
+                                            </div>
+                                            <div class="col-4 justify-content-right">
+                                                <div class="g-recaptcha float-right btn-block"
+                                                     data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk"></div>
+                                                <!-- /col-4 -->
+                                            </div>
+                                            <!-- /row -->
+                                        </div>
+
+                                        <button type="submit" name="delete_account"
+                                                class="btn btn-danger btn-lg btn-block">
+                                            Delete Account
+                                        </button>
+                                    </form>
+                                    <!-- /container -->
+                                </div>
+                                <!-- /col -->
+                            </div>
+                            <!-- /row -->
+                        </div>
+                        <!-- /card-body -->
+                    </div>
+                    <!-- /collapse -->
+                </div>
+                <!-- /card -->
+            </div>
+            <!-- /accordion -->
         </div>
+        <!-- /card -->
     </div>
+
     <div class="row justify-content-center">
         <div class="col-sm-5">
             <a href="/accountSettings" class="btn btn-outline-secondary float-right btn-block">Cancel</a>
@@ -64,7 +205,6 @@
         <div class="col-sm-5 pb-3">
             <button class="btn btn-info float-left btn-block">Save</button>
         </div>
-    </div>
     </div>
 
 {% endblock %}

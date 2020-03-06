@@ -356,6 +356,9 @@ def accountSettings():
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
+    uid = validSessions.checkSession(user_cookie)
+    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+
     return render_template('/settings.html', title="UEA Life | Profile Settings", user=logged_in_as)
 
 
@@ -557,6 +560,54 @@ def passwordReset():
 @app.route('/register', methods=['GET'])
 def register():
     return render_template('/register.html', title="UEA Life | Register")
+
+
+########################################################################################################################
+# Delete user account
+@app.route('/accountSetting/delete_account', methods=['GET', 'POST'])
+def delete_account():
+
+    user_cookie = functions.getCookie()
+    uid = validSessions.checkSession(user_cookie)
+
+    if validSessions.checkSession(user_cookie) is False:
+        flash('Really?! You can\'t delete an account your not logged in to!')
+        return redirect('/')
+
+    if request.form['verifyEmail'] is not None:
+
+        email_to_delete = functions.sanitiseInputs(request.form['verifyEmail'])
+
+        # If the user exists in the database
+        if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete) and \
+                query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete)[0].\
+                get('COUNT(email)') == 1:
+
+            if functions.verifyCaptcha():
+
+                update_query = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
+                query_db(update_query)
+                delete_query = 'DELETE FROM users WHERE id = "%s";' % uid
+                query_db(delete_query)
+                get_db().commit()
+
+                cookie_id = os.urandom(64)
+                cookie_id = b64encode(cookie_id)
+                response = make_response(redirect('/'))
+                response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True, expires=0)
+
+                return response
+            else:
+                flash('Are you a robot?')
+        else:
+            flash('Re-enter email address of account to be deleted')
+    else:
+        flash('Verify email of the account to be deleted')
+
+    return redirect('/')
+
+
+########################################################################################################################
 
 
 # Creates a new user account
