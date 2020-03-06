@@ -591,10 +591,21 @@ def delete_account():
 
             if functions.verifyCaptcha():
 
-                update_query = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
-                query_db(update_query)
-                delete_query = 'DELETE FROM users WHERE id = "%s";' % uid
-                query_db(delete_query)
+                # REPLACE POSTED_BY WITH "DELETED USER" FOR POSTS AND REPLIES
+                update_query_posts = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
+                query_db(update_query_posts)
+                update_query_replies = 'UPDATE replies SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
+                query_db(update_query_replies)
+
+                # DELETE DESIRED USER FROM ALL RELEVANT TABLES
+                delete_query_forgot_password_requests = 'DELETE FROM forgotPasswordRequests WHERE id = "%s";' % uid
+                query_db(delete_query_forgot_password_requests)
+                delete_query_verify_emails = 'DELETE FROM verifyEmails WHERE id = "%s";' % uid
+                query_db(delete_query_verify_emails)
+                delete_query_profiles = 'DELETE FROM profiles WHERE id = "%s";' % uid
+                query_db(delete_query_profiles)
+                delete_query_users = 'DELETE FROM users WHERE id = "%s";' % uid
+                query_db(delete_query_users)
                 get_db().commit()
 
                 cookie_id = os.urandom(64)
