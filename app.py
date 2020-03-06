@@ -608,10 +608,12 @@ def delete_account():
                 query_db(delete_query_users)
                 get_db().commit()
 
-                cookie_id = os.urandom(64)
-                cookie_id = b64encode(cookie_id)
-                response = make_response(redirect('/'))
-                response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True, expires=0)
+                # cookie_id = os.urandom(64)
+                # cookie_id = b64encode(cookie_id)
+                # response = make_response(redirect('/'))
+                # response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True, expires=0)
+
+                return redirect('/logout')
 
                 return response
             else:
