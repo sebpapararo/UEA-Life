@@ -838,5 +838,5 @@ def resend_verify():
 
 if __name__ == '__main__':
     # TODO: 11/02/2020 Change debug to False before submitting
-    # app.run(host='127.0.0.1', port=5000, debug=True, ssl_context=sslContext)
+    # app.run(host='127.0.0.1', port=5000, debug=False, ssl_context=sslContext)
     app.run(host='127.0.0.1', port=5000, debug=True)
