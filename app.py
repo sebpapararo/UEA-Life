@@ -82,9 +82,14 @@ def login():
         flash('You are already logged in you baboon!')
         return redirect('/dashboard')
 
+    # Make sure all fields are present
+    if request.form.get('email', None) is None or request.form.get('password', None) is None:
+        flash('Not all fields were sent mate!')
+        return redirect('/')
+
     # If the fields are not emtpy
-    if request.form['email'] != '' and request.form['password'] != '':
-        email = functions.sanitiseInputs(request.form['email'])
+    if request.form.get('email', None) != '' and request.form.get('password', None) != '':
+        email = functions.sanitiseInputs(request.form.get('email', None))
         # If the user exists in the database
         if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
                 query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') == 1:
@@ -92,7 +97,7 @@ def login():
             retrieved_salt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
             retrieved_salt = b64decode(retrieved_salt.encode())
             if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt,
-                                                                                                                                    request.form['password']):
+                                                                                                                                    request.form.get('password', None)):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
@@ -247,7 +252,6 @@ def createPost():
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    # username = request.form.get('username', None)
     cats = ['General', 'Finance', 'Accommodation', 'Student Union', 'Local Area', 'Travel']
     category = request.form.get('category', None)
     title = request.form.get('title', None)
@@ -257,28 +261,19 @@ def createPost():
 
     tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
 
-    if category not in cats:
-        flash('Incorrect Category Selected Dick!!')
-        return redirect('/newPost')
     category = functions.sanitiseInputs(category)
-    if category == '':
-        flash('Really?? Category')
+    if category not in cats or category == '':
+        flash('Incorrect category selected or blank category you muppet!')
         return redirect('/newPost')
 
-    if title is None:
-        flash('Title not sent')
-        return redirect('/newPost')
     title = functions.sanitiseInputs(title)
-    if title == '':
-        flash('Really??? Title??')
+    if title is None or title == '':
+        flash('Title not sent or it is blank!')
         return redirect('/newPost')
 
-    if content is None:
-        flash('Content Not Sent')
-        return redirect('/newPost')
     content = functions.sanitiseInputs(content)
-    if content == '':
-        flash('Really?!?! Content')
+    if content is None or content == '':
+        flash('Content not sent or it is blank!')
         return redirect('/newPost')
 
     query = 'INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
@@ -309,22 +304,18 @@ def createReply():
     postExists = query_db('SELECT * FROM posts WHERE id="%s"' % replyTo)
 
     # If no post with provided ID exists, throw error and redirect
-    if (len(postExists) != 1):
+    if len(postExists) != 1:
         flash('Mate, the post you are replying to does not exist!')
         return redirect('/dashboard')
 
-        # Extract ID from query
+    # Extract ID from query
     postId = postExists[0]['id']
 
     # Content of the reply:
     replyContent = request.form.get('replyBody', None)
 
-    if replyContent is None:
-        flash('You have not sent any reply content mate!')
-        return redirect('/dashboard')
-
-    if (replyContent == ''):
-        flash('A reply cannot be empty matee!')
+    if replyContent is None or replyContent == '':
+        flash('You have not sent any reply content mate or it was blank!')
         return redirect('/dashboard')
 
     replyContent = functions.sanitiseInputs(replyContent)
@@ -344,18 +335,10 @@ def createReply():
     return redirect('/dashboard')
 
 
-@app.route('/accountSettings', methods=['GET', 'POST'])
+@app.route('/accountSettings', methods=['GET'])
 def accountSettings():
     # Is Authed Guard, redirects to the login
     user_cookie = functions.getCookie()
-    if validSessions.checkSession(user_cookie) is False:
-        flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
-
-    uid = validSessions.checkSession(user_cookie)
-
-    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
-
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
@@ -378,24 +361,19 @@ def updateUsername():
     # TODO: 05/03/2020 Do not allow for current username
     # TODO: Get these from the request
     username = request.form.get('username', None)
-
     uid = validSessions.checkSession(user_cookie)  # TODO: get from request
 
     # Check they have sent a field called username
-    if username is None:
-        flash('Username field not sent mate')
-        return redirect('/accountSettings')
-
-    if not re.match("^[A-Za-z0-9_-]*$", username):
-        flash('Username contained invalid characters')
+    if username is None or username == '':
+        flash('Username field not sent mate or it was blank!')
         return redirect('/accountSettings')
 
     # Sanitising inputs
     username = functions.sanitiseInputs(username)
 
-    #  Check username is not empty
-    if username == '':
-        flash('Username cannot be empty you cheeky pr**k')
+    # Check the username doesn't contain invalid characters
+    if not re.match("^[A-Za-z0-9_-]*$", username):
+        flash('Username contained invalid characters')
         return redirect('/accountSettings')
 
     # Check if username has already been taken
@@ -428,8 +406,8 @@ def updateEmail():
     uid = validSessions.checkSession(user_cookie)  # TODO: get from request
 
     # Check they have sent a field called username
-    if email is None:
-        flash('Email field not sent mate')
+    if email is None or email == '':
+        flash('Email field not sent mate or it was blank!')
         return redirect('/accountSettings')
 
     # Verify the email is in the correct format using a regular expression
@@ -439,11 +417,6 @@ def updateEmail():
 
     # Sanitising inputs
     email = functions.sanitiseInputs(email)
-
-    #  Check username is not empty
-    if email == '':
-        flash('Email cannot be empty you cheeky pr**k')
-        return redirect('/accountSettings')
 
     # Check if email has already been taken
     if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
@@ -476,7 +449,11 @@ def updatePassword():
 
     # Check they have sent a field called password
     if currentPassword is None or currentPassword == '':
-        flash('Email field not sent mate')
+        flash('Current password field not sent mate or it was blank!')
+        return redirect('/accountSettings')
+
+    if newPassword is None or newPassword == '' or newPasswordCheck is None:
+        flash('New password field not sent mate or it was blank!')
         return redirect('/accountSettings')
 
     if newPassword != newPasswordCheck:
@@ -523,7 +500,12 @@ def forgotPassword():
         return render_template('/forgotPassword.html', title="UEA Life | Forgot Password")
     else:
 
-        email = functions.sanitiseInputs(request.form['email'])
+        email = request.form.get('email', None)
+        if email is None or email == '':
+            flash('Email field not sent mate or it was blank!')
+            return redirect('/forgotPassword')
+        email = functions.sanitiseInputs(email)
+
         # Check the email entered  is valid
         if re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
             # Check the reCaptcha was completed
@@ -571,7 +553,7 @@ def passwordReset():
     # Is Authed Guard, redirects to the login
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
-        flash('You are already logged in you baboon!')
+        flash('You are already logged in you donkey!')
         return redirect('/dashboard')
 
     if request.method == 'GET':
@@ -581,7 +563,7 @@ def passwordReset():
         userId = request.args.get('id')
 
         # this if statement make sure the logged in user or the non-logged in user cannot see the error messages for verify email
-        if linkKey is not None:
+        if linkKey is not None and userId is not None:
             # Check the key in the url is valid and has no expired.
 
             if hashedKey == query_db('SELECT key FROM forgotPasswordRequests WHERE id = "%s"' % userId)[-1].get('key'):
@@ -594,13 +576,23 @@ def passwordReset():
                 flash(Markup('Something went wrong. Try requesting another email  <a href="/forgotPassword" class="alert-link"> here!</a>'))
         return redirect('/')
     else:
-        if request.form['password'] == request.form['verifyPassword']:
-            if functions.validatePassword(request.form.get('password')):
+        password = request.form.get('password', None)
+        verifyPassword = request.form.get('verifyPassword', None)
+
+        if password is None or verifyPassword is None or password == '' or verifyPassword == '':
+            flash('Password field not sent mate or it was blank so try again!')
+            return redirect('/forgotPassword')
+
+        if password == verifyPassword:
+            if functions.validatePassword(password):
                 newSalt = functions.generateSalt()
-                hashedPass = functions.generateHashedPass(newSalt, request.form['password'])
+                hashedPass = functions.generateHashedPass(newSalt, password)
                 newSalt = b64encode(newSalt)
 
-                uid = request.form['id']
+                uid = request.form.get('id', None)
+                if uid is None:
+                    flash('Could not find your user id, try again!')
+                    return redirect('/forgotPassword')
 
                 query_db('UPDATE users SET password="%s", salt="%s" WHERE id="%s"' % (hashedPass, newSalt.decode(), uid))
                 get_db().commit()
@@ -628,9 +620,13 @@ def delete_account():
         return redirect('/')
     uid = validSessions.checkSession(user_cookie)
 
-    if request.form['verifyEmail'] is not None:
+    verifyEmail = request.form.get('verifyEmail', None)
+    # verifyPassword = request.form.get('verifyPassword', None)
 
-        email_to_delete = functions.sanitiseInputs(request.form['verifyEmail'])
+    if verifyEmail is not None:
+    # if verifyEmail is not None and verifyPassword is not None:
+
+        email_to_delete = functions.sanitiseInputs(verifyEmail)
 
         # If the user exists in the database
         if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete) and \
@@ -667,9 +663,6 @@ def delete_account():
     return redirect('/')
 
 
-########################################################################################################################
-
-
 # Creates a new user account
 @app.route('/register/createAccount', methods=['POST'])
 def createAccount():
@@ -679,14 +672,24 @@ def createAccount():
         flash('You are already logged in you donkey!')
         return redirect('/dashboard')
 
+    username = request.form.get('username', None)
+    email = request.form.get('email', None)
+    password = request.form.get('password', None)
+    verifyPassword = request.form.get('verifyPassword', None)
+    level = request.form.get('level', None)
+    school = request.form.get('school', None)
+
+    # Make sure all the fields are sent
+    if username is None or email is None or password is None or verifyPassword is None or level is None or school is None:
+        flash('One or more of the fields was not sent!')
+        return redirect('/register')
+
     # If none of the fields are emtpy
-    # TODO: 25/02/2020 check if XSS works in password field as it is not being sanitised
-    if request.form['username'] != '' and request.form['email'] != '' and request.form['password'] != '' and \
-            request.form['verifyPassword'] != '':
-        username = functions.sanitiseInputs(request.form['username'])
-        email = functions.sanitiseInputs(request.form['email'])
-        level = functions.sanitiseInputs(request.form['level'])
-        school = functions.sanitiseInputs(request.form['school'])
+    if username != '' and email != '' and password != '' and verifyPassword != '' and level != '' and school != '':
+        username = functions.sanitiseInputs(username)
+        email = functions.sanitiseInputs(email)
+        level = functions.sanitiseInputs(level)
+        school = functions.sanitiseInputs(school)
         # Verify the email is in the correct format using a regular expression
         if re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
             # Check the username matches the allowed format
@@ -698,9 +701,9 @@ def createAccount():
                     if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
                             query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') == 0:
                         # Check the passwords match each other
-                        if request.form['password'] == request.form['verifyPassword']:
+                        if password == verifyPassword:
                             # Check the password is valid, according to the rules we set out
-                            if functions.validatePassword(request.form['password']):
+                            if functions.validatePassword(password):
                                 # Check the reCaptcha has been completed properly
                                 if functions.verifyCaptcha():
                                     # Generate random uuid to be the user id
@@ -713,7 +716,7 @@ def createAccount():
                                     # Create the salt and pass it into the hashing algorithm with the password
                                     user_salt = functions.generateSalt()
 
-                                    hashed_password = functions.generateHashedPass(user_salt, request.form['password'])
+                                    hashed_password = functions.generateHashedPass(user_salt, password)
                                     user_salt = b64encode(user_salt)
 
                                     # Compose the queries for adding a new user to the database
@@ -778,7 +781,7 @@ def verify_account():
     userId = request.args.get('id')
 
     # this if statement make sure the logged in user or the non-logged in user cannot see the error messages for verify email
-    if linkKey is not None:
+    if linkKey is not None and userId is not None:
         # check if verified already
         if query_db('SELECT verified FROM users WHERE id = "%s"' % userId)[0].get('verified') == 1:
             flash('Your account is already verified!')
