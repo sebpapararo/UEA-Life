@@ -174,7 +174,6 @@ def dashboard():
 
     query = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, profiles.Username FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id " \
             "UNION ALL SELECT id, posted_on, category, title, content, posted_by FROM posts WHERE posted_by = 'Deleted User'"
-
     results = query_db(query)
 
     query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id " \
