@@ -170,19 +170,14 @@ def dashboard():
 
     # TODO(C): Check this actually works properly
     query = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, profiles.Username  FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
-    # query2 = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, posts.posted_by AS username FROM posts WHERE posts.posted_by = 'Deleted Users'"
     results = query_db(query)
-    # results2 = query_db(query2)
 
-    query = "SELECT replies.id, replies.posted_on, replies.posted_to, replies.posted_by AS username, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id"
-    # query2 = "SELECT replies.id, replies.posted_on, replies.posted_to, replies.posted_by AS username, replies.content FROM replies WHERE replies.posted_by = 'Deleted User'"
+    query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id"
     replies = query_db(query)
-    # replies2 = query_db(query2)
 
     return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as, replies=replies)
 
 
-# TODO: Add session checks
 @app.route('/profile', methods=['GET'])
 def profile():
     # Is Authed Guard, redirects to the login
@@ -644,74 +639,51 @@ def register():
 # Delete user account
 @app.route('/accountSetting/delete_account', methods=['GET', 'POST'])
 def delete_account():
-
     user_cookie = functions.getCookie()
-
-    # Check whether session is valid
     if validSessions.checkSession(user_cookie) is False:
         flash('Really?! You can\'t delete an account your not logged in to!')
         return redirect('/')
-
     uid = validSessions.checkSession(user_cookie)
 
-    # Get form data
-    verify_email = request.form.get('verifyEmail', None)
-    verify_password = request.form.get('verifyPassword', None)
+    verifyEmail = request.form.get('verifyEmail', None)
+    # verifyPassword = request.form.get('verifyPassword', None)
 
-    # Sanitise Email
-    email_to_delete = functions.sanitiseInputs(verify_email)
+    if verifyEmail is not None:
+    # if verifyEmail is not None and verifyPassword is not None:
 
-    # Check they have sent a field called password
-    if verify_password is None or verify_password == '':
-        flash('Current password field not sent mate or it was blank!')
-        return redirect('/accountSettings')
+        email_to_delete = functions.sanitiseInputs(verifyEmail)
 
-    # Check they have sent a field called password
-    if verify_email is None or verify_email == '':
-        flash('Email field not sent mate or it was blank!')
-        return redirect('/accountSettings')
+        # If the user exists in the database
+        if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete) and \
+                query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete)[0]. \
+                        get('COUNT(email)') == 1:
 
-    # Make sure password is correct
-    user_salt = query_db('SELECT salt FROM users WHERE id = "%s"' % uid)[0].get('salt')
-    user_salt = b64decode(user_salt.encode())
-    if functions.generateHashedPass(user_salt, verify_password) != \
-            query_db('SELECT password FROM users WHERE id = "%s"' % uid)[0].get('password'):
-        flash('Password was incorrect!')
-        return redirect('/accountSettings')
+            if functions.verifyCaptcha():
 
-    # Make sure email is correct
-    if verify_email != query_db('SELECT email FROM users WHERE id = "%s"' % uid)[0].get('email'):
-        flash('Email was incorrect!')
-        return redirect('/accountSettings')
+                # REPLACE POSTED_BY WITH "DELETED USER" FOR POSTS AND REPLIES
+                update_query_posts = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
+                query_db(update_query_posts)
+                update_query_replies = 'UPDATE replies SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
+                query_db(update_query_replies)
 
-    # If the user exists in the database
-    if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete) and \
-            query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete)[0].get('COUNT(email)') == 1:
+                # DELETE DESIRED USER FROM ALL RELEVANT TABLES
+                delete_query_forgot_password_requests = 'DELETE FROM forgotPasswordRequests WHERE id = "%s";' % uid
+                query_db(delete_query_forgot_password_requests)
+                delete_query_verify_emails = 'DELETE FROM verifyEmails WHERE id = "%s";' % uid
+                query_db(delete_query_verify_emails)
+                delete_query_profiles = 'DELETE FROM profiles WHERE id = "%s";' % uid
+                query_db(delete_query_profiles)
+                delete_query_users = 'DELETE FROM users WHERE id = "%s";' % uid
+                query_db(delete_query_users)
+                get_db().commit()
 
-        if functions.verifyCaptcha():
-
-            # REPLACE POSTED_BY WITH "DELETED USER" FOR POSTS AND REPLIES
-            update_query_posts = 'UPDATE posts SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
-            query_db(update_query_posts)
-            update_query_replies = 'UPDATE replies SET posted_by = "Deleted User" WHERE posted_by = "%s";' % uid
-            query_db(update_query_replies)
-
-            # DELETE DESIRED USER FROM ALL RELEVANT TABLES
-            delete_query_forgot_password_requests = 'DELETE FROM forgotPasswordRequests WHERE id = "%s";' % uid
-            query_db(delete_query_forgot_password_requests)
-            delete_query_verify_emails = 'DELETE FROM verifyEmails WHERE id = "%s";' % uid
-            query_db(delete_query_verify_emails)
-            delete_query_profiles = 'DELETE FROM profiles WHERE id = "%s";' % uid
-            query_db(delete_query_profiles)
-            delete_query_users = 'DELETE FROM users WHERE id = "%s";' % uid
-            query_db(delete_query_users)
-            get_db().commit()
-
-            return redirect('/logout')
+                return redirect('/logout')
+            else:
+                flash('Are you a robot?')
         else:
-            flash('Are you a robot?')
+            flash('Re-enter email address of account to be deleted')
     else:
-        flash('Incorrect Email')
+        flash('Verify email of the account to be deleted')
 
     return redirect('/')
 
