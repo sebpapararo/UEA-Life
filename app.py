@@ -169,11 +169,16 @@ def dashboard():
         flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> '
                      'to resend the verification email!'))
 
-    # TODO(C): Check this actually works properly
-    query = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, profiles.Username  FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id"
+        # TODO(C): Check this actually works properly
+
+
+    query = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, profiles.Username FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id " \
+            "UNION ALL SELECT id, posted_on, category, title, content, posted_by FROM posts WHERE posted_by = 'Deleted User'"
+
     results = query_db(query)
 
-    query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id"
+    query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id " \
+            "UNION ALL SELECT id, replies.posted_on, posted_to, posted_by AS username, content FROM replies WHERE posted_by = 'Deleted User'"
     replies = query_db(query)
 
     return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as, replies=replies)
