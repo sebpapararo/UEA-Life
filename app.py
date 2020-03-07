@@ -283,6 +283,32 @@ def createPost():
     return redirect('/dashboard')
 
 
+@app.route('/delete_post/', methods=['POST'])
+def delete_post():
+    # Is Authed Guard, redirects to the login
+    user_cookie = functions.getCookie()
+    if validSessions.checkSession(user_cookie) is False:
+        flash('Mate, you dont have a session hackerman! Go and login')
+        return redirect('/')
+    uid = validSessions.checkSession(user_cookie)
+
+    posted_by = request.form.get('posted_by', None)
+    post_id = request.form.get('post_id', None)
+
+    if posted_by is None or post_id is None:
+        flash('Content not sent or it is blank!')
+        return redirect('/dashboard')
+
+    if uid == posted_by:
+        query_db('DELETE FROM posts WHERE id="%s"' % post_id)
+        query_db('DELETE FROM replies where postId="%s"' % post_id)
+        get_db().commit()
+        flash("Post has been deleted")
+    else:
+        flash("You cannot delete someone else's post you cheeky pr**k!")
+    return redirect('/dashboard')
+
+
 @app.route('/createReply', methods=['POST'])
 def createReply():
     # Check user is logged in
