@@ -160,6 +160,7 @@ def dashboard():
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
+    # Check for valid session
     uid = validSessions.checkSession(user_cookie)
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
