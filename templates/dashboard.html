@@ -95,7 +95,7 @@
                             <hr>
                             <h4>All Posts</h4>
                             <hr>
-                            {% for post in data %}
+                            {% for post in data[::-1] %}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card shadow bg-light border-dark mb-3">
@@ -179,7 +179,7 @@
                                                     <b>Replies:</b>
                                                     <hr>
 
-                                                    {% for reply in replies if reply.posted_to == post.id %}
+                                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="card shadow bg-light border-dark mb-3">
@@ -222,7 +222,7 @@
                         <div class="tab-pane fade" id="general" role="tabpanel" aria-labelledby="general_Tab">
                             <h4>General Feed</h4>
                             <hr>
-                            {% for post in data if post.category == 'General' %}
+                            {% for post in data[::-1] if post.category == 'General' %}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card shadow bg-light border-dark mb-3">
@@ -301,7 +301,7 @@
                                                     <b>Replies:</b>
                                                     <hr>
 
-                                                    {% for reply in replies if reply.posted_to == post.id %}
+                                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="card shadow bg-light border-dark mb-3">
@@ -343,7 +343,7 @@
                         <div class="tab-pane fade" id="sUnion" role="tabpanel" aria-labelledby="sUnion_Tab">
                             <h4>Student Union Feed</h4>
                             <hr>
-                            {% for post in data if post.category == 'Student Union' %}
+                            {% for post in data[::-1] if post.category == 'Student Union' %}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card shadow bg-light border-dark mb-3">
@@ -422,7 +422,7 @@
                                                     <b>Replies:</b>
                                                     <hr>
 
-                                                    {% for reply in replies if reply.posted_to == post.id %}
+                                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="card shadow bg-light border-dark mb-3">
@@ -463,7 +463,7 @@
                         <div class="tab-pane fade" id="accommodation" role="tabpanel" aria-labelledby="accom_Tab">
                             <h4>Accommodation Feed</h4>
                             <hr>
-                            {% for post in data if post.category == 'Accommodation' %}
+                            {% for post in data[::-1] if post.category == 'Accommodation' %}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card shadow bg-light border-dark mb-3">
@@ -542,7 +542,7 @@
                                                     <b>Replies:</b>
                                                     <hr>
 
-                                                    {% for reply in replies if reply.posted_to == post.id %}
+                                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="card shadow bg-light border-dark mb-3">
@@ -583,7 +583,7 @@
                         <div class="tab-pane fade" id="finance" role="tabpanel" aria-labelledby="finance_Tab">
                             <h4>Finance Feed</h4>
                             <hr>
-                            {% for post in data if post.category == 'Finance' %}
+                            {% for post in data[::-1] if post.category == 'Finance' %}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card shadow bg-light border-dark mb-3">
@@ -662,7 +662,7 @@
                                                     <b>Replies:</b>
                                                     <hr>
 
-                                                    {% for reply in replies if reply.posted_to == post.id %}
+                                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="card shadow bg-light border-dark mb-3">
@@ -703,7 +703,7 @@
                         <div class="tab-pane fade" id="localArea" role="tabpanel" aria-labelledby="localArea_Tab">
                             <h4>Local Area Feed</h4>
                             <hr>
-                            {% for post in data if post.category == 'Local Area' %}
+                            {% for post in data[::-1] if post.category == 'Local Area' %}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card shadow bg-light border-dark mb-3">
@@ -782,7 +782,7 @@
                                                     <b>Replies:</b>
                                                     <hr>
 
-                                                    {% for reply in replies if reply.posted_to == post.id %}
+                                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="card shadow bg-light border-dark mb-3">
@@ -823,7 +823,7 @@
                         <div class="tab-pane fade" id="travel" role="tabpanel" aria-labelledby="travel_Tab">
                             <h4>Travel Feed</h4>
                             <hr>
-                            {% for post in data if post.category == 'Travel' %}
+                            {% for post in data[::-1] if post.category == 'Travel' %}
                                 <div class="row">
                                     <div class="col-12">
                                         <div class="card shadow bg-light border-dark mb-3">
@@ -902,7 +902,7 @@
                                                     <b>Replies:</b>
                                                     <hr>
 
-                                                    {% for reply in replies if reply.posted_to == post.id %}
+                                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
                                                         <div class="row">
                                                             <div class="col-12">
                                                                 <div class="card shadow bg-light border-dark mb-3">
