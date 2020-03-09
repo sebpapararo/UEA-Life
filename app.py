@@ -236,6 +236,7 @@ def profile():
     # Gets the users profile
     user_profile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
+
     # When more than expected profiles are received, throw error.
     if len(user_profile) != 1:
         flash('User Does Not Exist!')
@@ -247,7 +248,7 @@ def profile():
     user_profile = user_profile[0]
 
     # gets the users post
-    user_profile = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % user_profile['id'])[0]['COUNT(*)']
+    user_profile['post_count'] = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % user_profile['id'])[0]['COUNT(*)']
 
     # Get Date Joined
     date_joined = query_db('SELECT Created_on FROM users WHERE id = "%s";' % user_profile['id'])
