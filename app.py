@@ -116,8 +116,8 @@ def login():
                     get_db().commit()
 
                     response = make_response(redirect('/dashboard'))
-                    # TODO: 03/03/2020 change secure to True
-                    response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True,
+
+                    response.set_cookie('userSession', cookie_id, samesite='strict', secure=True, httponly=True,
                                         expires=expiry_date)
 
                     flash('Successfully logged in as %s' % email)
@@ -145,8 +145,7 @@ def logout():
     cookie_id = os.urandom(64)
     cookie_id = b64encode(cookie_id)
     response = make_response(redirect('/'))
-    # TODO: 03/03/2020 change secure to True
-    response.set_cookie('userSession', cookie_id, samesite='strict', secure=False, httponly=True, expires=0)
+    response.set_cookie('userSession', cookie_id, samesite='strict', secure=True, httponly=True, expires=0)
 
     flash('Successfully logged out!')
     return response
@@ -168,9 +167,6 @@ def dashboard():
     if verified == 0:
         flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> '
                      'to resend the verification email!'))
-
-        # TODO(C): Check this actually works properly
-
 
     query = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, profiles.Username FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id " \
             "UNION ALL SELECT id, posted_on, category, title, content, posted_by FROM posts WHERE posted_by = 'Deleted User'"
@@ -214,10 +210,7 @@ def profile():
     user_profile = user_profile[0]
 
     # gets the users post
-    post_count = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % user_profile['id'])
-
-    # TODO: hacky way of getting this, change if have time!
-    user_profile['post_count'] = post_count[0]['COUNT(*)']
+    user_profile = query_db('SELECT COUNT(*) FROM posts WHERE posted_by = "%s";' % user_profile['id'])[0]['COUNT(*)']
 
     # Get Date Joined
     date_joined = query_db('SELECT Created_on FROM users WHERE id = "%s";' % user_profile['id'])
@@ -226,7 +219,6 @@ def profile():
     # Get the Content of the posts
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
-    # TODO: dont use [0]
     return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=user_profile,
                            usersPosts=posts, user=logged_in_as)
 
@@ -388,10 +380,9 @@ def updateUsername():
         return redirect('/')
 
     # TODO: add more checks here (see createAccount as example)
-    # TODO: 05/03/2020 Do not allow for current username
     # TODO: Get these from the request
     username = request.form.get('username', None)
-    uid = validSessions.checkSession(user_cookie)  # TODO: get from request
+    uid = validSessions.checkSession(user_cookie)
 
     # Check they have sent a field called username
     if username is None or username == '':
@@ -428,8 +419,7 @@ def updateEmail():
         flash('Mate, you dont have a session hackerman! Go and login')
         return redirect('/')
 
-    # TODO: add more checks here (see createAccount as example)
-    # TODO: 05/03/2020 do not allow for current email
+    # TODO: add more checks here (see createAccount as example
     # TODO: Get these from the request
     email = request.form.get('email', None)
 
@@ -560,8 +550,7 @@ def forgotPassword():
                 query_db(forgotPasswordQuery)
                 get_db().commit()
 
-                # TODO: 03/03/2020 change link to https before submitting
-                link = 'http://127.0.0.1:5000/passwordReset?key=%s&id=%s' % (key.decode(), uid)
+                link = 'https://127.0.0.1:5000/passwordReset?key=%s&id=%s' % (key.decode(), uid)
                 msg = Message("Password Reset - UEA Life", sender="uealifedss@gmail.com",
                               recipients=[email])
                 messageBody = 'Hi %s,\n Please click the following link to reset your password:\n %s\n\nNotes: ' \
@@ -772,8 +761,7 @@ def createAccount():
                                     get_db().commit()
 
                                     # send an email with a link to verify_email page with the id given
-                                    # TODO: 03/03/2020 change link to https before submitting
-                                    link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), user_id)
+                                    link = 'https://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), user_id)
                                     msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
                                                   recipients=[email])
                                     message_body = 'Hi %s,\n Please click the following link to verify your email:\n %s\n\nNotes: ' \
@@ -856,8 +844,7 @@ def resend_verify():
     get_db().commit()
 
     # send an email with a link to verify_email page with the id given
-    # TODO: 03/03/2020 change link to https before submitting
-    link = 'http://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), uid)
+    link = 'https://127.0.0.1:5000/verify_email?key=%s&id=%s' % (key.decode(), uid)
     msg = Message("Verify Email - UEA Life", sender="uealifedss@gmail.com",
                   recipients=[email])
     messageBody = 'Hi %s,\n Please click the following link to verify your email:\n %s\n\nNotes: ' \
@@ -870,6 +857,4 @@ def resend_verify():
 
 
 if __name__ == '__main__':
-    # TODO: 11/02/2020 Change debug to False before submitting
-    # app.run(host='127.0.0.1', port=5000, debug=False, ssl_context=sslContext)
-    app.run(host='127.0.0.1', port=5000, debug=True)
+    app.run(host='127.0.0.1', port=5000, debug=False, ssl_context=sslContext)
