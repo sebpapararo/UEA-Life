@@ -69,7 +69,7 @@ def setHeaders(response):
                                                   "script-src ttps://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-1141458096' code.jquery.com cdn.jsdelivr.net ajax.googleapis.com  stackpath.bootstrapcdn.com 'self';" \
                                                   "frame-src https://www.google.com/recaptcha/ 'self';" \
                                                   "style-src stackpath.bootstrapcdn.com 'self';" \
-                                                  "img-src https://www.uea.ac.uk/documents/3154295/3310218/About+Us+Homepage+Banner.jpeg https://www.pub-quiz.com/quiz_image/1375437795_UEAStudentsUnionNorwich.jpg https://www.timeshighereducation.com/sites/default/files/institution/header_image/header_image_-_uea_campus.jpg https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg 'self';" \
+                                                  "img-src https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg https://www.pub-quiz.com/quiz_image/1375437795_UEAStudentsUnionNorwich.jpg https://www.timeshighereducation.com/sites/default/files/institution/header_image/header_image_-_uea_campus.jpg 'self';" \
                                                   "font-src stackpath.bootstrapcdn.com 'self';"
     return response
 
@@ -237,7 +237,6 @@ def profile():
     # Gets the users profile
     user_profile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
-
     # When more than expected profiles are received, throw error.
     if len(user_profile) != 1:
         flash('User Does Not Exist!')
@@ -258,8 +257,13 @@ def profile():
     # Get the Content of the posts
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
+    # TODO: Confirm this is okay to use
+    query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id " \
+            "UNION ALL SELECT id, replies.posted_on, posted_to, posted_by AS username, content FROM replies WHERE posted_by = 'Deleted User'"
+    replies = query_db(query)
+
     response = make_response(render_template('/profile.html', title="UEA Life | Someones profile", userProfile=user_profile,
-                                             usersPosts=posts, user=logged_in_as))
+                                             usersPosts=posts, user=logged_in_as, replies=replies))
     response = setHeaders(response)
     return response
 

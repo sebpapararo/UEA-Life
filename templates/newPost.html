@@ -13,12 +13,13 @@
             <div class="container">
                 {% for message in get_flashed_messages() %}
                     <div class="alert alert-warning">
+                        <i class="fa fa-lg fa-exclamation-circle"></i>
                         {{ message }}
                     </div>
                 {% endfor %}
             </div>
 
-            <div class="card mt-5 shadow">
+            <div class="card my-4 shadow">
                 <h3 class="card-header">Create a New Post</h3>
 
                 <div class="card-body">

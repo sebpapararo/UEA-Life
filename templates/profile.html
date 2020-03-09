@@ -1,48 +1,213 @@
 <!-- profile.html -->
 <!-- MAIN HOME SCREEN POST USER LOGIN/ACCOUNT CREATION -->
 {% extends 'base.html' %}
+{% block title %}{{ super() }} Profile{% endblock %}
 {% set active_page = "profile" %}
 {% block current_user %}{{ user }}{% endblock %}
 
 {% block content %}
 
-    <div class="container">
-        <div class="card pl-4 mt-5 pt-2">
-            <h5 class="card-title">Profile:</h5>
-            <div class="row">
-                Username: {{ userProfile.username }}
+    <div class="card my-3">
+        <div class="row no-gutters">
+            <div class="col-md-4">
+                <img src="/static/user.png" class="card-img" alt="" style="height: 50%">
             </div>
-            <div class="row">
-                Date Joined: {{ userProfile.date_joined }}
-            </div>
-            <div class="row">
-                Level: {{ userProfile.level }}
-            </div>
-            <div class="row">
-                School: {{ userProfile.school }}
-            </div>
-            <div class="row">
-                Last Active: {{ userProfile.last_active }}
-            </div>
-            <div class="row">
-                Post Count: {{ userProfile.post_count }}
-            </div>
-            <div class="row">
-                Recent Posts:
-            </div>
-            {% for post in usersPosts %}
-                <div class="row">
-                    <div class="card text-white bg-primary mb-3 w-100">
-                        <div class="card-header">
-                            <div class="row">
-                                <div class="col-3">Posted By: {{ post.username | safe }}</div>
-                                <div class="col-3">Posted To: {{ post.category | safe }}</div>
-                                <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h1 class="card-title"><b>{{ userProfile.username }}'s Profile</b></h1>
+                    <hr>
+                    <div class="row justify-content-around">
+                        <div class="col-auto align-self-center">
+                            <p class="card-text">
+                            <div class="row justify-content-between my-3">
+                                <div class="col-auto">
+                                    <b>Username:</b>
+                                </div>
+                                <div class="col-auto">
+                                    {{ userProfile.username }}
+                                </div>
                             </div>
+                            <hr>
+                            <div class="row justify-content-between my-3">
+                                <div class="col-auto">
+                                    <b>Level of Study:</b>
+                                </div>
+                                <div class="col-auto">
+                                    {{ userProfile.level }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row justify-content-between my-3">
+                                <div class="col-auto">
+                                    <b>Last Active:</b>
+                                </div>
+                                <div class="col-auto">
+                                    {{ userProfile.last_active }}
+                                </div>
+                            </div>
+                            </p>
                         </div>
-                        <div class="card-body">
-                            <h5 class="card-title">{{ post.title | safe }}</h5>
-                            <p class="card-text">{{ post.content | safe }}</p>
+
+                        <div class="col-auto">
+                            <p class="card-text">
+                            <div class="row justify-content-between my-3">
+                                <div class="col-auto">
+                                    <b>Date Joined:</b>
+                                </div>
+                                <div class="col-auto">
+                                    {{ userProfile.date_joined }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row justify-content-between my-3">
+                                <div class="col-auto">
+                                    <b>UEA School:</b>
+                                </div>
+                                <div class="col-auto">
+                                    {{ userProfile.school }}
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="row justify-content-between my-3">
+                                <div class="col-auto">
+                                    <b>Number of Posts:</b>
+                                </div>
+                                <div class="col-auto">
+                                    {{ userProfile.post_count }}
+                                </div>
+                            </div>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card my-3">
+        <div class="card-header">
+            <h2 class="card-title">Recent Posts for: {{ userProfile.username }}</h2>
+        </div>
+        <div class="card-body">
+            {% for post in usersPosts[::-1] %}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card shadow bg-light border-dark mb-3">
+                            <div class="card-header">
+                                <div class="row justify-content-between">
+
+                                    <div class="col-3 text-left">
+                                    </div>
+
+                                    <div class="col-3 text-right">
+                                        <div class="dropdown">
+                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                                                    type="button"
+                                                    id="dropdownMenuButton" data-toggle="dropdown"
+                                                    aria-haspopup="true" aria-expanded="false">
+                                                Actions
+                                            </button>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                                <a class="dropdown-item" href="#">Edit Post</a>
+                                                <a class="dropdown-item" href="#">Delete Post</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                            <div class="card-body text-dark">
+                                <h5 class="card-title"><b>{{ post.title | safe }}</b></h5>
+                                <p class="card-text">{{ post.content | safe }}</p>
+
+                                <hr>
+
+                                <div class="row justify-content-between">
+                                    <div class="col-3 text-left">
+                                        <small>
+                                            <i>Posted to:</i> <b>{{ post.category | safe }}</b>
+                                        </small>
+                                    </div>
+                                    <div class="col-3 text-right">
+                                        <small>
+                                            <i>Posted on:</i> <b>{{ post.posted_on | safe }}</b>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer text-muted">
+                                <form method="POST" action="/createReply">
+                                    <div class="form-row">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control no-border" id="replyBody"
+                                                   name="replyBody" aria-label="Reply"
+                                                   aria-describedby="basic-addon1"
+                                                   placeholder="Reply to this post">
+                                            <div class="input-group-append">
+                                                <input type="hidden" id="postId" name="postId"
+                                                       value="{{ post.id | safe }}">
+                                                <button type="submit" class="btn btn-success"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Submit Your Response">
+                                                    Submit
+                                                </button>
+                                                <button class="btn btn-secondary" type="button"
+                                                        data-toggle="tooltip" data-placement="top"
+                                                        title="Watch this Post">
+                                                    <i class="fa fa-lg fa-eye"></i>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <a class="btn btn-secondary" data-toggle="collapse"
+                               href="#replyCollapse{{ post.id | safe }}" role="button"
+                               aria-expanded="false" aria-controls="multiCollapse">Show/Hide
+                                Comments</a>
+                            <div class="collapse multi-collapse"
+                                 id="replyCollapse{{ post.id | safe }}">
+
+                                <div class="container p-3 mb-2">
+                                    <b>Replies:</b>
+                                    <hr>
+
+                                    {% for reply in replies[::-1] if reply.posted_to == post.id %}
+                                        <div class="row">
+                                            <div class="col-12">
+                                                <div class="card shadow bg-light border-dark mb-3">
+
+                                                    <div class="card-body">
+                                                        <p class="card-text">
+                                                            {{ reply.content | safe }}
+                                                        </p>
+                                                    </div>
+
+                                                    <div class="card-footer">
+                                                        <div class="row justify-content-between">
+                                                            <div class="col-4 text-left">
+                                                                <small>
+                                                                    <i>Reply from:</i>
+                                                                    <b>{{ reply.posted_by | safe }}</b>
+                                                                </small>
+                                                            </div>
+                                                            <div class="col-4 text-right">
+                                                                <small>
+                                                                    <i>Replied on:</i>
+                                                                    <b>{{ reply.posted_on | safe }}</b>
+                                                                </small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -53,7 +218,7 @@
 {% endblock %}
 
 {% block footer %}
-    <footer id="fixed-footer" class="py-4 bg-dark text-white-50 fixed-bottom">
+    <footer id="fixed-footer" class="py-4 bg-dark text-white-50">
         <div class="container text-center">
             <small>Copyright &copy; UEA Life</small>
         </div>
