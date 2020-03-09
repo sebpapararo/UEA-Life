@@ -103,7 +103,7 @@ def create():
 
     # Create some fake posts
     c.execute('INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
-            (uid, "General", "This is the first post", "This site is absolutely incredible!", "07/03/2020 14:04"))
+              (uid, "General", "This is the first post", "This site is absolutely incredible!", "07/03/2020 14:04"))
     c.execute('INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
               (uid3, "Student Union", "The SU is trash!", "My rep is useless and does not listen to anything I say", "07/03/2020 14:10"))
     c.execute('INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
@@ -115,7 +115,7 @@ def create():
 
     # Create some fake replies
     c.execute('INSERT INTO replies (posted_on, posted_to, posted_by, content) VALUES("%s","%s","%s","%s");' % \
-            ("07/03/2020 14:20", 2, uid, "I totally agree, they are completely incompetent, almost as bad as the hub!"))
+              ("07/03/2020 14:20", 2, uid, "I totally agree, they are completely incompetent, almost as bad as the hub!"))
     c.execute('INSERT INTO replies (posted_on, posted_to, posted_by, content) VALUES("%s","%s","%s","%s");' % \
               ("07/03/2020 14:29", 4, uid3, "Haha, I love lego as well. I prefer Beyblade's though!"))
 

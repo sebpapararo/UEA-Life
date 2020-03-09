@@ -24,6 +24,7 @@ app.config.update(
 )
 mail = Mail(app)
 
+
 # Database Methods - Courtesy of Oli
 def get_db():
     db = getattr(g, '_database', None)
@@ -71,6 +72,7 @@ def setHeaders(response):
                                                   "font-src stackpath.bootstrapcdn.com 'self';"
     return response
 
+
 # Routes
 @app.route('/', methods=['GET'])
 def index():
@@ -114,7 +116,8 @@ def login():
             retrieved_salt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
             retrieved_salt = b64decode(retrieved_salt.encode())
             if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt,
-                                                                                                                                    request.form.get('password', None)):
+                                                                                                                                    request.form.get('password',
+                                                                                                                                                     None)):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
@@ -254,7 +257,7 @@ def profile():
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
     response = make_response(render_template('/profile.html', title="UEA Life | Someones profile", userProfile=user_profile,
-                           usersPosts=posts, user=logged_in_as))
+                                             usersPosts=posts, user=logged_in_as))
     response = setHeaders(response)
     return response
 
@@ -780,7 +783,7 @@ def delete_account():
     # verifyPassword = request.form.get('verifyPassword', None)
 
     if verifyEmail is not None:
-    # if verifyEmail is not None and verifyPassword is not None:
+        # if verifyEmail is not None and verifyPassword is not None:
 
         email_to_delete = functions.sanitiseInputs(verifyEmail)
 
@@ -900,7 +903,7 @@ def createAccount():
                                     timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
 
                                     verify_email_query = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (
-                                    hashed_key, user_id, timestamp)
+                                        hashed_key, user_id, timestamp)
                                     query_db(verify_email_query)
                                     get_db().commit()
 
