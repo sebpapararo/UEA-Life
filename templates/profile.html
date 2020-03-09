@@ -38,21 +38,24 @@
                                 <div class="col-3">Posted By: {{ post.username | safe }}</div>
                                 <div class="col-3">Posted To: {{ post.category | safe }}</div>
                                 <div class="cols-3">Posted on: {{ post.posted_on | safe }}</div>
-                                <!-- /row -->
                             </div>
-                            <!-- /card-header -->
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">{{ post.title | safe }}</h5>
                             <p class="card-text">{{ post.content | safe }}</p>
-                            <!-- /card-body -->
                         </div>
-                        <!-- /card text-white bg-primary mb-3 w-100 -->
                     </div>
-                    <!-- /row -->
                 </div>
             {% endfor %}
         </div>
     </div>
 
+{% endblock %}
+
+{% block footer %}
+    <footer id="fixed-footer" class="py-4 bg-dark text-white-50 fixed-bottom">
+        <div class="container text-center">
+          <small>Copyright &copy; UEA Life</small>
+        </div>
+    </footer>
 {% endblock %}

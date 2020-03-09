@@ -6,135 +6,162 @@
 
 {% block content %}
     <div class="card mt-2">
-    <div class="jumbotron jumbotron-fluid">
-        <div class="container">
-            <h2 class="display-4">{{ user }}'s Account Settings</h2>
+        <div class="jumbotron jumbotron-fluid">
+            <div class="container">
+                <h2 class="display-4">{{ user }}'s Account Settings</h2>
+            </div>
         </div>
-    </div>
 
+        <div class="container">
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
 
-    <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-                {{ message }}
-            </div>
-        {% endfor %}
-    </div>
+        <div class="accordion m-2" id="accordionSettings">
 
-    <div class="accordion m-2" id="accordionSettings">
-        {# TODO: Line 39, 56 and 98 - Need to discus the exampleInputEmail1#}
+            {# GENERAL SETTINGS CARD #}
+            <div class="card">
+                <div class="card-header" id="generalSettings">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseGeneral"
+                                aria-expanded="true" aria-controls="collapseGeneral">
+                            General Account Settings
+                        </button>
+                    </h5>
+                </div>
 
-        {# GENERAL SETTINGS CARD #}
-        <div class="card">
-            <div class="card-header" id="generalSettings">
-                <h5 class="mb-0">
-                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseGeneral"
-                            aria-expanded="true" aria-controls="collapseGeneral">
-                        General Account Settings
-                    </button>
-                </h5>
-            </div>
+                <div id="collapseGeneral" class="collapse show" aria-labelledby="generalSettings"
+                     data-parent="#accordionSettings">
+                    <div class="card-body">
 
-            <div id="collapseGeneral" class="collapse show" aria-labelledby="generalSettings"
-                 data-parent="#accordionSettings">
-                <div class="card-body">
-                    <div class="row pl-4 pb-2 justify-content-center">
-                        <div class="col">
+                        <div class="container align-items-center">
+
+                            <h3>General Account Settings</h3>
+                            <hr>
+
+                            <div class="alert alert-info my-2" role="alert">
+                                <b>Our Promise</b>
+                                <hr>
+                                We will <b><u>never</u></b> share your personal information, data or email address with any
+                                third party
+                            </div>
+
                             <form action="/accountSettings/updateUsername" method="POST" role="change-username"
                                   id="update-username">
-                                <label for="inputUsername">Username</label>
-                                <div class="input-group">
-                                    <input disabled name="username" id="username" type="text" class="form-control"
-                                           placeholder="Your username here:" aria-label="Recipient's username"
-                                           aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button id="button-username" class="btn btn-outline-secondary" type="button"
-                                                onclick="profileUndisable('username')">Change
-                                        </button>
+                                <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="inputUsername"><b>Change Your Username to:</b></label>
+                                        <div class="input-group">
+                                            <input disabled name="username" id="username" type="text" class="form-control"
+                                                   placeholder="Your username here:" aria-label="Recipient's username"
+                                                   aria-describedby="basic-addon2">
+                                            <div class="input-group-append">
+                                                <button id="button-username" class="btn btn-outline-secondary" type="button"
+                                                        onclick="profileUndisable('username')">Change
+                                                </button>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </form>
-                            <small id="emailHelp" class="form-text text-muted">
-                                We'll never share your private details with anyone else.
-                            </small>
+
+                            <div class="alert alert-info my-2" role="alert">
+                                Ensure any new email is valid prior to submitting a change. Updated/Changed email addresses
+                                will no longer be verified so keep an eye on your new email inbox to verify your new email
+                                address. <b>Remember</b> - you will not be able to submit posts until your email address is
+                                verified.
+                            </div>
 
                             <form action="/accountSettings/updateEmail" method="POST" role="change-email"
                                   id="update-email">
-                                <label for="inputEmail">Email address</label>
-                                <div class="input-group">
-                                    <input disabled id="email" name="email" type="text" class="form-control"
-                                           placeholder="Your email here:"
-                                           aria-label="Recipient's email" aria-describedby="basic-addon2">
-                                    <div class="input-group-append">
-                                        <button id="button-email" class="btn btn-outline-secondary" type="button"
-                                                onclick="profileUndisable('email')">
-                                            Change
-                                        </button>
-                                        <!-- /input-group-append -->
-                                    </div>
-                                    <!-- /input-group -->
-                                </div>
-                            </form>
-                            <small id="emailHelp" class="form-text text-muted">
-                                We'll never share your email with anyone else.
-                            </small>
-                            <!-- /col -->
-                        </div>
-                        <!-- /row pl-4 pb-2 justify-content-center -->
-                    </div>
-                    <!-- /card-body -->
-                </div>
-                <!-- /collapse -->
-            </div>
-            <!-- /card -->
-        </div>
-
-        {# PASSWORD SETTINGS CARD #}
-        <div class="card">
-            <div class="card-header" id="passwordSettings">
-                <h5 class="mb-0">
-                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
-                            data-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
-                        Password Settings
-                    </button>
-                </h5>
-                <!-- /card-header -->
-            </div>
-
-            <div id="collapsePassword" class="collapse" aria-labelledby="passwordSettings"
-                 data-parent="#accordionSettings">
-                <div class="card-body">
-                    <div class="row pl-4 pb-2 justify-content-center">
-                        <div class="col">
-                            <label for="changePassword">Password</label>
-                            <div class="input-group">
-                                <form action="/accountSettings/updatePassword" method="POST" role="change-password"
-                                      id="update-password">
-                                    <div class="input-group">
-                                        <label for="exampleInputPassword">Current Password</label>
-                                        <input id="password" name="password" type="password" class="form-control"
-                                               placeholder="Current password here:"
-                                               aria-label="Recipient's password" aria-describedby="basic-addon2">
-                                        <label for="exampleInputPassword">New password</label>
-                                        <input id="newPassword" name="newPassword" type="password" class="form-control"
-                                               placeholder="New password here:"
-                                               aria-label="Recipient's password" aria-describedby="basic-addon2">
-                                        <label for="exampleInputPassword">Confirm new password</label>
-                                        <input id="newPasswordCheck" name="newPasswordCheck" type="password"
-                                               class="form-control" placeholder="New password:"
-                                               aria-label="Recipient's password" aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button id="button-password" class="btn btn-outline-secondary" type="button"
-                                                    onclick="profileUndisable('password')">
-                                                Change
-                                            </button>
+                                <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="inputEmail"><b>Change Your Email to:</b></label>
+                                        <div class="input-group">
+                                            <input disabled id="email" name="email" type="text" class="form-control"
+                                                   placeholder="Your email here:"
+                                                   aria-label="Recipient's email" aria-describedby="basic-addon2">
+                                            <div class="input-group-append">
+                                                <button id="button-email" class="btn btn-outline-secondary" type="button"
+                                                        onclick="profileUndisable('email')">
+                                                    Change
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
-                                </form>
-                                <small id="emailHelp" class="form-text text-muted">
-                                    We'll never share your personal details with anyone else.
-                                </small>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {# PASSWORD SETTINGS CARD #}
+            <div class="card">
+                <div class="card-header" id="passwordSettings">
+                    <h5 class="mb-0">
+                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse"
+                                data-target="#collapsePassword" aria-expanded="false" aria-controls="collapsePassword">
+                            Password Settings
+                        </button>
+                    </h5>
+                </div>
+
+                <div id="collapsePassword" class="collapse" aria-labelledby="passwordSettings"
+                     data-parent="#accordionSettings">
+                    <div class="card-body">
+
+                        <div class="container align-items-center">
+
+                            <h3>Change/Update Your Password</h3>
+                            <hr>
+
+                            <div class="alert alert-info my-2" role="alert">
+                                <b>Good Password Security</b>
+                                <hr>
+                                A good password consists of a mixture of upper and lower case characters, numbers and
+                                special characters. Avoid using easily guessable passwords, such as "password123". For
+                                greater security use a unique password for this account and do not reuse it for other online
+                                accounts. Regularly changing your passwords is also good practice for protecting yourself
+                                online.
                             </div>
+
+                            <form action="/accountSettings/updatePassword" method="POST" role="change-password"
+                                  id="update-password">
+
+                                <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="inputCurrentPassword"><b>Current Password:</b></label>
+                                        <input id="password" name="password" type="password" class="form-control"
+                                               placeholder="Current password here:">
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="newPassword"><b>New Password:</b></label>
+                                        <input id="newPassword" name="newPassword" type="password" class="form-control"
+                                               placeholder="New password here:">
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="newPasswordCheck"><b>Confirm New Password:</b></label>
+                                        <input id="newPasswordCheck" name="newPasswordCheck" type="password"
+                                               class="form-control" placeholder="Confirm New Password:">
+                                    </div>
+                                </div>
+
+                                <button type="submit" name="updatePassword" class="btn btn-success btn-lg btn-block mt-3">
+                                    Confirm Password Change
+                                </button>
+
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -155,86 +182,94 @@
                 <div id="collapseDelete" class="collapse" aria-labelledby="deleteAccount"
                      data-parent="#accordionSettings">
                     <div class="card-body">
-                        <div class="row pb-2 justify-content-center align-items-center">
-                            <div class="col">
-                                <div class="container align-items-center">
 
-                                    <div class="alert alert-info my-2" role="alert">
-                                        <b>Why Would You Leave?</b>
-                                        <hr>
-                                        If you wish to delete your account please complete the following steps to
-                                        ensure it is really you and that you really wish to delete your account
+                        <div class="container align-items-center">
+
+                            <h3>Account Deletion</h3>
+                            <hr>
+
+                            <div class="alert alert-info my-2" role="alert">
+                                <b>Why Would You Leave?</b>
+                                <hr>
+                                If you wish to delete your account please complete the following steps to
+                                ensure it is really you and that you really wish to delete your account
+                            </div>
+
+                            <form method="POST" action="/accountSetting/delete_account">
+                                <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="verifyPassword">
+                                            <b>
+                                                1) Reassure use that its' really you, please enter your password:
+                                            </b>
+                                        </label>
+                                        <input id="verifyPassword" name="verifyPassword" type="password"
+                                               class="form-control" placeholder="Verify Password">
+                                    </div>
+                                </div>
+
+                                <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="verifyEmail">
+                                            <b>
+                                                2) If your determined to go please verify the email address
+                                                associated with your soon to be deleted account
+                                            </b>
+                                        </label>
+                                        <input type="text" class="form-control" id="verifyEmail"
+                                               name="verifyEmail"
+                                               placeholder="Verify Email">
+                                        <small id="emailHelp" class="form-text text-muted">
+                                            We'll never share your email with anyone else.
+                                        </small>
+                                        <!-- /col-8 -->
+                                    </div>
+                                    <!-- /row -->
+                                </div>
+
+                                <div class="row my-4 justify-content-between">
+                                    <div class="col-4">
+                                        <label for="verifyCap">
+                                            <b>
+                                                3) Please verify that you are not secretly a robot trying to
+                                                delete a humans account:
+                                            </b>
+                                        </label>
+                                        <div class="g-recaptcha" id="verifyCap"
+                                             data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk">
+                                        </div>
                                     </div>
 
-                                    <form method="POST" action="/accountSetting/delete_account">
-                                        <div class="row align-items-center my-4">
-                                            <div class="col-12">
-                                                <label for="verifyPassword">
-                                                    <b>
-                                                        1) Reassure use that its' really you, please enter your password:
-                                                    </b>
-                                                </label>
-                                                <input id="verifyPassword" name="verifyPassword" type="password"
-                                                       class="form-control" placeholder="Verify Password">
-                                            </div>
+                                    <div class="col-7">
+                                        <div class="alert alert-info" role="alert">
+                                            <b>Was it Something We Did?</b>
+                                            <hr>
+                                            Once you have verified your account, identity and confirmed your
+                                            human click the delete button to fully delete your account.
+                                            <hr>
+                                            <b>This process <u>CAN NOT</u> be reversed once completed</b>
                                         </div>
-
-                                        <div class="row align-items-center my-4">
-                                            <div class="col-12">
-                                                <label for="verifyEmail">
-                                                    <b>
-                                                        2) If your determined to go please verify the email address
-                                                        associated with your soon to be deleted account
-                                                    </b>
-                                                </label>
-                                                <input type="text" class="form-control" id="verifyEmail"
-                                                       name="verifyEmail"
-                                                       placeholder="Verify Email">
-                                                <small id="emailHelp" class="form-text text-muted">
-                                                    We'll never share your email with anyone else.
-                                                </small>
-                                                <!-- /col-8 -->
-                                            </div>
-                                            <!-- /row -->
-                                        </div>
-
-                                        <div class="row my-4 justify-content-between">
-                                            <div class="col-4">
-                                                <label for="verifyCap">
-                                                    <b>
-                                                        3) Please verify that you are not secretly a robot trying to
-                                                        delete a humans account:
-                                                    </b>
-                                                </label>
-                                                <div class="g-recaptcha" id="verifyCap"
-                                                     data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-7">
-                                                <div class="alert alert-info" role="alert">
-                                                    <b>Was it Something We Did?</b>
-                                                    <hr>
-                                                    Once you have verified your account, identity and confirmed your
-                                                    human click the delete button to fully delete your account.
-                                                    <hr>
-                                                    <b>This process <u>CAN NOT</u> be reversed once completed</b>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <button type="submit" name="delete_account"
-                                                class="btn btn-danger btn-lg btn-block">
-                                            Delete Account
-                                        </button>
-
-                                    </form>
+                                    </div>
                                 </div>
-                            </div>
+
+                                <button type="submit" name="delete_account"
+                                        class="btn btn-danger btn-lg btn-block">
+                                    Delete Account
+                                </button>
+
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block footer %}
+    <footer id="fixed-footer" class="py-4 bg-dark text-white-50">
+        <div class="container text-center">
+          <small>Copyright &copy; UEA Life</small>
+        </div>
+    </footer>
 {% endblock %}

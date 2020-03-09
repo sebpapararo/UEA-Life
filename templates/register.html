@@ -7,79 +7,233 @@
 
 {% block content %}
 
-    <br>
-    <!-- Div to display any error messages created when logging in -->
-    <div class="container">
-        {% for message in get_flashed_messages() %}
-            <div class="alert alert-warning">
-                {{ message }}
+    <div class="container bg-white p-2">
+
+        <div class="col-sm-12">
+
+            <div class="jumbotron jumbotron-fluid" id="reg_jumbo">
+                <div class="container text-white">
+                    <h1 class="display-4"><b>Sign Up to UEA Life</b></h1>
+                    <p class="lead"><b>Create an account with UEA Life which you can use to talk to other UEA Students and Staff
+                        to give yourself a leg up on life at the UEA</b></p>
+                </div>
             </div>
-        {% endfor %}
-    </div>
-    <div class="container">
-        <div class="card mt-5">
-            <div class="card-body">
-                <h5 class="card-title">Register an account</h5>
-                <form action="/register/createAccount" method="POST" role="register-form">
-                    <div class="form-group">
-                        <label for="title"> Username </label>
-                        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
-                        <label for="title"> Email </label>
-                        <input type="text" class="form-control" id="email" name="email" placeholder="Email">
-                        <label for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" placeholder="Password" name="password" data-toggle="tooltip" title="Password requirements:
-                        - One upper-case character.
-                        - One lower-case character.
-                        - One number.
-                        - One special character.
-                        - At least 8 characters in length.">
-                        <label for="password">Verify Password:</label>
-                        <input type="password" class="form-control" id="verifyPassword" placeholder="Retype Password" name="verifyPassword"
-                               data-toggle="tooltip" title="Password requirements:
-                        - One upper-case character.
-                        - One lower-case character.
-                        - One number.
-                        - One special character.
-                        - At least 8 characters in length.">
+
+            <!-- Div to display any error messages created when logging in -->
+            <div class="container">
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-warning">
+                        {{ message }}
                     </div>
-                    <div class="form-group">
-                        <h6 class="card-title">Other Details</h6>
-                        <label for="level"> Level </label>
-                        <select class="form-control" id="level" name="level">
-                            <option>UG (Undergraduate)</option>
-                            <option>PGT (Postgraduate Taught)</option>
-                            <option>PGR (Postgraduate Research)</option>
-                            <option>STF (Staff)</option>
-                        </select>
+                {% endfor %}
+            </div>
+
+            <div class="card mt-5 shadow">
+                <h3 class="card-header">Register an account</h3>
+
+                <div class="card-body">
+                    <h4 class="card-title">General Details</h4>
+
+                    <div class="alert alert-info my-2" role="alert">
+                        <b>Basic Account Details</b>
+                        <hr>
+                        The following section focuses on providing basic account details. These are details
+                        that you will use to make posts, replies and to find other users.
                     </div>
-                    <div class="form-group">
-                        <label for="school"> School </label>
-                        <select class="form-control" id="school" name="school">
-                            <option>BIO</option>
-                            <option>ENV</option>
-                            <option>CMP</option>
-                            <option>CHE</option>
-                            <option>MED</option>
-                            <option>MTH</option>
-                            <option>ECO</option>
-                            <option>LAW</option>
-                            <option>PPL</option>
-                            <option>NBS</option>
-                            <option>PHA</option>
-                            <option>NAT</option>
-                            <option>AMA</option>
-                        </select>
-                    </div>
-                    <div class="row justify-content-center mt-2">
-                        <div class="g-recaptcha" data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk"></div>
-                    </div>
-                    <div>
-                        <div style="text-align: center;">
-                            <button type="submit" class="btn btn-success" name="createAccount">Submit</button>
+
+                    <form action="/register/createAccount" method="POST" role="register-form">
+                        <div class="form-group">
+
+                            <div class="row align-items-center my-4">
+                                <div class="col-12">
+                                    <label for="title"><b>1) Define Your Desired Username:</b> </label>
+                                    <div class="input-group mt-1">
+
+                                        <input type="text" class="form-control" id="username" name="username"
+                                               placeholder="Username" aria-describedby="button-addon1">
+
+                                        <div class="input-group-append">
+                                            <button class="btn btn-info" type="button" id="button-addon1"
+                                                    data-toggle="tooltip" data-placement="top"
+                                                    title="Check Availability">
+                                                Check
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center my-4">
+                                <div class="col-12">
+                                    <label for="title"><b>2) Enter Your Email:</b></label>
+                                    <div class="input-group mt-1">
+                                        <input type="text" class="form-control" id="email" name="email"
+                                               placeholder="Email Address" aria-describedby="button-addon1">
+
+                                        <div class="input-group-append">
+                                            <button class="btn btn-info" type="button" id="button-addon1"
+                                                    data-toggle="tooltip" data-placement="top"
+                                                    title="Check Availability">
+                                                Check
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row align-items-center my-4">
+                                    <div class="col-12">
+                                        <label for="password"><b>3) Enter Your Password:</b></label>
+                                        <div class="input-group mt-1">
+                                            <div class="input-group-prepend">
+                                                <a class="btn btn-info" type="button" id="button-addon1" tabindex="0"
+                                                   data-container="body" data-placement="top" data-trigger="focus"
+                                                   data-toggle="popover" data-html="true"  title="Password Requirements"
+                                                   data-content="Password must be at least 8 characters long and contain at least:
+                                                   <br /> - One Upper-Case Character,
+                                                   <br /> - One Lower-Case Character,
+                                                   <br /> - One Number,
+                                                   <br /> - One Special Character">
+                                                    <i class="fa text-white fa-lg fa-question"></i>
+                                                </a>
+                                            </div>
+
+                                            <input type="password" class="form-control" id="password" name="password"
+                                                   placeholder="Password" aria-describedby="button-addon1">
+                                        </div>
+                                    </div>
+                            </div>
+
+                            <div class="row align-items-center my-4">
+                                <div class="col-12">
+                                    <label for="password"><b>4) Verify Your Password:</b></label>
+                                    <div class="input-group mt-1">
+                                        <div class="input-group-prepend">
+                                            <a class="btn btn-info" type="button" id="button-addon1" tabindex="0"
+                                               data-container="body" data-placement="top" data-trigger="focus"
+                                               data-toggle="popover" data-html="true" title="Password Requirements"
+                                               data-content="Password must be at least 8 characters long and contain at least:
+                                               <br /> - One Upper-Case Character,
+                                               <br /> - One Lower-Case Character,
+                                               <br /> - One Number,
+                                               <br /> - One Special Character">
+                                                <i class="fa text-white fa-lg fa-question"></i>
+                                            </a>
+                                        </div>
+                                        <input type="password" class="form-control" id="verifyPassword" name="verifyPassword"
+                                               placeholder="Retype Password" aria-describedby="button-addon1">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </form>
+
+                        <hr>
+                        <h4 class="card-title">Other Details</h4>
+
+                        <div class="alert alert-info my-2" role="alert">
+                            <b>Further Account Details</b>
+                            <hr>
+                            These extra account details are used to provide members an ability to communicate between
+                            either schools or levels of study.
+                        </div>
+
+                        <div class="form-group">
+                            <div class="row align-items-center my-4">
+                                <div class="col-12">
+                                    <label for="level"><b>5) What is Your Level of Study?</b></label>
+                                    <div class="input-group mt-1">
+                                        <div class="input-group-prepend">
+                                            <a class="btn btn-info" type="button" id="button-addon1" tabindex="0"
+                                               data-container="body" data-placement="top" data-trigger="focus"
+                                               data-toggle="popover" data-html="true" title="Level of Study"
+                                               data-content="Tell us what is your level of study. If this is not known
+                                               you can find out by looking at your UEA campus card, it can be seen in
+                                               the black strip on the right of your card">
+
+                                                <i class="fa text-white fa-lg fa-question"></i>
+                                            </a>
+                                        </div>
+                                        <select class="form-control" id="level" name="level" aria-describedby="button-addon1">
+                                            <option>UG (Undergraduate)</option>
+                                            <option>PGT (Postgraduate Taught)</option>
+                                            <option>PGR (Postgraduate Research)</option>
+                                            <option>STF (Staff)</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+{#                        <div class="form-group">#}
+                            <div class="row align-items-center my-4">
+                                <div class="col-12">
+                                    <label for="school"><b>6) Which Campus School are you Studying at?</b></label>
+                                    <div class="input-group mt-1">
+                                        <div class="input-group-prepend">
+                                            <a class="btn btn-info" type="button" id="button-addon1" tabindex="0"
+                                               data-container="body" data-placement="top" data-trigger="focus"
+                                               data-toggle="popover" data-html="true" title="School"
+                                               data-content="Tell us which campus school you are enrolled at">
+                                                <i class="fa text-white fa-lg fa-question"></i>
+                                            </a>
+                                        </div>
+                                        <select class="form-control" id="school" name="school" aria-describedby="button-addon1">
+                                            <option>BIO</option>
+                                            <option>ENV</option>
+                                            <option>CMP</option>
+                                            <option>CHE</option>
+                                            <option>MED</option>
+                                            <option>MTH</option>
+                                            <option>ECO</option>
+                                            <option>LAW</option>
+                                            <option>PPL</option>
+                                            <option>NBS</option>
+                                            <option>PHA</option>
+                                            <option>NAT</option>
+                                            <option>AMA</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+{#                        </div>#}
+
+                        <div class="row my-4 justify-content-between">
+                            <div class="col-4">
+                                <label for="verifyCap">
+                                    <b>
+                                        7) Please confirm that you are not secretly a robot:
+                                    </b>
+                                </label>
+                                <div class="g-recaptcha" id="verifyCap"
+                                     data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk">
+                                </div>
+                            </div>
+
+                            <div class="col-7">
+                                <div class="alert alert-info" role="alert">
+                                    <b>Our Guarantee</b>
+                                    <hr>
+                                    We will <b><u>never</u></b> share any of your personal information, data or email
+                                    address with any third party
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" name="createAccount" class="btn btn-success btn-lg btn-block mt-3">
+                            Submit
+                        </button>
+
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block footer %}
+    <footer id="fixed-footer" class="py-4 bg-dark text-white-50">
+        <div class="container text-center">
+          <small>Copyright &copy; UEA Life</small>
+        </div>
+    </footer>
 {% endblock %}

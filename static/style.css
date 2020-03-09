@@ -7,3 +7,9 @@
     background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://www.uea.ac.uk/documents/3154295/3310218/About+Us+Homepage+Banner.jpeg/4efb463a-5359-4065-b847-f9db6bbf2fce?t=1372346830234");
     background-size: cover;
 }
+
+#reg_jumbo {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("https://www.pub-quiz.com/quiz_image/1375437795_UEAStudentsUnionNorwich.jpg");
+    background-size: cover;
+    background-position: center;
+}

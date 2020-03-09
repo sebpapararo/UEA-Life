@@ -13,9 +13,19 @@ function profileUndisable(field) {
     } else {
         form.submit();
     }
-}
+};
 
 
 $(document).ready(function () {
     $('[data-toggle="tooltip"]').tooltip();
+});
+
+
+$(function () {
+  $('[data-toggle="popover"]').popover()
+});
+
+
+$('.popover-dismiss').popover({
+  trigger: 'focus'
 });

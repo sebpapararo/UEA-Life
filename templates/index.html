@@ -14,62 +14,73 @@
         </div>
     </div>
 
-    <div class="row row align-items-center">
-        <div class="col-6">
-            <div class="card">
-                <img class="card-img-top"
-                     src="https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg/fcc74a2c-eedb-437a-a39f-1d6fa1ccae26?t=1391011295968"
-                     alt="Card image cap">
-                <div class="card-body">
-                    <h1 class="card-title">Welcome to UEA Life</h1>
-                    <h4 class="card-subtitle mb-2 text-muted">New to the UEA? Need help with Campus Life? Have advice for new students?</h4>
-                    <p class="card-text">UEA Life offers student and staff a forum to exchange advice, experiences and answer other
-                        questions</p>
-                    <a href="#" class="card-link">Learn More</a>
-                </div>
+    <div class="card-deck mb-4">
+
+        <div class="card shadow">
+            <img class="card-img-top"
+                 src="https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg/fcc74a2c-eedb-437a-a39f-1d6fa1ccae26?t=1391011295968"
+                 alt="Card image cap">
+            <div class="card-body">
+                <h1 class="card-title">Welcome to UEA Life</h1>
+                <hr>
+                <h4 class="card-subtitle mb-2 text-muted">New to the UEA? Need help with Campus Life? Have advice for new students?</h4>
+                <p class="card-text">UEA Life offers student and staff a forum to exchange advice, experiences and answer other
+                    questions</p>
+                <a href="#" class="card-link">Learn More</a>
             </div>
         </div>
-        <div class="col-6">
-            <div class="card">
-                <div class=card-body>
-                    <!-- Div to display any error messages created when logging in -->
-                    <div class="container">
-                        {% for message in get_flashed_messages() %}
-                            <div class="alert alert-warning">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
-                    </div>
-                    <h5 class="card-title">Login</h5>
-                    <form action="/login" method="post" role="login-form">
-                        <div class="form-group">
-                            <label for="email"> Email Address: </label>
-                            <input type="text" class="form-control" id="email" name="email"
-                                   placeholder="Email Address"/>
-                            <label for="password"> Password </label>
-                            <input type="password" class="form-control" id="password" name="password"
-                                   placeholder="Password">
-                        </div>
-                        <div class="row justify-content-center mt-2">
-                            <div class="g-recaptcha" data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk"></div>
-                        </div>
-                        <div class="row justify-content-center mt-2">
-                            <div class="col-sm-5">
-                                <button type="submit" class="btn btn-success btn-block">Login</button>
-                            </div>
-                        </div>
 
-                    </form>
-                    <div class="row pt-2 justify-content-center">
-                        <div class="col-sm-5">
-                            <a href="/register" class="btn btn-outline-success float-right btn-block">Sign Up</a>
+        <div class="card shadow">
+            <div class=card-body>
+                <!-- Div to display any error messages created when logging in -->
+                <div class="container">
+                    {% for message in get_flashed_messages() %}
+                        <div class="alert alert-warning">
+                            <i class="fa fa-lg fa-exclamation-circle"></i>
+                            {{ message }}
                         </div>
+                    {% endfor %}
+                </div>
+
+                <h4 class="card-title">Login</h4>
+                <hr>
+                <form action="/login" method="post" role="login-form">
+                    <div class="form-group">
+                        <label for="email"> Email Address: </label>
+                        <input type="text" class="form-control" id="email" name="email"
+                               placeholder="Email Address"/>
+                        <label for="password"> Password </label>
+                        <input type="password" class="form-control" id="password" name="password"
+                               placeholder="Password">
+                    </div>
+                    <div class="row justify-content-center mt-2">
+                        <div class="g-recaptcha" data-sitekey="6LegU9sUAAAAAJDIOyEjYrrbHV5MS4RtzESQcOtk"></div>
+                    </div>
+                    <div class="row justify-content-center mt-2">
                         <div class="col-sm-5">
-                            <a href="/forgotPassword" class="btn btn-outline-info float-left btn-block">Forgot Password</a>
+                            <button type="submit" class="btn btn-success btn-block">Login</button>
                         </div>
+                    </div>
+
+                </form>
+                <div class="row pt-2 justify-content-center">
+                    <div class="col-sm-5">
+                        <a href="/register" class="btn btn-outline-success float-right btn-block">Sign Up</a>
+                    </div>
+                    <div class="col-sm-5">
+                        <a href="/forgotPassword" class="btn btn-outline-info float-left btn-block">Forgot Password</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+{% endblock %}
+
+{% block footer %}
+    <footer id="fixed-footer" class="py-4 bg-dark text-white-50 fixed-bottom">
+        <div class="container text-center">
+          <small>Copyright &copy; UEA Life</small>
+        </div>
+    </footer>
 {% endblock %}

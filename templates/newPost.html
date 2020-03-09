@@ -6,46 +6,101 @@
 {% block current_user %}{{ user }}{% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="card mt-5">
-            <div class="card-body">
+    <div class="container bg-white p-2">
 
-                <h5 class="card-title">Create a New Post</h5>
+        <div class="col-sm-12">
 
-                <form method="POST" action="/createPost">
+{#            <div class="jumbotron jumbotron-fluid" id="post_jumbo">#}
+{#                <div class="container text-white">#}
+{#                    <h1 class="display-4"><b>Sign Up to UEA Life</b></h1>#}
+{#                    <p class="lead"><b>Create an account with UEA Life which you can use to talk to other UEA Students and Staff#}
+{#                        to give yourself a leg up on life at the UEA</b></p>#}
+{#                </div>#}
+{#            </div>#}
 
-                    <div class="container">
-                        {% for message in get_flashed_messages() %}
-                            <div class="alert alert-warning">
-                                {{ message }}
+            <div class="container">
+                {% for message in get_flashed_messages() %}
+                    <div class="alert alert-warning">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <div class="card mt-5 shadow">
+                <h3 class="card-header">Create a New Post</h3>
+
+                <div class="card-body">
+
+                    <form method="POST" action="/createPost">
+                        <div class="form-group">
+
+                            <div class="row align-items-center mt-2 mb-4">
+                                <div class="col-12">
+                                    <label for="category"><b>1) Which Category Best Suites Your Post?</b></label>
+
+                                    <div class="alert alert-info" role="alert">
+                                        Selecting an appropriate category ensures your posts are directed to the best
+                                        subject area.
+                                    </div>
+
+                                    <select class="form-control" name="category" id="category">
+                                        <option>General</option>
+                                        <option>Finance</option>
+                                        <option>Accommodation</option>
+                                        <option>Student Union</option>
+                                        <option>Local Area</option>
+                                        <option>Travel</option>
+                                    </select>
+                                </div>
                             </div>
-                        {% endfor %}
-                    </div>
 
-                    <div class="form-group">
-                        <label for="category"> Category </label>
-                        <select class="form-control" name="category" id="category">
-                            <option>General</option>
-                            <option>Finance</option>
-                            <option>Accommodation</option>
-                            <option>Student Union</option>
-                            <option>Local Area</option>
-                            <option>Travel</option>
-                        </select>
+                            <hr>
 
-                        <label for="title"> Title </label>
-                        <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+                            <div class="row align-items-center my-4">
+                                <div class="col-12">
+                                    <label for="title"><b>2) What is the Title of Your Post?</b></label>
 
-                        <label for="content"> Comment </label>
-                        <textarea class="form-control" rows="5" id="content" name="content" placeholder="Post Your Content"></textarea>
-                    </div>
-                    <div>
-                        <div style="text-align: center;">
-                            <button type="submit" class="btn btn-success">Submit</button>
+                                    <div class="alert alert-info" role="alert">
+                                        Give your post a brief title to provide other UEA Life members a quick idea of
+                                        your posts content.
+                                    </div>
+
+                                    <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+                                </div>
+                            </div>
+
+                            <hr>
+
+                            <div class="row align-items-center my-4">
+                                <div class="col-12">
+                                    <label for="content"><b>3) What is the Content of Your Post?</b></label>
+
+                                    <div class="alert alert-info" role="alert">
+                                        This is the section for your posts main content
+                                    </div>
+
+                                    <textarea class="form-control" rows="5" id="content" name="content"
+                                              placeholder="Post Your Content"></textarea>
+                                </div>
+                            </div>
+
                         </div>
-                    </div>
-                </form>
+
+                        <button type="submit" name="submitPost" class="btn btn-success btn-lg btn-block mt-3">
+                            Submit
+                        </button>
+
+                    </form>
+                </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block footer %}
+    <footer id="fixed-footer" class="py-4 bg-dark text-white-50 fixed-bottom">
+        <div class="container text-center">
+          <small>Copyright &copy; UEA Life</small>
+        </div>
+    </footer>
 {% endblock %}
