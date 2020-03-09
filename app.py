@@ -64,6 +64,7 @@ def close_connection(exception):
 
 def setHeaders(response):
     response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Content-Security-Policy'] = "default-src https: 'self';" \
                                                   "script-src ttps://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-1141458096' code.jquery.com cdn.jsdelivr.net ajax.googleapis.com  stackpath.bootstrapcdn.com 'self';" \
                                                   "frame-src https://www.google.com/recaptcha/ 'self';" \
