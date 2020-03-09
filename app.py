@@ -24,7 +24,6 @@ app.config.update(
 )
 mail = Mail(app)
 
-
 # Database Methods - Courtesy of Oli
 def get_db():
     db = getattr(g, '_database', None)
@@ -62,6 +61,16 @@ def close_connection(exception):
         db.close()
 
 
+def setHeaders(response):
+    response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Content-Security-Policy'] = "default-src https: 'self';" \
+                                                  "script-src ttps://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-1141458096' code.jquery.com cdn.jsdelivr.net ajax.googleapis.com  stackpath.bootstrapcdn.com 'self';" \
+                                                  "frame-src https://www.google.com/recaptcha/ 'self';" \
+                                                  "style-src stackpath.bootstrapcdn.com 'self';" \
+                                                  "img-src https://www.uea.ac.uk/documents/3154295/3310218/About+Us+Homepage+Banner.jpeg https://www.pub-quiz.com/quiz_image/1375437795_UEAStudentsUnionNorwich.jpg https://www.timeshighereducation.com/sites/default/files/institution/header_image/header_image_-_uea_campus.jpg https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg 'self';" \
+                                                  "font-src stackpath.bootstrapcdn.com 'self';"
+    return response
+
 # Routes
 @app.route('/', methods=['GET'])
 def index():
@@ -69,9 +78,13 @@ def index():
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
         flash('You are already logged in you baboon!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
-    return render_template('/index.html', title="UEA Life | Home")
+    response = make_response(render_template('/index.html', title="UEA Life | Home"))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/login', methods=['POST'])
@@ -80,12 +93,16 @@ def login():
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
         flash('You are already logged in you baboon!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     # Make sure all fields are present
     if request.form.get('email', None) is None or request.form.get('password', None) is None:
         flash('Not all fields were sent mate!')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     # If the fields are not emtpy
     if request.form.get('email', None) != '' and request.form.get('password', None) != '':
@@ -116,7 +133,7 @@ def login():
                     get_db().commit()
 
                     response = make_response(redirect('/dashboard'))
-
+                    response = setHeaders(response)
                     response.set_cookie('userSession', cookie_id, samesite='strict', secure=True, httponly=True,
                                         expires=expiry_date)
 
@@ -130,7 +147,10 @@ def login():
             flash('The username or password is incorrect!')
     else:
         flash('The username and password fields cannot be left blank!')
-    return redirect('/')
+
+    response = make_response(redirect('/'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/logout')
@@ -138,13 +158,17 @@ def logout():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('You can\'t logout if you weren\'t logged in, you meathead!')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     validSessions.removeSession(user_cookie)
 
     cookie_id = os.urandom(64)
     cookie_id = b64encode(cookie_id)
+
     response = make_response(redirect('/'))
+    response = setHeaders(response)
     response.set_cookie('userSession', cookie_id, samesite='strict', secure=True, httponly=True, expires=0)
 
     flash('Successfully logged out!')
@@ -157,7 +181,9 @@ def dashboard():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     # Check for valid session
     uid = validSessions.checkSession(user_cookie)
@@ -176,7 +202,9 @@ def dashboard():
             "UNION ALL SELECT id, replies.posted_on, posted_to, posted_by AS username, content FROM replies WHERE posted_by = 'Deleted User'"
     replies = query_db(query)
 
-    return render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as, replies=replies)
+    response = make_response(render_template('/dashboard.html', title="UEA Life | Dashboard", data=results, user=logged_in_as, replies=replies))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/profile', methods=['GET'])
@@ -185,7 +213,9 @@ def profile():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     uid = validSessions.checkSession(user_cookie)
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
@@ -196,15 +226,19 @@ def profile():
     # Check the username field has been sent
     if username is None:
         flash('No username sent mate!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     # Gets the users profile
     user_profile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
     # When more than expected profiles are received, throw error.
-    if (len(user_profile) != 1):
+    if len(user_profile) != 1:
         flash('User Does Not Exist!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     # Get single profile
     user_profile = user_profile[0]
@@ -219,8 +253,10 @@ def profile():
     # Get the Content of the posts
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
-    return render_template('/profile.html', title="UEA Life | Someones profile", userProfile=user_profile,
-                           usersPosts=posts, user=logged_in_as)
+    response = make_response(render_template('/profile.html', title="UEA Life | Someones profile", userProfile=user_profile,
+                           usersPosts=posts, user=logged_in_as))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/newPost', methods=['GET'])
@@ -229,15 +265,21 @@ def newPost():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
     uid = validSessions.checkSession(user_cookie)
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
     if query_db('SELECT verified FROM users WHERE id = "%s"' % uid)[0].get('verified') == 1:
-        return render_template('/newPost.html', username=uid, user=logged_in_as)
+        response = make_response(render_template('/newPost.html', username=uid, user=logged_in_as))
+        response = setHeaders(response)
+        return response
     else:
         flash('Behave - Verify account before posting')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
 
 @app.route('/createPost', methods=['POST'])
@@ -246,7 +288,9 @@ def createPost():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     cats = ['General', 'Finance', 'Accommodation', 'Student Union', 'Local Area', 'Travel']
     category = request.form.get('category', None)
@@ -260,23 +304,31 @@ def createPost():
     category = functions.sanitiseInputs(category)
     if category not in cats or category == '':
         flash('Incorrect category selected or blank category you muppet!')
-        return redirect('/newPost')
+        response = make_response(redirect('/newPost'))
+        response = setHeaders(response)
+        return response
 
     title = functions.sanitiseInputs(title)
     if title is None or title == '':
         flash('Title not sent or it is blank!')
-        return redirect('/newPost')
+        response = make_response(redirect('/newPost'))
+        response = setHeaders(response)
+        return response
 
     content = functions.sanitiseInputs(content)
     if content is None or content == '':
         flash('Content not sent or it is blank!')
-        return redirect('/newPost')
+        response = make_response(redirect('/newPost'))
+        response = setHeaders(response)
+        return response
 
     query = 'INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
             (posted_by, category, title, content, tod)
     query_db(query)
     get_db().commit()
-    return redirect('/dashboard')
+    response = make_response(redirect('/dashboard'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/delete_post/', methods=['POST'])
@@ -285,7 +337,9 @@ def delete_post():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
     uid = validSessions.checkSession(user_cookie)
 
     posted_by = request.form.get('posted_by', None)
@@ -293,7 +347,9 @@ def delete_post():
 
     if posted_by is None or post_id is None:
         flash('Content not sent or it is blank!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     if uid == posted_by:
         query_db('DELETE FROM posts WHERE id="%s"' % post_id)
@@ -302,7 +358,9 @@ def delete_post():
         flash("Post has been deleted")
     else:
         flash("You cannot delete someone else's post you cheeky pr**k!")
-    return redirect('/dashboard')
+    response = make_response(redirect('/dashboard'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/createReply', methods=['POST'])
@@ -311,14 +369,18 @@ def createReply():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     # Reply to the post with the ID:
     replyTo = request.form.get('postId', None)
     # Check this field is being sent
     if replyTo is None:
         flash('You have not sent a reply field mate!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     replyTo = functions.sanitiseInputs(replyTo)
 
@@ -328,7 +390,9 @@ def createReply():
     # If no post with provided ID exists, throw error and redirect
     if len(postExists) != 1:
         flash('Mate, the post you are replying to does not exist!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     # Extract ID from query
     postId = postExists[0]['id']
@@ -338,7 +402,9 @@ def createReply():
 
     if replyContent is None or replyContent == '':
         flash('You have not sent any reply content mate or it was blank!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     replyContent = functions.sanitiseInputs(replyContent)
 
@@ -354,7 +420,9 @@ def createReply():
     get_db().commit()
 
     flash('Reply has been created')
-    return redirect('/dashboard')
+    response = make_response(redirect('/dashboard'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/accountSettings', methods=['GET'])
@@ -363,12 +431,16 @@ def accountSettings():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     uid = validSessions.checkSession(user_cookie)
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
-    return render_template('/settings.html', title="UEA Life | Profile Settings", user=logged_in_as)
+    response = make_response(render_template('/settings.html', title="UEA Life | Profile Settings", user=logged_in_as))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/accountSettings/updateUsername', methods=['POST'])
@@ -377,7 +449,9 @@ def updateUsername():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     # TODO: add more checks here (see createAccount as example)
     # TODO: Get these from the request
@@ -387,7 +461,9 @@ def updateUsername():
     # Check they have sent a field called username
     if username is None or username == '':
         flash('Username field not sent mate or it was blank!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Sanitising inputs
     username = functions.sanitiseInputs(username)
@@ -395,20 +471,26 @@ def updateUsername():
     # Check the username doesn't contain invalid characters
     if not re.match("^[A-Za-z0-9_-]*$", username):
         flash('Username contained invalid characters')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Check if username has already been taken
     if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
             query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') != 0:
         flash("Username was invalid. Please pick another one.")
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Update requesting users username to the supplied
     query_db('UPDATE profiles SET username="%s" WHERE id="%s"' % (username, uid))
     get_db().commit()
 
     flash('Username updated successfully!')
-    return redirect('/accountSettings')
+    response = make_response(redirect('/accountSettings'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/accountSettings/updateEmail', methods=['POST'])
@@ -417,7 +499,9 @@ def updateEmail():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     # TODO: add more checks here (see createAccount as example
     # TODO: Get these from the request
@@ -428,12 +512,16 @@ def updateEmail():
     # Check they have sent a field called username
     if email is None or email == '':
         flash('Email field not sent mate or it was blank!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Verify the email is in the correct format using a regular expression
     if not re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
         flash('Email contained invalid character!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Sanitising inputs
     email = functions.sanitiseInputs(email)
@@ -442,7 +530,9 @@ def updateEmail():
     if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
             query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') != 0:
         flash("Email invalid. Please pick another one.")
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Update requesting users email to the supplied
     query_db('UPDATE users SET email="%s" WHERE id="%s"' % (email, uid))
@@ -450,7 +540,9 @@ def updateEmail():
     get_db().commit()
 
     flash('Email updated successfully!')
-    return redirect('/accountSettings')
+    response = make_response(redirect('/accountSettings'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/accountSettings/updatePassword', methods=['POST'])
@@ -459,7 +551,9 @@ def updatePassword():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     currentPassword = request.form.get('password', None)
     newPassword = request.form.get('newPassword', None)
@@ -470,31 +564,43 @@ def updatePassword():
     # Check they have sent a field called password
     if currentPassword is None or currentPassword == '':
         flash('Current password field not sent mate or it was blank!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     if newPassword is None or newPassword == '' or newPasswordCheck is None:
         flash('New password field not sent mate or it was blank!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     if newPassword != newPasswordCheck:
         flash('Passwords did not match!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Verify the email is in the correct format using a regular expression
     if not functions.validatePassword(newPassword):
         flash('Password was not valid!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     # Make sure current password is correct
     userSalt = query_db('SELECT salt FROM users WHERE id = "%s"' % uid)[0].get('salt')
     userSalt = b64decode(userSalt.encode())
     if functions.generateHashedPass(userSalt, currentPassword) != query_db('SELECT password FROM users WHERE id = "%s"' % uid)[0].get('password'):
         flash('Current password was incorrect!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     if currentPassword == newPassword:
         flash('Your new password was the same as the old one you melt!')
-        return redirect('/accountSettings')
+        response = make_response(redirect('/accountSettings'))
+        response = setHeaders(response)
+        return response
 
     newSalt = functions.generateSalt()
     newHashedPass = functions.generateHashedPass(newSalt, newPassword)
@@ -505,7 +611,9 @@ def updatePassword():
     get_db().commit()
 
     flash('Password updated successfully!')
-    return redirect('/accountSettings')
+    response = make_response(redirect('/accountSettings'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/forgotPassword', methods=['GET', 'POST'])
@@ -514,16 +622,22 @@ def forgotPassword():
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
         flash('You are already logged in you donkey!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     if request.method == 'GET':
-        return render_template('/forgotPassword.html', title="UEA Life | Forgot Password")
+        response = make_response(render_template('/forgotPassword.html', title="UEA Life | Forgot Password"))
+        response = setHeaders(response)
+        return response
     else:
 
         email = request.form.get('email', None)
         if email is None or email == '':
             flash('Email field not sent mate or it was blank!')
-            return redirect('/forgotPassword')
+            response = make_response(redirect('/forgotPassword'))
+            response = setHeaders(response)
+            return response
         email = functions.sanitiseInputs(email)
 
         # Check the email entered  is valid
@@ -540,8 +654,9 @@ def forgotPassword():
                 # Make sure the email exists in teh database
                 if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
                         query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') == 0:
-                    flash('Email has been sent')
-                    return redirect('/')
+                    response = make_response(redirect('/'))
+                    response = setHeaders(response)
+                    return response
 
                 uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
                 username = query_db('SELECT username FROM profiles WHERE id = "%s"' % uid)[0].get('username')
@@ -559,12 +674,16 @@ def forgotPassword():
                 mail.send(msg)
 
                 flash('Email has been sent')
-                return redirect('/')
+                response = make_response(redirect('/'))
+                response = setHeaders(response)
+                return response
             else:
                 flash('Invalid reCaptcha!')
         else:
             flash('Email address was invalid!')
-    return redirect('/forgotPassword')
+    response = make_response(redirect('/forgotPassword'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/passwordReset', methods=['GET', 'POST'])
@@ -573,7 +692,9 @@ def passwordReset():
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is not False:
         flash('You are already logged in you donkey!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     if request.method == 'GET':
         linkKey = request.args.get('key')
@@ -588,19 +709,25 @@ def passwordReset():
             if hashedKey == query_db('SELECT key FROM forgotPasswordRequests WHERE id = "%s"' % userId)[-1].get('key'):
                 if datetime.datetime.today() < datetime.datetime.strptime(
                         query_db('SELECT expiresOn FROM forgotPasswordRequests WHERE key = "%s"' % hashedKey)[0].get('expiresOn'), '%Y-%m-%d %H:%M'):
-                    return render_template('/passwordReset.html', title="UEA Life | Password Reset")
+                    response = make_response(render_template('/passwordReset.html', title="UEA Life | Password Reset"))
+                    response = setHeaders(response)
+                    return response
                 else:
                     flash(Markup('Email has expired! <a href="/forgotPassword" class="alert-link">Click here</a> to request another!'))
             else:
                 flash(Markup('Something went wrong. Try requesting another email  <a href="/forgotPassword" class="alert-link"> here!</a>'))
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
     else:
         password = request.form.get('password', None)
         verifyPassword = request.form.get('verifyPassword', None)
 
         if password is None or verifyPassword is None or password == '' or verifyPassword == '':
             flash('Password field not sent mate or it was blank so try again!')
-            return redirect('/forgotPassword')
+            response = make_response(redirect('/forgotPassword'))
+            response = setHeaders(response)
+            return response
 
         if password == verifyPassword:
             if functions.validatePassword(password):
@@ -611,23 +738,31 @@ def passwordReset():
                 uid = request.form.get('id', None)
                 if uid is None:
                     flash('Could not find your user id, try again!')
-                    return redirect('/forgotPassword')
+                    response = make_response(redirect('/forgotPassword'))
+                    response = setHeaders(response)
+                    return response
 
                 query_db('UPDATE users SET password="%s", salt="%s" WHERE id="%s"' % (hashedPass, newSalt.decode(), uid))
                 get_db().commit()
                 flash('Password updated!')
-                return redirect('/')
+                response = make_response(redirect('/'))
+                response = setHeaders(response)
+                return response
             else:
                 flash('Invalid password! Please follow the rules')
         else:
             flash("Passwords do not match")
-        return redirect('/passwordReset')
+        response = make_response(redirect('/passwordReset'))
+        response = setHeaders(response)
+        return response
 
 
 # Render the register html
 @app.route('/register', methods=['GET'])
 def register():
-    return render_template('/register.html', title="UEA Life | Register")
+    response = make_response(render_template('/register.html', title="UEA Life | Register"))
+    response = setHeaders(response)
+    return response
 
 
 # Delete user account
@@ -636,7 +771,9 @@ def delete_account():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('Really?! You can\'t delete an account your not logged in to!')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
     uid = validSessions.checkSession(user_cookie)
 
     verifyEmail = request.form.get('verifyEmail', None)
@@ -671,15 +808,18 @@ def delete_account():
                 query_db(delete_query_users)
                 get_db().commit()
 
-                return redirect('/logout')
+                response = make_response(redirect('/logout'))
+                response = setHeaders(response)
+                return response
             else:
                 flash('Are you a robot?')
         else:
             flash('Re-enter email address of account to be deleted')
     else:
         flash('Verify email of the account to be deleted')
-
-    return redirect('/')
+    response = make_response(redirect('/'))
+    response = setHeaders(response)
+    return response
 
 
 # Creates a new user account
@@ -689,7 +829,9 @@ def createAccount():
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is not False:
         flash('You are already logged in you donkey!')
-        return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
 
     username = request.form.get('username', None)
     email = request.form.get('email', None)
@@ -701,7 +843,9 @@ def createAccount():
     # Make sure all the fields are sent
     if username is None or email is None or password is None or verifyPassword is None or level is None or school is None:
         flash('One or more of the fields was not sent!')
-        return redirect('/register')
+        response = make_response(redirect('/register'))
+        response = setHeaders(response)
+        return response
 
     # If none of the fields are emtpy
     if username != '' and email != '' and password != '' and verifyPassword != '' and level != '' and school != '':
@@ -770,7 +914,9 @@ def createAccount():
                                     mail.send(msg)
 
                                     flash('Account has been created, please login!')
-                                    return redirect('/')
+                                    response = make_response(redirect('/'))
+                                    response = setHeaders(response)
+                                    return response
                                 else:
                                     flash('Invalid reCaptcha!')
                             else:
@@ -787,7 +933,9 @@ def createAccount():
             flash('Email address was invalid!')
     else:
         flash('All fields must not be empty!')
-    return redirect('/register')
+    response = make_response(redirect('/register'))
+    response = setHeaders(response)
+    return response
 
 
 @app.route('/verify_email', methods=['GET'])
@@ -803,6 +951,9 @@ def verify_account():
         # check if verified already
         if query_db('SELECT verified FROM users WHERE id = "%s"' % userId)[0].get('verified') == 1:
             flash('Your account is already verified!')
+            response = make_response(redirect('/'))
+            response = setHeaders(response)
+            return response
         else:
             # check against db
             if hashedKey == query_db('SELECT key FROM verifyEmails WHERE id = "%s"' % userId)[-1].get('key'):
@@ -816,9 +967,13 @@ def verify_account():
                     flash(Markup('Email has expired! <a href="/resend_verify" class="alert-link">Click here</a> to resend the verification email!'))
             else:
                 flash('Something went wrong. Try logging in to send another email (and don\'t forget to check your spam folder!)')
-        return render_template('dashboard.html')
+        response = make_response(render_template('dashboard.html'))
+        response = setHeaders(response)
+        return response
     else:
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
 
 @app.route('/resend_verify', methods=['GET'])
@@ -827,7 +982,9 @@ def resend_verify():
     userCookie = functions.getCookie()
     if validSessions.checkSession(userCookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
-        return redirect('/')
+        response = make_response(redirect('/'))
+        response = setHeaders(response)
+        return response
 
     uid = validSessions.checkSession(userCookie)
     username = query_db('SELECT username FROM profiles WHERE id = "%s"' % uid)[0].get('username')
@@ -853,7 +1010,9 @@ def resend_verify():
     mail.send(msg)
 
     flash('Email has been sent')
-    return redirect('/dashboard')
+    response = make_response(redirect('/'))
+    response = setHeaders(response)
+    return response
 
 
 if __name__ == '__main__':
