@@ -4,6 +4,7 @@
 {% block title %}{{ super() }} New Post{% endblock %}
 {% set active_page = "newPost" %}
 {% block current_user %}{{ user }}{% endblock %}
+{% block current_profile %}{{ user }}{% endblock %}
 
 {% block content %}
     <div class="container bg-white p-2">

@@ -3,6 +3,7 @@
 {% block title %}{{ super() }} Settings{% endblock %}
 {% set active_page = "accountSettings" %}
 {% block current_user %}{{ user }}{% endblock %}
+{% block current_profile %}{{ user }}{% endblock %}
 
 {% block content %}
     <div class="card mt-2">
