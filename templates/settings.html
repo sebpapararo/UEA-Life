@@ -144,16 +144,45 @@
                                 <div class="row align-items-center my-4">
                                     <div class="col-12">
                                         <label for="newPassword"><b>New Password:</b></label>
-                                        <input id="newPassword" name="newPassword" type="password" class="form-control"
-                                               placeholder="New password here:">
+                                        <div class="input-group mt-1">
+                                            <div class="input-group-prepend">
+                                                <a class="btn btn-info" type="button" id="button-addon1" tabindex="0"
+                                                   data-container="body" data-placement="top" data-trigger="focus"
+                                                   data-toggle="popover" data-html="true" title="Password Requirements"
+                                                   data-content="Password must be at least 8 characters long and contain at least:
+                                                       <br /> - One Upper-Case Character,
+                                                       <br /> - One Lower-Case Character,
+                                                       <br /> - One Number,
+                                                       <br /> - One Special Character">
+                                                    <i class="fa text-white fa-lg fa-question"></i>
+                                                </a>
+                                            </div>
+                                            <input id="newPassword" name="newPassword" type="password" class="form-control"
+                                                   placeholder="New password here:" aria-describedby="button-addon1">
+                                        </div>
                                     </div>
                                 </div>
 
                                 <div class="row align-items-center my-4">
                                     <div class="col-12">
                                         <label for="newPasswordCheck"><b>Confirm New Password:</b></label>
-                                        <input id="newPasswordCheck" name="newPasswordCheck" type="password"
-                                               class="form-control" placeholder="Confirm New Password:">
+                                        <div class="input-group mt-1">
+                                            <div class="input-group-prepend">
+                                                <a class="btn btn-info" type="button" id="button-addon1" tabindex="0"
+                                                   data-container="body" data-placement="top" data-trigger="focus"
+                                                   data-toggle="popover" data-html="true" title="Password Requirements"
+                                                   data-content="Password must be at least 8 characters long and contain at least:
+                                                       <br /> - One Upper-Case Character,
+                                                       <br /> - One Lower-Case Character,
+                                                       <br /> - One Number,
+                                                       <br /> - One Special Character">
+                                                    <i class="fa text-white fa-lg fa-question"></i>
+                                                </a>
+                                            </div>
+                                            <input id="newPasswordCheck" name="newPasswordCheck" type="password"
+                                                   class="form-control" placeholder="Confirm New Password:"
+                                                   aria-describedby="button-addon1">
+                                        </div>
                                     </div>
                                 </div>
 

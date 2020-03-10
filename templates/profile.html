@@ -101,18 +101,16 @@
                                     </div>
 
                                     <div class="col-3 text-right">
-                                        <div class="dropdown">
-                                            <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
-                                                    type="button"
-                                                    id="dropdownMenuButton" data-toggle="dropdown"
-                                                    aria-haspopup="true" aria-expanded="false">
-                                                Actions
+                                        <form action="/delete_post" method="POST" >
+                                            <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
+                                            <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+
+                                            <button type="submit" class="btn btn-secondary"
+                                                    data-toggle="tooltip" data-placement="top"
+                                                    title="Delete Post">
+                                                <i class="fa fa-lg fa-trash"></i>
                                             </button>
-                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                                <a class="dropdown-item" href="#">Edit Post</a>
-                                                <a class="dropdown-item" href="#">Delete Post</a>
-                                            </div>
-                                        </div>
+                                        </form>
                                     </div>
 
                                 </div>
@@ -151,11 +149,6 @@
                                                         data-toggle="tooltip" data-placement="top"
                                                         title="Submit Your Response">
                                                     Submit
-                                                </button>
-                                                <button class="btn btn-secondary" type="button"
-                                                        data-toggle="tooltip" data-placement="top"
-                                                        title="Watch this Post">
-                                                    <i class="fa fa-lg fa-eye"></i>
                                                 </button>
                                             </div>
                                         </div>
