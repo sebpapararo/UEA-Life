@@ -139,7 +139,7 @@ def login():
                     validSessions.addSession(cookie_id, cookie_value)
 
                     new_last_active = datetime.datetime.today()
-                    new_last_active = datetime.datetime.strftime(new_last_active, '%Y-%m-%d %H:%M')
+                    new_last_active = datetime.datetime.strftime(new_last_active, '%d/%m/%y %H:%M')
                     uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
                     query_db('UPDATE profiles SET last_active="%s" WHERE id="%s"' % (new_last_active, uid))
                     get_db().commit()
@@ -675,7 +675,7 @@ def forgotPassword():
                 key = b64encode(os.urandom(32))
                 hashedKey = functions.generateHashedKey(key)
                 timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
-                timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
+                timestamp = datetime.datetime.strftime(timestamp, '%d/%m/%y %H:%M')
 
                 # Make sure the email exists in teh database
                 if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
@@ -923,7 +923,7 @@ def createAccount():
                                     key = b64encode(os.urandom(32))
                                     hashed_key = functions.generateHashedKey(key)
                                     timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
-                                    timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
+                                    timestamp = datetime.datetime.strftime(timestamp, '%d/%m/%y %H:%M')
 
                                     verify_email_query = 'INSERT INTO verifyEmails(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (
                                         hashed_key, user_id, timestamp)
@@ -1020,7 +1020,7 @@ def resend_verify():
     key = b64encode(os.urandom(32))
     hashedKey = functions.generateHashedKey(key)
     timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
-    timestamp = datetime.datetime.strftime(timestamp, '%Y-%m-%d %H:%M')
+    timestamp = datetime.datetime.strftime(timestamp, '%d/%m/%y %H:%M')
 
     verifyEmailQuery = 'INSERT INTO verifyEmails(id, key, expiresOn) VALUES ("%s", "%s", "%s")' % (uid, hashedKey, timestamp)
     query_db(verifyEmailQuery)
