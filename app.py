@@ -125,9 +125,8 @@ def login():
             # Check if the password is correct
             retrieved_salt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
             retrieved_salt = b64decode(retrieved_salt.encode())
-            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt,
-                                                                                                                                    request.form.get('password',
-                                                                                                                                                     None)):
+            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == \
+                    functions.generateHashedPass(retrieved_salt, request.form.get('password', None)):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
@@ -192,6 +191,7 @@ def logout():
 def dashboard():
     # Is Authed Guard, redirects to the login
     user_cookie = functions.getCookie()
+
     if validSessions.checkSession(user_cookie) is False:
         flash('Mate, you dont have a session hackerman! Go and login')
         response = make_response(redirect('/'))
@@ -266,7 +266,6 @@ def profile():
     # Get the Content of the posts
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
-    # TODO: Confirm this is okay to use
     query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id " \
             "UNION ALL SELECT id, replies.posted_on, posted_to, posted_by AS username, content FROM replies WHERE posted_by = 'Deleted User'"
     replies = query_db(query)
@@ -391,56 +390,65 @@ def createReply():
         response = setHeaders(response)
         return response
 
-    # Reply to the post with the ID:
-    replyTo = request.form.get('postId', None)
-    # Check this field is being sent
-    if replyTo is None:
-        flash('You have not sent a reply field mate!')
+    uid = validSessions.checkSession(user_cookie)
+    logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
+
+    if query_db('SELECT verified FROM users WHERE id = "%s"' % uid)[0].get('verified') == 1:
+        # Reply to the post with the ID:
+        replyTo = request.form.get('postId', None)
+        # Check this field is being sent
+        if replyTo is None:
+            flash('You have not sent a reply field mate!')
+            response = make_response(redirect('/dashboard'))
+            response = setHeaders(response)
+            return response
+
+        replyTo = functions.sanitiseInputs(replyTo)
+
+        # Check this field is correct (post with the ID exists)
+        postExists = query_db('SELECT * FROM posts WHERE id="%s"' % replyTo)
+
+        # If no post with provided ID exists, throw error and redirect
+        if len(postExists) != 1:
+            flash('Mate, the post you are replying to does not exist!')
+            response = make_response(redirect('/dashboard'))
+            response = setHeaders(response)
+            return response
+
+        # Extract ID from query
+        postId = postExists[0]['id']
+
+        # Content of the reply:
+        replyContent = request.form.get('replyBody', None)
+
+        if replyContent is None or replyContent == '':
+            flash('You have not sent any reply content mate or it was blank!')
+            response = make_response(redirect('/dashboard'))
+            response = setHeaders(response)
+            return response
+
+        replyContent = functions.sanitiseInputs(replyContent)
+
+        # Reply posted by user with ID:
+        postedBy = validSessions.checkSession(user_cookie)
+        # Time which user posted the reply:
+        postedOn = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
+
+        # Construct Insert Query
+        query = 'INSERT INTO replies (posted_on, posted_to, posted_by, content) VALUES("%s","%s","%s","%s");' % \
+                (postedOn, postId, postedBy, replyContent)
+        query_db(query)
+        get_db().commit()
+
+        flash('Reply has been created')
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
-
-    replyTo = functions.sanitiseInputs(replyTo)
-
-    # Check this field is correct (post with the ID exists)
-    postExists = query_db('SELECT * FROM posts WHERE id="%s"' % replyTo)
-
-    # If no post with provided ID exists, throw error and redirect
-    if len(postExists) != 1:
-        flash('Mate, the post you are replying to does not exist!')
+    else:
+        flash('Behave - Verify account before posting a reply')
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
-
-    # Extract ID from query
-    postId = postExists[0]['id']
-
-    # Content of the reply:
-    replyContent = request.form.get('replyBody', None)
-
-    if replyContent is None or replyContent == '':
-        flash('You have not sent any reply content mate or it was blank!')
-        response = make_response(redirect('/dashboard'))
-        response = setHeaders(response)
-        return response
-
-    replyContent = functions.sanitiseInputs(replyContent)
-
-    # Reply posted by user with ID:
-    postedBy = validSessions.checkSession(user_cookie)
-    # Time which user posted the reply:
-    postedOn = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
-
-    # Construct Insert Query
-    query = 'INSERT INTO replies (posted_on, posted_to, posted_by, content) VALUES("%s","%s","%s","%s");' % \
-            (postedOn, postId, postedBy, replyContent)
-    query_db(query)
-    get_db().commit()
-
-    flash('Reply has been created')
-    response = make_response(redirect('/dashboard'))
-    response = setHeaders(response)
-    return response
 
 
 @app.route('/accountSettings', methods=['GET'])
