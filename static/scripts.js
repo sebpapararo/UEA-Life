@@ -17,7 +17,7 @@ function profileUndisable(field) {
 
 
 $(document).ready(function () {
-    $('[data-toggle="tooltip"]').tooltip();
+    ('[data-toggle="tooltip"]').tooltip();
 });
 
 

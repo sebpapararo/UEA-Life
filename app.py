@@ -62,15 +62,30 @@ def close_connection(exception):
         db.close()
 
 
+def defineGenericCookie(response):
+    expiry_date = datetime.datetime.today() + datetime.timedelta(days=7)
+    response.set_cookie('userSession', samesite='strict', secure=True, httponly=True,
+                        expires=expiry_date)
+    return response
+
+
 def setHeaders(response):
     response.headers['X-Frame-Options'] = 'DENY'
+    response.headers['Cache-Control'] = 'no-cache; no-store; must-revalidate;'
+    response.headers['Pragma'] = 'no-cache;'
+    response.headers['X-Content-Type-Options'] = 'nosniff;'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Content-Security-Policy'] = "default-src https: 'self';" \
-                                                  "script-src ttps://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-1141458096' code.jquery.com cdn.jsdelivr.net ajax.googleapis.com  stackpath.bootstrapcdn.com 'self';" \
+                                                  "script-src https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-cmM3QXk4NldmRXFJejFuQ1paRHA=' " \
+                                                        "https://code.jquery.com/ cdn.jsdelivr.net https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/  " \
+                                                        "stackpath.bootstrapcdn.com 'self';" \
                                                   "frame-src https://www.google.com/recaptcha/ 'self';" \
                                                   "style-src stackpath.bootstrapcdn.com 'self';" \
-                                                  "img-src https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg https://www.pub-quiz.com/quiz_image/1375437795_UEAStudentsUnionNorwich.jpg https://www.timeshighereducation.com/sites/default/files/institution/header_image/header_image_-_uea_campus.jpg 'self';" \
-                                                  "font-src stackpath.bootstrapcdn.com 'self';"
+                                                  "img-src https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg " \
+                                                        "https://www.pub-quiz.com/quiz_image/1375437795_UEAStudentsUnionNorwich.jpg " \
+                                                        "https://www.timeshighereducation.com/sites/default/files/institution/header_image/header_image_-_uea_campus.jpg 'self';" \
+                                                  "font-src stackpath.bootstrapcdn.com 'self';" \
+                                                  "frame-ancestors 'none';"
     return response
 
 
@@ -442,6 +457,7 @@ def accountSettings():
         flash('Mate, you dont have a session hackerman! Go and login')
         response = make_response(redirect('/'))
         response = setHeaders(response)
+        # response = defineGenericCookie(response)
         return response
 
     uid = validSessions.checkSession(user_cookie)
@@ -449,6 +465,7 @@ def accountSettings():
 
     response = make_response(render_template('/settings.html', title="UEA Life | Profile Settings", user=logged_in_as))
     response = setHeaders(response)
+    # response.set_cookie(user_cookie)
     return response
 
 
@@ -1026,3 +1043,4 @@ def resend_verify():
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=False, ssl_context=sslContext)
+    # app.run(host='127.0.0.1', port=5000, debug=False)

@@ -1,5 +1,4 @@
 <!-- index.html -->
-<!-- WELCOME PAGE USER LOGS IN OR REGISTERS PRIOR TO ACCESSING MAIN HOME -->
 {% extends "base.html" %}
 {% block title %}{{ super() }} Welcome{% endblock %}
 {% set active_page = "index" %}
@@ -36,7 +35,6 @@
 
         <div class="card shadow">
             <div class=card-body>
-                <!-- Div to display any error messages created when logging in -->
                 <div class="container">
                     {% for message in get_flashed_messages() %}
                         <div class="alert alert-warning">
@@ -66,16 +64,11 @@
 
                     </form>
 
-{#                    <div class="row justify-content-center">#}
                         <div class="btn-group d-flex" role="group" aria-label="btnGroup">
                             <a role="button" href="/register" class="btn btn-info border-dark float-right w-100">Sign Up</a>
                             <a role="button" href="/forgotPassword" class="btn btn-secondary border-dark float-left w-100">Forgot
                                 Password</a>
                         </div>
-{#                    </div>#}
-
-
-
                 </div>
             </div>
         </div>
