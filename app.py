@@ -125,9 +125,7 @@ def login():
             # Check if the password is correct
             retrieved_salt = query_db('SELECT salt FROM users where email = "%s"' % email)[0].get('salt')
             retrieved_salt = b64decode(retrieved_salt.encode())
-            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt,
-                                                                                                                                    request.form.get('password',
-                                                                                                                                                     None)):
+            if query_db('SELECT password FROM users WHERE email = "%s"' % email)[0].get('password') == functions.generateHashedPass(retrieved_salt,request.form.get('password', None)):
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
@@ -795,17 +793,28 @@ def delete_account():
     uid = validSessions.checkSession(user_cookie)
 
     verifyEmail = request.form.get('verifyEmail', None)
+    verifyPassword = request.form.get('verifyPassword', None)
     # verifyPassword = request.form.get('verifyPassword', None)
 
-    if verifyEmail is not None:
+    if verifyEmail is not None and verifyPassword is not None:
         # if verifyEmail is not None and verifyPassword is not None:
+
 
         email_to_delete = functions.sanitiseInputs(verifyEmail)
 
-        # If the user exists in the database
-        if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete) and \
-                query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete)[0]. \
+        # If the user exists in the database (checks email belongs to user)
+        if query_db('SELECT COUNT(email) FROM users WHERE email = "%s" AND id="%s"' % (email_to_delete, uid)) and \
+                query_db('SELECT COUNT(email) FROM users WHERE email = "%s" AND id="%s"' % (email_to_delete, uid))[0]. \
                         get('COUNT(email)') == 1:
+
+
+            retrieved_salt = query_db('SELECT salt FROM users where id = "%s"' % uid)[0].get('salt')
+            retrieved_salt = b64decode(retrieved_salt.encode())
+            if query_db('SELECT password FROM users WHERE id = "%s"' % uid)[0].get('password') != functions.generateHashedPass(retrieved_salt, verifyPassword):
+                flash('Password did not match!')
+                response = make_response(redirect('/accountSettings'))
+                response = setHeaders(response)
+                return response
 
             if functions.verifyCaptcha():
 
@@ -826,6 +835,7 @@ def delete_account():
                 query_db(delete_query_users)
                 get_db().commit()
 
+                flash('Succesfully deleted account!')
                 response = make_response(redirect('/logout'))
                 response = setHeaders(response)
                 return response
@@ -835,7 +845,7 @@ def delete_account():
             flash('Re-enter email address of account to be deleted')
     else:
         flash('Verify email of the account to be deleted')
-    response = make_response(redirect('/'))
+    response = make_response(redirect('/accountSettings'))
     response = setHeaders(response)
     return response
 
