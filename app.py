@@ -67,12 +67,12 @@ def setHeaders(response):
     response.headers['Cache-Control'] = 'no-cache; no-store; must-revalidate;'
     response.headers['Pragma'] = 'no-cache;'
     response.headers['X-Content-Type-Options'] = 'nosniff;'
+    response.headers['X-Content-Type-Options'] = 'nosniff;'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Content-Security-Policy'] = "default-src https: 'self';" \
                                                   "script-src https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-cmM3QXk4NldmRXFJejFuQ1paRHA=' " \
                                                         "https://code.jquery.com/ cdn.jsdelivr.net https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/  " \
                                                         "stackpath.bootstrapcdn.com 'self';" \
-                                                  "script-src https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-1141458096' code.jquery.com cdn.jsdelivr.net ajax.googleapis.com  stackpath.bootstrapcdn.com 'self';" \
                                                   "frame-src https://www.google.com/recaptcha/ 'self';" \
                                                   "style-src stackpath.bootstrapcdn.com 'self';" \
                                                   "img-src https://www.uea.ac.uk/documents/2654296/5212779/Accom+ziggurats+banner.jpg " \
@@ -348,7 +348,7 @@ def createPost():
     return response
 
 
-@app.route('/delete_post/', methods=['POST'])
+@app.route('/delete_post', methods=['POST'])
 def delete_post():
     # Is Authed Guard, redirects to the login
     user_cookie = functions.getCookie()
