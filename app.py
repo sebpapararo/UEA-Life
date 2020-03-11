@@ -357,14 +357,22 @@ def delete_post():
         return response
     uid = validSessions.checkSession(user_cookie)
 
-    posted_by = request.form.get('posted_by', None)
     post_id = request.form.get('post_id', None)
 
-    if posted_by is None or post_id is None:
+    if post_id is None:
         flash('Content not sent or it is blank!')
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
+
+    posted_by = query_db('SELECT posted_by FROM posts WHERE id = "%s";' % post_id)
+    if len(posted_by) != 1:
+        flash('No post with that id mate!')
+        response = make_response(redirect('/dashboard'))
+        response = setHeaders(response)
+        return response
+
+    posted_by = posted_by[0].get('posted_by')
 
     if uid == posted_by:
         query_db('DELETE FROM posts WHERE id="%s"' % post_id)
@@ -845,7 +853,7 @@ def delete_account():
 # Creates a new user account
 @app.route('/register/createAccount', methods=['POST'])
 def createAccount():
-    # Is Authed Guard, redirects to the login
+    # Is Authed Guard, redirects to the dashboard
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is not False:
         flash('You are already logged in you donkey!')
@@ -853,6 +861,7 @@ def createAccount():
         response = setHeaders(response)
         return response
 
+    # Get all the fields from the form
     username = request.form.get('username', None)
     email = request.form.get('email', None)
     password = request.form.get('password', None)
@@ -959,9 +968,8 @@ def createAccount():
 
 @app.route('/verify_email', methods=['GET'])
 def verify_account():
-    # get id from url
-    linkKey = request.args.get('key')
-    linkKey = linkKey.replace(' ', '+')
+    # Grab the parameters from the link and format them correctly
+    linkKey = request.args.get('key').replace(' ', '+')
     hashedKey = functions.generateHashedKey(linkKey.encode())
     userId = request.args.get('id')
 
@@ -1005,16 +1013,18 @@ def resend_verify():
         response = setHeaders(response)
         return response
 
+    # Get required required parameters from cookie and the database
     uid = validSessions.checkSession(userCookie)
     username = query_db('SELECT username FROM profiles WHERE id = "%s"' % uid)[0].get('username')
     email = query_db('SELECT email FROM users WHERE id = "%s"' % uid)[0].get('email')
 
-    # get uuid from database
+    # Generate and encode the unique key as well as creating the expiry timestamp
     key = b64encode(os.urandom(32))
     hashedKey = functions.generateHashedKey(key)
     timestamp = datetime.datetime.today() + datetime.timedelta(minutes=15)
     timestamp = datetime.datetime.strftime(timestamp, '%d/%m/%y %H:%M')
 
+    # Add a log of the request to the database, ready to be checked against when the link is clicked
     verifyEmailQuery = 'INSERT INTO verifyEmails(id, key, expiresOn) VALUES ("%s", "%s", "%s")' % (uid, hashedKey, timestamp)
     query_db(verifyEmailQuery)
     get_db().commit()
@@ -1034,5 +1044,6 @@ def resend_verify():
     return response
 
 
+# Run the app on local host specified with the given ssl certificate and key
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=False, ssl_context=sslContext)
