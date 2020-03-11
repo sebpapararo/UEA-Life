@@ -4,21 +4,20 @@ import hashlib
 import os
 import urllib
 import json
-import validSessions
 
 
 # Method to sanitise the inputs by replacing suspect characters with its HTML numeric code counterpart
-def sanitiseInputs(input):
-    input = input.replace('"', '&#34')
-    input = input.replace('#', '&#35')
-    input = input.replace('&', '&#38')
-    input = input.replace("'", '&#39')
-    input = input.replace('(', '&#40')
-    input = input.replace(')', '&#41')
-    input = input.replace('/', '&#47')
-    input = input.replace(';', '&#59')
-    input = input.replace('<', '&#60')
-    return input.replace('>', '&#62')
+def sanitiseInputs(userInput):
+    userInput = userInput.replace('"', '&#34')
+    userInput = userInput.replace('#', '&#35')
+    userInput = userInput.replace('&', '&#38')
+    userInput = userInput.replace("'", '&#39')
+    userInput = userInput.replace('(', '&#40')
+    userInput = userInput.replace(')', '&#41')
+    userInput = userInput.replace('/', '&#47')
+    userInput = userInput.replace(';', '&#59')
+    userInput = userInput.replace('<', '&#60')
+    return userInput.replace('>', '&#62')
 
 
 # Used to check if a string contains a given character
