@@ -128,6 +128,7 @@ def login():
                 # Check if the reCaptcha is valid
                 if functions.verifyCaptcha():
 
+                    # Generate random key and add session to validSessions
                     cookie_id = os.urandom(64)
                     cookie_id = b64encode(cookie_id)
                     expiry_date = datetime.datetime.today() + datetime.timedelta(days=7)
@@ -136,11 +137,13 @@ def login():
                     cookie_value = [user_id, expiry_date, ip_addr]
                     validSessions.addSession(cookie_id, cookie_value)
 
+                    # Set last active to now for user
                     new_last_active = datetime.datetime.today()
                     new_last_active = datetime.datetime.strftime(new_last_active, '%d/%m/%y %H:%M')
                     uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
                     query_db('UPDATE profiles SET last_active="%s" WHERE id="%s"' % (new_last_active, uid))
                     get_db().commit()
+
 
                     response = make_response(redirect('/dashboard'))
                     response = setHeaders(response)
@@ -165,6 +168,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    # Is Authed Guard, redirects if not logged in
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is False:
         flash('You can\'t logout if you weren\'t logged in, you meathead!')
@@ -172,8 +176,10 @@ def logout():
         response = setHeaders(response)
         return response
 
+    # Removes user session from validSessions
     validSessions.removeSession(user_cookie)
 
+    # Set cookie to random value
     cookie_id = os.urandom(64)
     cookie_id = b64encode(cookie_id)
 
@@ -200,15 +206,18 @@ def dashboard():
     uid = validSessions.checkSession(user_cookie)
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
+    # Check if the user is verified
     verified = query_db('SELECT verified FROM users where id = "%s"' % uid)[0].get('verified')
     if verified == 0:
         flash(Markup('Your account is not verified! <a href="/resend_verify" class="alert-link">Click here</a> '
                      'to resend the verification email!'))
 
+    # Get posts
     query = "SELECT posts.id AS id, posts.Posted_on, posts.Category, posts.Title, posts.Content, profiles.Username FROM posts INNER JOIN profiles ON posts.posted_by = profiles.id " \
             "UNION ALL SELECT id, posted_on, category, title, content, posted_by FROM posts WHERE posted_by = 'Deleted User'"
     results = query_db(query)
 
+    # Get replies
     query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id " \
             "UNION ALL SELECT id, replies.posted_on, posted_to, posted_by AS username, content FROM replies WHERE posted_by = 'Deleted User'"
     replies = query_db(query)
@@ -228,6 +237,7 @@ def profile():
         response = setHeaders(response)
         return response
 
+    # Get the logged in user
     uid = validSessions.checkSession(user_cookie)
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
@@ -264,6 +274,7 @@ def profile():
     # Get the Content of the posts
     posts = query_db('SELECT * FROM posts WHERE posted_by = "%s";' % user_profile['id'])
 
+    # Get replies
     query = "SELECT replies.id, replies.posted_on, replies.posted_to, profiles.username AS posted_by, replies.content FROM replies INNER JOIN profiles ON replies.posted_by = profiles.id " \
             "UNION ALL SELECT id, replies.posted_on, posted_to, posted_by AS username, content FROM replies WHERE posted_by = 'Deleted User'"
     replies = query_db(query)
@@ -284,8 +295,11 @@ def newPost():
         response = setHeaders(response)
         return response
     uid = validSessions.checkSession(user_cookie)
+
+    # Get logged in user
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
+    # Check if the user is verified
     if query_db('SELECT verified FROM users WHERE id = "%s"' % uid)[0].get('verified') == 1:
         response = make_response(render_template('/newPost.html', username=uid, user=logged_in_as))
         response = setHeaders(response)
@@ -312,31 +326,37 @@ def createPost():
     title = request.form.get('title', None)
     content = request.form.get('content', None)
 
+    # Get uid
     posted_by = validSessions.checkSession(user_cookie)
 
+    # Get time now
     tod = datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
 
-    category = functions.sanitiseInputs(category)
-    if category not in cats or category == '':
+    # Check category
+    if category is None or category not in cats or category == '':
         flash('Incorrect category selected or blank category you muppet!')
         response = make_response(redirect('/newPost'))
         response = setHeaders(response)
         return response
+    category = functions.sanitiseInputs(category)
 
-    title = functions.sanitiseInputs(title)
+    # Check title
     if title is None or title == '':
         flash('Title not sent or it is blank!')
         response = make_response(redirect('/newPost'))
         response = setHeaders(response)
         return response
+    title = functions.sanitiseInputs(title)
 
-    content = functions.sanitiseInputs(content)
+    # Check content
     if content is None or content == '':
         flash('Content not sent or it is blank!')
         response = make_response(redirect('/newPost'))
         response = setHeaders(response)
         return response
+    content = functions.sanitiseInputs(content)
 
+    # Create post
     query = 'INSERT INTO posts (posted_by, category, title, content, posted_on) VALUES("%s","%s","%s","%s","%s");' % \
             (posted_by, category, title, content, tod)
     query_db(query)
@@ -369,8 +389,12 @@ def delete_post():
         response = setHeaders(response)
         return response
 
+    post_id = functions.sanitiseInputs(post_id)
+
     # Check the post ID is valid
     posted_by = query_db('SELECT posted_by FROM posts WHERE id = "%s";' % post_id)
+
+    # Check only 1 post is being found
     if len(posted_by) != 1:
         flash('No post with that id mate!')
         response = make_response(redirect('/dashboard'))
@@ -387,7 +411,7 @@ def delete_post():
         get_db().commit()
         flash("Post has been deleted")
     else:
-        flash("You cannot delete someone else's post you cheeky pr**k!")
+        flash("You cannot delete someone else's post you cheeky [gender neutral pronoun here:]!")
     response = make_response(redirect('/dashboard'))
     response = setHeaders(response)
     return response
