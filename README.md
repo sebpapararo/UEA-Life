@@ -9,7 +9,14 @@
   pip install flask
   pip install flask-mail
   ```
-  # Team
+
+  ## Usage
+  
+  ```bash
+  python ./app.py
+  ```
+
+  ## Team
 
   - Callum Carter
   - Sebastian Papararo
