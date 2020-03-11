@@ -78,24 +78,21 @@ def create():
 
     # Create and add some test users
     salt1 = functions.generateSalt()
-    # TODO: 04/03/2020 change passwords to follow rules
-    hashedPass1 = functions.generateHashedPass(salt1, 'a')
+    hashedPass1 = functions.generateHashedPass(salt1, 'Testtest123!')
     salt1 = b64encode(salt1)
     uid = str(uuid.uuid4())
     c.execute('INSERT INTO users VALUES("%s", "04/03/2020 12:28", 1, "%s", "%s", "s.papararo@gmail.com")' % (uid, hashedPass1, salt1.decode()))
     c.execute('INSERT INTO profiles VALUES("%s", "seb", "04/03/2020 12:28", "PGT", "CMP")' % uid)
 
     salt2 = functions.generateSalt()
-    # TODO: 04/03/2020 change passwords to follow rules
-    hashedPass2 = functions.generateHashedPass(salt2, 'a')
+    hashedPass2 = functions.generateHashedPass(salt2, 'Qazxswo98!')
     salt2 = b64encode(salt2)
     uid2 = str(uuid.uuid4())
     c.execute('INSERT INTO users VALUES("%s", "04/03/2020 12:32", 1, "%s", "%s", "a@a.com")' % (uid2, hashedPass2, salt2.decode()))
     c.execute('INSERT INTO profiles VALUES("%s", "callum", "04/03/2020 12:28", "PGT", "CMP")' % uid2)
 
     salt3 = functions.generateSalt()
-    # TODO: 04/03/2020 change passwords to follow rules
-    hashedPass3 = functions.generateHashedPass(salt3, 'a')
+    hashedPass3 = functions.generateHashedPass(salt3, 'Spencer20!')
     salt3 = b64encode(salt3)
     uid3 = str(uuid.uuid4())
     c.execute('INSERT INTO users VALUES("%s", "04/03/2020 12:28", 1, "%s", "%s", "a.davies964@gmail.com")' % (uid3, hashedPass3, salt3.decode()))

@@ -13,7 +13,6 @@ from flask_mail import Mail, Message
 app = Flask(__name__, template_folder="templates")
 DATABASE = 'database.db'
 sslContext = ('server.crt', 'server.key')
-# TODO: 25/02/2020 research what these do
 app.secret_key = os.urandom(64)
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
@@ -478,8 +477,6 @@ def updateUsername():
         response = setHeaders(response)
         return response
 
-    # TODO: add more checks here (see createAccount as example)
-    # TODO: Get these from the request
     username = request.form.get('username', None)
     uid = validSessions.checkSession(user_cookie)
 
@@ -528,11 +525,9 @@ def updateEmail():
         response = setHeaders(response)
         return response
 
-    # TODO: add more checks here (see createAccount as example
-    # TODO: Get these from the request
     email = request.form.get('email', None)
 
-    uid = validSessions.checkSession(user_cookie)  # TODO: get from request
+    uid = validSessions.checkSession(user_cookie)
 
     # Check they have sent a field called username
     if email is None or email == '':
@@ -584,7 +579,7 @@ def updatePassword():
     newPassword = request.form.get('newPassword', None)
     newPasswordCheck = request.form.get('newPasswordCheck', None)
 
-    uid = validSessions.checkSession(user_cookie)  # TODO: get from request
+    uid = validSessions.checkSession(user_cookie)
 
     # Check they have sent a field called password
     if currentPassword is None or currentPassword == '':
@@ -895,7 +890,6 @@ def createAccount():
                                 # Check the reCaptcha has been completed properly
                                 if functions.verifyCaptcha():
                                     # Generate random uuid to be the user id
-                                    # TODO: 25/02/2020 Learn how this works again
                                     user_id = str(uuid.uuid4())
 
                                     # Get the current date and time
