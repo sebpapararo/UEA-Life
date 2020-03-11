@@ -1,10 +1,8 @@
-<!-- newPost.html -->
-<!-- CREATE/ADD A NEW POST -->
 {% extends 'base.html' %}
-{% block title %}{{ super() }} New Post{% endblock %}
+{% block title %}{{ super() | safe }} New Post{% endblock %}
 {% set active_page = "newPost" %}
-{% block current_user %}{{ user | safe}}{% endblock %}
-{% block current_profile %}{{ user | safe}}{% endblock %}
+{% block current_user %}{{ user | safe }}{% endblock %}
+{% block current_profile %}{{ user | safe }}{% endblock %}
 
 {% block content %}
     <div class="container bg-white p-2">
@@ -77,7 +75,6 @@
                                               placeholder="Post Your Content"></textarea>
                                 </div>
                             </div>
-
                         </div>
 
                         <button type="submit" name="submitPost" class="btn btn-success btn-lg btn-block mt-3">

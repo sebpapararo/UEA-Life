@@ -1,7 +1,5 @@
-<!-- profile.html -->
-<!-- MAIN HOME SCREEN POST USER LOGIN/ACCOUNT CREATION -->
 {% extends 'base.html' %}
-{% block title %}{{ super() }} Profile{% endblock %}
+{% block title %}{{ super() | safe }} Profile{% endblock %}
 {% set active_page = "profile" %}
 {% block current_user %}{{ user | safe}}{% endblock %}
 {% block current_profile %}{{ user | safe}}{% endblock %}
@@ -97,8 +95,7 @@
                             <div class="card-header">
                                 <div class="row justify-content-between">
 
-                                    <div class="col-3 text-left">
-                                    </div>
+                                    <div class="col-3 text-left"></div>
 
                                     <div class="col-3 text-right">
                                         <form action="/delete_post" method="POST" >
@@ -194,7 +191,6 @@
                                                             </div>
                                                         </div>
                                                     </div>
-
                                                 </div>
                                             </div>
                                         </div>

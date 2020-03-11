@@ -1,6 +1,5 @@
-<!-- profile.html -->
 {% extends 'base.html' %}
-{% block title %}{{ super() }} Settings{% endblock %}
+{% block title %}{{ super() | safe }} Settings{% endblock %}
 {% set active_page = "accountSettings" %}
 {% block current_user %}{{ user | safe}}{% endblock %}
 {% block current_profile %}{{ user | safe}}{% endblock %}
@@ -24,7 +23,6 @@
 
         <div class="accordion m-2" id="accordionSettings">
 
-            {# GENERAL SETTINGS CARD #}
             <div class="card">
                 <div class="card-header" id="generalSettings">
                     <h5 class="mb-0">
@@ -100,7 +98,6 @@
                 </div>
             </div>
 
-            {# PASSWORD SETTINGS CARD #}
             <div class="card">
                 <div class="card-header" id="passwordSettings">
                     <h5 class="mb-0">
@@ -196,7 +193,6 @@
                 </div>
             </div>
 
-            {# DELETE ACCOUNT CARD #}
             <div class="card">
                 <div class="card-header" id="deleteAccount">
                     <h5 class="mb-0">
@@ -205,7 +201,6 @@
                             Delete Account
                         </button>
                     </h5>
-                    <!-- /card-header -->
                 </div>
 
                 <div id="collapseDelete" class="collapse" aria-labelledby="deleteAccount"

@@ -1,6 +1,5 @@
-<!-- index.html -->
 {% extends "base.html" %}
-{% block title %}{{ super() }} Welcome{% endblock %}
+{% block title %}{{ super() | safe }} Welcome{% endblock %}
 {% set active_page = "index" %}
 {% set hide_nav = True %}
 
