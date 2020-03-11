@@ -416,6 +416,7 @@ def createReply():
             response = setHeaders(response)
             return response
 
+        # Sanitise Inputs
         replyTo = functions.sanitiseInputs(replyTo)
 
         # Check this field is correct (post with the ID exists)
@@ -434,12 +435,15 @@ def createReply():
         # Content of the reply:
         replyContent = request.form.get('replyBody', None)
 
+        # Check to see if replyContent is either none or empty
         if replyContent is None or replyContent == '':
+            # If none or empty send alert
             flash('You have not sent any reply content mate or it was blank!')
             response = make_response(redirect('/dashboard'))
             response = setHeaders(response)
             return response
 
+        # Santise Inputs
         replyContent = functions.sanitiseInputs(replyContent)
 
         # Reply posted by user with ID:
@@ -452,11 +456,12 @@ def createReply():
                 (postedOn, postId, postedBy, replyContent)
         query_db(query)
         get_db().commit()
-
+        # Confirm reply has been created
         flash('Reply has been created')
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
+    # If user email is not verified
     else:
         flash('Behave - Verify account before posting a reply')
         response = make_response(redirect('/dashboard'))
@@ -475,6 +480,7 @@ def accountSettings():
         return response
 
     uid = validSessions.checkSession(user_cookie)
+    # Query DB for current logged in user
     logged_in_as = query_db('SELECT username FROM profiles where id = "%s"' % uid)[0].get('username')
 
     response = make_response(render_template('/settings.html', title="UEA Life | Profile Settings", user=logged_in_as))
@@ -602,13 +608,13 @@ def updatePassword():
         response = make_response(redirect('/accountSettings'))
         response = setHeaders(response)
         return response
-
+    # Check they have sent a field called newPassword
     if newPassword is None or newPassword == '' or newPasswordCheck is None:
         flash('New password field not sent mate or it was blank!')
         response = make_response(redirect('/accountSettings'))
         response = setHeaders(response)
         return response
-
+    # Check that newPassword and newPasswordCheck match
     if newPassword != newPasswordCheck:
         flash('Passwords did not match!')
         response = make_response(redirect('/accountSettings'))
@@ -630,13 +636,14 @@ def updatePassword():
         response = make_response(redirect('/accountSettings'))
         response = setHeaders(response)
         return response
-
+    # Check that the newPassword is not a repeat of the currentPassword
     if currentPassword == newPassword:
-        flash('Your new password was the same as the old one you melt!')
+        flash('Your new password was the same as the old one!')
         response = make_response(redirect('/accountSettings'))
         response = setHeaders(response)
         return response
 
+    # Salt and Hash newPassword
     newSalt = functions.generateSalt()
     newHashedPass = functions.generateHashedPass(newSalt, newPassword)
     newSalt = b64encode(newSalt)
@@ -645,6 +652,7 @@ def updatePassword():
     query_db('UPDATE users SET password="%s", salt="%s" WHERE id="%s"' % (newHashedPass, newSalt.decode(), uid))
     get_db().commit()
 
+    # Inform user of success
     flash('Password updated successfully!')
     response = make_response(redirect('/accountSettings'))
     response = setHeaders(response)
@@ -660,19 +668,21 @@ def forgotPassword():
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
-
+    # IF method is GET load page
     if request.method == 'GET':
         response = make_response(render_template('/forgotPassword.html', title="UEA Life | Forgot Password"))
         response = setHeaders(response)
         return response
     else:
-
+        # Request email form form
         email = request.form.get('email', None)
+        # Check to see if email is none or empty
         if email is None or email == '':
             flash('Email field not sent mate or it was blank!')
             response = make_response(redirect('/forgotPassword'))
             response = setHeaders(response)
             return response
+        # Sanitise email
         email = functions.sanitiseInputs(email)
 
         # Check the email entered  is valid
@@ -693,13 +703,16 @@ def forgotPassword():
                     response = setHeaders(response)
                     return response
 
+                # Query DB for email and UID
                 uid = query_db('SELECT id FROM users WHERE email = "%s"' % email)[0].get('id')
                 username = query_db('SELECT username FROM profiles WHERE id = "%s"' % uid)[0].get('username')
 
+                # Generate a forgotPasswordQuery and insert into DB
                 forgotPasswordQuery = 'INSERT INTO forgotPasswordRequests(key, id, expiresOn) VALUES ("%s", "%s", "%s")' % (hashedKey, uid, timestamp)
                 query_db(forgotPasswordQuery)
                 get_db().commit()
 
+                # Send password reset email
                 link = 'https://127.0.0.1:5000/passwordReset?key=%s&id=%s' % (key.decode(), uid)
                 msg = Message("Password Reset - UEA Life", sender="uealifedss@gmail.com",
                               recipients=[email])
@@ -708,6 +721,7 @@ def forgotPassword():
                 msg.body = messageBody
                 mail.send(msg)
 
+                # Inform user email has been sent
                 flash('Email has been sent')
                 response = make_response(redirect('/'))
                 response = setHeaders(response)
@@ -730,7 +744,7 @@ def passwordReset():
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
-
+    # If method is GET load page
     if request.method == 'GET':
         linkKey = request.args.get('key')
         linkKey = linkKey.replace(' ', '+')
@@ -740,7 +754,6 @@ def passwordReset():
         # this if statement make sure the logged in user or the non-logged in user cannot see the error messages for verify email
         if linkKey is not None and userId is not None:
             # Check the key in the url is valid and has no expired.
-
             if hashedKey == query_db('SELECT key FROM forgotPasswordRequests WHERE id = "%s"' % userId)[-1].get('key'):
                 if datetime.datetime.today() < datetime.datetime.strptime(
                         query_db('SELECT expiresOn FROM forgotPasswordRequests WHERE key = "%s"' % hashedKey)[0].get('expiresOn'), '%Y-%m-%d %H:%M'):
@@ -754,10 +767,11 @@ def passwordReset():
         response = make_response(redirect('/'))
         response = setHeaders(response)
         return response
+    # Performs password reset
     else:
         password = request.form.get('password', None)
         verifyPassword = request.form.get('verifyPassword', None)
-
+        # Confirm both password and verifyPassword contain inputs
         if password is None or verifyPassword is None or password == '' or verifyPassword == '':
             flash('Password field not sent mate or it was blank so try again!')
             response = make_response(redirect('/forgotPassword'))
@@ -803,27 +817,26 @@ def register():
 # Delete user account
 @app.route('/accountSetting/delete_account', methods=['GET', 'POST'])
 def delete_account():
+    # Is Authed Guard, redirects to the login
     user_cookie = functions.getCookie()
+    # Check for valid session
     if validSessions.checkSession(user_cookie) is False:
         flash('Really?! You can\'t delete an account your not logged in to!')
         response = make_response(redirect('/'))
         response = setHeaders(response)
         return response
     uid = validSessions.checkSession(user_cookie)
-
+    # Get email from form
     verifyEmail = request.form.get('verifyEmail', None)
-    # verifyPassword = request.form.get('verifyPassword', None)
 
     if verifyEmail is not None:
-        # if verifyEmail is not None and verifyPassword is not None:
-
         email_to_delete = functions.sanitiseInputs(verifyEmail)
 
         # If the user exists in the database
         if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete) and \
                 query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email_to_delete)[0]. \
                         get('COUNT(email)') == 1:
-
+            # Verify reCaptcha
             if functions.verifyCaptcha():
 
                 # REPLACE POSTED_BY WITH "DELETED USER" FOR POSTS AND REPLIES
@@ -863,7 +876,7 @@ def createAccount():
     # Is Authed Guard, redirects to the dashboard
     user_cookie = functions.getCookie()
     if validSessions.checkSession(user_cookie) is not False:
-        flash('You are already logged in you donkey!')
+        flash('You are already logged in!')
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
