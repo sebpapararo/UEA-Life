@@ -251,6 +251,8 @@ def profile():
         response = setHeaders(response)
         return response
 
+    username = functions.sanitiseInputs(username)
+
     # Gets the users profile
     user_profile = query_db('SELECT * FROM profiles WHERE username = "%s"' % username)
 
@@ -746,7 +748,7 @@ def forgotPassword():
                 mail.send(msg)
 
                 # Inform user email has been sent
-                flash('Email has been sent')
+                flash('Email has been sent! Check your inbox and spam folder!')
                 response = make_response(redirect('/'))
                 response = setHeaders(response)
                 return response
@@ -1094,7 +1096,7 @@ def resend_verify():
     msg.body = messageBody
     mail.send(msg)
 
-    flash('Email has been sent')
+    flash('Email has been sent. Check your inbox and spam folder!')
     response = make_response(redirect('/'))
     response = setHeaders(response)
     return response
