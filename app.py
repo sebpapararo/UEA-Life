@@ -355,16 +355,21 @@ def delete_post():
         response = make_response(redirect('/'))
         response = setHeaders(response)
         return response
+
+    # Get the users ID
     uid = validSessions.checkSession(user_cookie)
 
+    # Get the posts ID
     post_id = request.form.get('post_id', None)
 
+    # Check the post ID has been sent
     if post_id is None:
         flash('Content not sent or it is blank!')
         response = make_response(redirect('/dashboard'))
         response = setHeaders(response)
         return response
 
+    # Check the post ID is valid
     posted_by = query_db('SELECT posted_by FROM posts WHERE id = "%s";' % post_id)
     if len(posted_by) != 1:
         flash('No post with that id mate!')
@@ -372,8 +377,10 @@ def delete_post():
         response = setHeaders(response)
         return response
 
+    # The the user that belong to the post
     posted_by = posted_by[0].get('posted_by')
 
+    # If the the user and posted_by user are the same allow to delete
     if uid == posted_by:
         query_db('DELETE FROM posts WHERE id="%s"' % post_id)
         query_db('DELETE FROM replies where postId="%s"' % post_id)
@@ -883,21 +890,21 @@ def createAccount():
         level = functions.sanitiseInputs(level)
         school = functions.sanitiseInputs(school)
         # Verify the email is in the correct format using a regular expression
-        if re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
-            # Check the username matches the allowed format
-            if re.match("^[A-Za-z0-9_-]*$", username):
-                # Check the email does not exist in the database
-                if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
-                        query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') == 0:
-                    # Check the username does not exist in the database
-                    if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
-                            query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') == 0:
-                        # Check the passwords match each other
-                        if password == verifyPassword:
-                            # Check the password is valid, according to the rules we set out
-                            if functions.validatePassword(password):
-                                # Check the reCaptcha has been completed properly
-                                if functions.verifyCaptcha():
+        if functions.verifyCaptcha():
+            if re.match('^[A-Za-z0-9\.\+_-]+@[A-Za-z0-9\._-]+\.[a-zA-Z]*$', email):
+                # Check the username matches the allowed format
+                if re.match("^[A-Za-z0-9_-]*$", username):
+                    # Check the email does not exist in the database
+                    if query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email) and \
+                            query_db('SELECT COUNT(email) FROM users WHERE email = "%s"' % email)[0].get('COUNT(email)') == 0:
+                        # Check the username does not exist in the database
+                        if query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username) and \
+                                query_db('SELECT COUNT(username) FROM profiles WHERE username = "%s"' % username)[0].get('COUNT(username)') == 0:
+                            # Check the passwords match each other
+                            if password == verifyPassword:
+                                # Check the password is valid, according to the rules we set out
+                                if functions.validatePassword(password):
+                                    # Check the reCaptcha has been completed properly
                                     # Generate random uuid to be the user id
                                     user_id = str(uuid.uuid4())
 
@@ -946,21 +953,22 @@ def createAccount():
                                     response = setHeaders(response)
                                     return response
                                 else:
-                                    flash('Invalid reCaptcha!')
+                                    flash('Invalid password! Please follow the rules')
                             else:
-                                flash('Invalid password! Please follow the rules')
+                                flash('Passwords do not match!')
                         else:
-                            flash('Passwords do not match!')
+                            flash("Invalid username. Please pick another one.")
                     else:
-                        flash("Invalid username. Please pick another one.")
+                        flash('Invalid email. Please pick another one.')
                 else:
-                    flash('Invalid email. Please pick another one.')
+                    flash('Username contained invalid characters!')
             else:
-                flash('Username contained invalid characters!')
+                flash('Email address was invalid!')
         else:
-            flash('Email address was invalid!')
+            flash('Invalid reCaptcha!')
     else:
         flash('All fields must not be empty!')
+
     response = make_response(redirect('/register'))
     response = setHeaders(response)
     return response
