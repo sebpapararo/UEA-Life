@@ -3,8 +3,8 @@
 {% extends 'base.html' %}
 {% block title %}{{ super() }} Profile{% endblock %}
 {% set active_page = "profile" %}
-{% block current_user %}{{ user }}{% endblock %}
-{% block current_profile %}{{ user }}{% endblock %}
+{% block current_user %}{{ user | safe}}{% endblock %}
+{% block current_profile %}{{ user | safe}}{% endblock %}
 
 {% block content %}
 
@@ -15,7 +15,7 @@
             </div>
             <div class="col-md-8">
                 <div class="card-body">
-                    <h1 class="card-title"><b>{{ userProfile.username }}'s Profile</b></h1>
+                    <h1 class="card-title"><b>{{ userProfile.username | safe}}'s Profile</b></h1>
                     <hr>
                     <div class="row justify-content-around">
                         <div class="col-auto align-self-center">
@@ -25,7 +25,7 @@
                                     <b>Username:</b>
                                 </div>
                                 <div class="col-auto">
-                                    {{ userProfile.username }}
+                                    {{ userProfile.username | safe}}
                                 </div>
                             </div>
                             <hr>
@@ -34,7 +34,7 @@
                                     <b>Level of Study:</b>
                                 </div>
                                 <div class="col-auto">
-                                    {{ userProfile.level }}
+                                    {{ userProfile.level | safe}}
                                 </div>
                             </div>
                             <hr>
@@ -43,7 +43,7 @@
                                     <b>Last Active:</b>
                                 </div>
                                 <div class="col-auto">
-                                    {{ userProfile.last_active }}
+                                    {{ userProfile.last_active | safe}}
                                 </div>
                             </div>
                             </p>
@@ -56,7 +56,7 @@
                                     <b>Date Joined:</b>
                                 </div>
                                 <div class="col-auto">
-                                    {{ userProfile.date_joined }}
+                                    {{ userProfile.date_joined | safe}}
                                 </div>
                             </div>
                             <hr>
@@ -65,7 +65,7 @@
                                     <b>UEA School:</b>
                                 </div>
                                 <div class="col-auto">
-                                    {{ userProfile.school }}
+                                    {{ userProfile.school | safe}}
                                 </div>
                             </div>
                             <hr>
@@ -74,7 +74,7 @@
                                     <b>Number of Posts:</b>
                                 </div>
                                 <div class="col-auto">
-                                    {{ userProfile.post_count }}
+                                    {{ userProfile.post_count | safe}}
                                 </div>
                             </div>
                             </p>
@@ -87,7 +87,7 @@
 
     <div class="card my-3">
         <div class="card-header">
-            <h2 class="card-title">Recent Posts for: {{ userProfile.username }}</h2>
+            <h2 class="card-title">Recent Posts for: {{ userProfile.username | safe}}</h2>
         </div>
         <div class="card-body">
             {% for post in usersPosts[::-1] %}
@@ -101,9 +101,9 @@
                                     </div>
 
                                     <div class="col-3 text-right">
-                                        <form action="/delete_post" method="POST">
-                                            <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-                                            <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+                                        <form action="/delete_post" method="POST" >
+                                            <input type="hidden" name="post_id" id="post_id" value="{{ post.id | safe}}">
+                                            <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by | safe}}">
 
                                             <button type="submit" class="btn btn-secondary"
                                                     data-toggle="tooltip" data-placement="top"

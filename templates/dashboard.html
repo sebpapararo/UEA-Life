@@ -12,7 +12,7 @@
 
         <div class="jumbotron jumbotron-fluid" id="dash_jumbo">
             <div class="container text-white">
-                <h1 class="display-4">Welcome {{ user }}</h1>
+                <h1 class="display-4">Welcome {{ user | safe}}</h1>
                 <p class="lead">An Online Forum for UEA Student and Staff</p>
             </div>
         </div>
@@ -22,7 +22,7 @@
             {% for message in get_flashed_messages() %}
                 <div class="alert alert-warning">
                     <i class="fa fa-lg fa-exclamation-circle"></i>
-                    {{ message }}
+                    {{ message | safe}}
                 </div>
             {% endfor %}
         </div>
@@ -104,9 +104,9 @@
                                                 </div>
 
                                                 <div class="col-3 text-right">
-                                                    <form action="/delete_post" method="POST">
-                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+                                                    <form action="/delete_post" method="POST" >
+                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id | safe}}">
+                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by | safe}}">
 
                                                         <button type="submit" class="btn btn-secondary"
                                                                 data-toggle="tooltip" data-placement="top"
@@ -343,9 +343,9 @@
                                                 </div>
 
                                                 <div class="col-3 text-right">
-                                                    <form action="/delete_post" method="POST">
-                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+                                                    <form action="/delete_post" method="POST" >
+                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id | safe}}">
+                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by | safe}}">
 
                                                         <button type="submit" class="btn btn-secondary"
                                                                 data-toggle="tooltip" data-placement="top"
@@ -460,9 +460,9 @@
 
                                                 <div class="col-3 text-right">
 
-                                                    <form action="/delete_post" method="POST">
-                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+                                                    <form action="/delete_post" method="POST" >
+                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id | safe}}">
+                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by | safe}}">
 
                                                         <button type="submit" class="btn btn-secondary"
                                                                 data-toggle="tooltip" data-placement="top"
@@ -577,9 +577,9 @@
                                                 </div>
 
                                                 <div class="col-3 text-right">
-                                                    <form action="/delete_post" method="POST">
-                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+                                                    <form action="/delete_post" method="POST" >
+                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id | safe}}">
+                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by | safe}}">
 
                                                         <button type="submit" class="btn btn-secondary"
                                                                 data-toggle="tooltip" data-placement="top"
@@ -693,9 +693,9 @@
                                                 </div>
 
                                                 <div class="col-3 text-right">
-                                                    <form action="/delete_post" method="POST">
-                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+                                                    <form action="/delete_post" method="POST" >
+                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id | safe}}">
+                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by | safe}}">
 
                                                         <button type="submit" class="btn btn-secondary"
                                                                 data-toggle="tooltip" data-placement="top"
@@ -809,9 +809,9 @@
                                                 </div>
 
                                                 <div class="col-3 text-right">
-                                                    <form action="/delete_post" method="POST">
-                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id }}">
-                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by }}">
+                                                    <form action="/delete_post" method="POST" >
+                                                        <input type="hidden" name="post_id" id="post_id" value="{{ post.id | safe}}">
+                                                        <input type="hidden" name="posted_by" id="posted_by" value="{{ post.posted_by | safe}}">
 
                                                         <button type="submit" class="btn btn-secondary"
                                                                 data-toggle="tooltip" data-placement="top"

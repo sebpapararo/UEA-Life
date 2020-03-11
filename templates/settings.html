@@ -2,14 +2,14 @@
 {% extends 'base.html' %}
 {% block title %}{{ super() }} Settings{% endblock %}
 {% set active_page = "accountSettings" %}
-{% block current_user %}{{ user }}{% endblock %}
-{% block current_profile %}{{ user }}{% endblock %}
+{% block current_user %}{{ user | safe}}{% endblock %}
+{% block current_profile %}{{ user | safe}}{% endblock %}
 
 {% block content %}
     <div class="card mt-2">
         <div class="jumbotron jumbotron-fluid">
             <div class="container">
-                <h2 class="display-4">{{ user }}'s Account Settings</h2>
+                <h2 class="display-4">{{ user | safe}}'s Account Settings</h2>
             </div>
         </div>
 
@@ -17,7 +17,7 @@
             {% for message in get_flashed_messages() %}
                 <div class="alert alert-warning">
                     <i class="fa fa-lg fa-exclamation-circle"></i>
-                    {{ message }}
+                    {{ message | safe}}
                 </div>
             {% endfor %}
         </div>
