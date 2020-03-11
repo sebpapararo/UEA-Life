@@ -411,7 +411,7 @@ def delete_post():
         get_db().commit()
         flash("Post has been deleted")
     else:
-        flash("You cannot delete someone else's post you cheeky [gender neutral pronoun here:]!")
+        flash("You cannot delete someone else's post you cheeky twit!")
     response = make_response(redirect('/dashboard'))
     response = setHeaders(response)
     return response
@@ -1017,9 +1017,20 @@ def verify_account():
     linkKey = request.args.get('key').replace(' ', '+')
     hashedKey = functions.generateHashedKey(linkKey.encode())
     userId = request.args.get('id')
+    userId = functions.sanitiseInputs(userId)
 
     # this if statement make sure the logged in user or the non-logged in user cannot see the error messages for verify email
     if linkKey is not None and userId is not None:
+        isUser = query_db('SELECT verified FROM users WHERE id = "%s"' % userId)
+
+        # Check user exists
+        if len(isUser) != 1:
+            flash('An error has occured, please try again')
+            response = make_response(redirect('/'))
+            response = setHeaders(response)
+            return response
+
+
         # check if verified already
         if query_db('SELECT verified FROM users WHERE id = "%s"' % userId)[0].get('verified') == 1:
             flash('Your account is already verified!')
