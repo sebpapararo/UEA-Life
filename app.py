@@ -67,7 +67,6 @@ def setHeaders(response):
     response.headers['Cache-Control'] = 'no-cache; no-store; must-revalidate;'
     response.headers['Pragma'] = 'no-cache;'
     response.headers['X-Content-Type-Options'] = 'nosniff;'
-    response.headers['X-Content-Type-Options'] = 'nosniff;'
     response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
     response.headers['Content-Security-Policy'] = "default-src https: 'self';" \
                                                   "script-src https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/ 'nonce-cmM3QXk4NldmRXFJejFuQ1paRHA=' " \
