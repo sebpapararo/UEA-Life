@@ -21,20 +21,6 @@ def sanitiseInputs(input):
     return input.replace('>', '&#62')
 
 
-# Used to desanitise inputs so that text can be displayed properly on the screen
-def desanitiseInputs(input):
-    input = input.replace('&#62', '>')
-    input = input.replace('&#60', '<')
-    input = input.replace('&#59', ';')
-    input = input.replace('&#47', '/')
-    input = input.replace('&#41', ')')
-    input = input.replace('&#40', '(')
-    input = input.replace('&#39', "'")
-    input = input.replace('&#38', '&')
-    input = input.replace('&#35', '#')
-    return input.replace('&#34', '"')
-
-
 # Used to check if a string contains a given character
 def contains(required_chars, s):
     return any(c in required_chars for c in s)
@@ -117,9 +103,6 @@ def generateHashedPass(salt, message):
 
 
 def generateHashedKey(message):
-    # Message must be encoded before being hashed
-    # message = message.encode('utf-8')
-
     return hashlib.sha3_512(message).hexdigest()
 
 
